@@ -1,0 +1,49 @@
+{
+  "name": "planskop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "worker:sample": "dotenv -e .env.local -- pnpx tsx --watch workers/sample.worker.ts"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.7.3",
+    "@next/env": "^14.2.17",
+    "@upstash/qstash": "^2.7.16",
+    "@vercel/postgres": "^0.8.0",
+    "babel-plugin-react-compiler": "0.0.0-experimental-938cd9a-20240601",
+    "d3": "^7.9.0",
+    "dotenv-cli": "^7.4.2",
+    "drizzle-orm": "^0.31.4",
+    "drizzle-zod": "^0.5.1",
+    "express": "^4.21.1",
+    "jpeg-js": "^0.4.4",
+    "next": "15.0.3",
+    "next-auth": "5.0.0-beta.20",
+    "react": "19.0.0-rc-5c56b873-20241107",
+    "react-dom": "19.0.0-rc-5c56b873-20241107",
+    "resend": "^4.0.0",
+    "scatter-gl": "^0.0.13",
+    "tsx": "^4.19.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "drizzle-kit": "^0.22.8",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.4",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@9.3.0"
+}

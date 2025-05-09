@@ -1,0 +1,39 @@
+.ToggleThemeBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  --border-width: 1px;
+  cursor: pointer;
+}
+
+.ToggleThemeBtn::before {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 16px;
+  border: var(--border-width) solid var(--md-sys-color-outline);
+  border-radius: 8px;
+}
+
+.ToggleThemeBtn::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--md-sys-color-primary);
+  border-radius: 50%;
+  position: absolute;
+  top: var(--border-width);
+  left: var(--border-width);
+}
+
+.ToggleThemeBtn:checked::after {
+  left: 16px;
+}
+
+label:has(.ToggleThemeBtn)::after {
+  content: "dark theme";
+}
+label:has(.ToggleThemeBtn:checked)::after {
+  content: "light theme";
+}

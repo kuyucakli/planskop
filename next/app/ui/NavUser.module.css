@@ -1,0 +1,9 @@
+.NavUser {
+  min-width: auto;
+
+  & ul {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}

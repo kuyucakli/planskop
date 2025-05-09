@@ -1,0 +1,1 @@
+ALTER TABLE "action_plan" DROP COLUMN IF EXISTS "remind";
