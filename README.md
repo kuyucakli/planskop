@@ -4,6 +4,8 @@ I am using auth.js (next-auth v5 beta ) with keycloak provider for authenticatio
 
 For the job que and sending email reminders I've used upstash account with redis. On the client side bullmq, ioredis was used.
 
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
 ## History
 
 - Decided to use auth.js (next.js auth 5.0 ) with keycloak
@@ -26,5 +28,3 @@ For the job que and sending email reminders I've used upstash account with redis
 - [] Solve cron job and sending informative messages to users
 - [] Upload to vercel
 - [] Learn rust + wasm ( integrate )
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).

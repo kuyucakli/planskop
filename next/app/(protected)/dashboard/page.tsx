@@ -1,27 +1,22 @@
-import HandWrittenNums from "@/app/ui/HandWrittenNums";
-import { auth } from "@/auth";
+import HandWrittenNums from "@/components/HandWrittenNums";
+// import { auth } from "@/auth";
 import { getActionPlans } from "@/db/queries";
-import Link from "next/link";
 import styles from "./page.module.css";
-import { Fragment } from "react";
 import * as _wasm from "@/pkg/planskop_rust";
-import { PieChart } from "@/app/ui/D3";
-
-
-
+import { auth } from "@clerk/nextjs/server";
 
 
 export default async function Dashboard() {
 
-    const session = await auth();
+    const { userId } = await auth();
 
-    if (!session?.user) { return "Please sign in to view this page." }
+    if (!userId) { return "Please sign in to view this page." }
 
+    const actionPlans = await getActionPlans(userId as string);
 
-    const actionPlans = await getActionPlans(session?.user?.id as string);
+    if (!actionPlans) return <p>Ops</p>
 
     const { get_closest_action_dates, get_dt_str_from_rruleset, get_human_readable_rrule, with_timezone_offset } = _wasm;
-
 
     const actionPlansJSON = JSON.stringify(actionPlans);
 
@@ -29,12 +24,10 @@ export default async function Dashboard() {
 
     const now = new Date();
 
-
-
     return (
         <>
             <section>
-                <h1 className="display-lg">Hello, {session?.user?.name}</h1>
+                <h1 className="display-lg">Hello, {userId}</h1>
                 <ul className={styles.Dashboard}>
                     <li >
 
@@ -50,8 +43,6 @@ export default async function Dashboard() {
                                     : "No upcoming Actions. Create one..."
                             }
 
-
-
                         </h2>
                     </li>
                     <li >
@@ -60,11 +51,9 @@ export default async function Dashboard() {
                         </h2>
                         <ul>
                             <li>Picasso</li>
-                            <PieChart />
+                            {/* <PieChart /> */}
                         </ul>
                     </li>
-
-
 
                 </ul>
             </section>
@@ -83,7 +72,7 @@ export default async function Dashboard() {
                     </thead>
                     <tbody>
                         {/* filter(a => a.closest) */}
-                        {closestActions.map((a, index: number) => (
+                        {/* {closestActions.map((a: InsertActionPlan, index: number) => (
                             <Fragment key={a.id}>
                                 <tr >
                                     <td>
@@ -105,11 +94,10 @@ export default async function Dashboard() {
 
                                         {get_human_readable_rrule(a.rrule)}
 
-
                                     </td>
                                     <td >{a.closest}</td>
                                 </tr>
-                                {/* <tr>
+                                <tr>
                                     <td colSpan={4}>
                                         <table>
                                             <thead>
@@ -132,19 +120,16 @@ export default async function Dashboard() {
                                             </tbody>
                                         </table>
                                     </td>
-                                </tr> */}
+                                </tr>
                             </Fragment>
-                        ))}
+                        ))} */}
 
                     </tbody>
                 </table>
 
             </section>
 
-
-
         </>
-
 
     )
 }

@@ -1,10 +1,17 @@
-import { sql } from '@vercel/postgres';
-import { drizzle } from "drizzle-orm/vercel-postgres";
-import * as schema from './schema';
-import { cwd } from 'node:process';
+import { drizzle } from 'drizzle-orm/neon-http'
 import { loadEnvConfig } from '@next/env';
+import { neon } from '@neondatabase/serverless'
+import { UserMessages } from './schema'
 
-loadEnvConfig(cwd());
+loadEnvConfig(process.cwd());
 
 
-export const db = drizzle(sql, { schema });
+if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL must be a Neon postgres connection string')
+}
+
+const sql = neon(process.env.DATABASE_URL);
+
+export const db = drizzle(sql, {
+    schema: { UserMessages },
+})

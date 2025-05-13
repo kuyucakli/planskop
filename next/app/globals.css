@@ -1,6 +1,16 @@
-@layer reset, defaults;
+@import "tailwindcss";
 
-@layer defaults {
+@theme {
+  --color-*: initial;
+  --color-primary: oklch(0.67 0.13 175.13);
+  --color-secondary: oklch(0.67 0.13 200);
+  --color-purple: #3f3cbb;
+  --color-midnight: #121063;
+  --color-tahiti: #3ab7bf;
+  --color-bermuda: #78dcca;
+}
+
+@layer system {
   /* --- variables --- */
   :root {
     /* related to browser default styles */
@@ -10,227 +20,19 @@
   :root:has(input#toggle-theme:checked) {
     --max-width: 1100px;
     --border-radius: 12px;
-    --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    --font-mono:
+      ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
       "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
       "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
-    /* spacing */
-    --spc-0: 2px;
-    --spc-1: 4px;
-    --spc-2: 8px;
-    --spc-3: 12px;
-    --spc-4: 16px;
-    --spc-5: 20px;
-    --spc-6: 24px;
-    --spc-7: 28px;
-    --spc-8: 32px;
-    --spc-9: 36px;
-    --spc-10: 40px;
-    --spc-11: 44px;
-    --spc-12: 48px;
-    --spc-13: 52px;
-    --spc-14: 56px;
-    --spc-15: 60px;
+    --brk-p-0: 1200px;
 
-    /* font */
-    --typ-display-lg-fs: 57px;
-    --typ-display-lg-lh: 64px;
-    --typ-display-lg-ls: -0.25px;
-
-    --typ-display-md-fs: 45px;
-    --typ-display-md-lh: 52px;
-    --typ-display-md-ls: 0px;
-
-    --typ-display-sm-fs: 36px;
-    --typ-display-sm-lh: 44px;
-    --typ-display-sm-ls: 0px;
-
-    --typ-headline-lg-fs: 32px;
-    --typ-headline-lg-lh: 40px;
-    --typ-headline-lg-ls: 0px;
-
-    --typ-headline-md-fs: 28px;
-    --typ-headline-md-lh: 36px;
-    --typ-headline-md-ls: 0px;
-
-    --typ-headline-sm-fs: 24px;
-    --typ-headline-sm-lh: 32px;
-    --typ-headline-sm-ls: 0px;
-
-    --typ-title-lg-fs: 22px;
-    --typ-title-lg-lh: 28px;
-    --typ-title-lg-ls: 0px;
-
-    --typ-title-md-fs: 16px;
-    --typ-title-md-lh: 24px;
-    --typ-title-md-ls: 0.15px;
-
-    --typ-title-sm-fs: 14px;
-    --typ-title-sm-lh: 20px;
-    --typ-title-sm-ls: 0.1px;
-
-    --typ-body-lg-fs: 16px;
-    --typ-body-lg-lh: 24px;
-    --typ-body-lg-ls: 0.5px;
-
-    --typ-body-md-fs: 14px;
-    --typ-body-md-lh: 20px;
-    --typ-body-md-ls: 0.25px;
-
-    --typ-body-sm-fs: 12px;
-    --typ-body-sm-lh: 16px;
-    --typ-body-sm-ls: 0.4px;
-
-    --typ-label-lg-fs: 14px;
-    --typ-label-lg-lh: 20px;
-    --typ-label-lg-ls: 0.1px;
-
-    --typ-label-md-fs: 12px;
-    --typ-label-md-lh: 16px;
-    --typ-label-md-ls: 0.5px;
-
-    --typ-label-sm-fs: 11px;
-    --typ-label-sm-lh: 16px;
-    --typ-label-sm-ls: 0.5px;
+    --limited-width-0: 1200px;
+    --limited-width-1: 1000px;
 
     .color-filter-invertable {
       filter: invert(0);
     }
-
-    .display-lg {
-      font-size: var(--typ-display-lg-fs);
-      line-height: var(--typ-display-lg-lh);
-      letter-spacing: var(--typ-display-lg-ls);
-    }
-
-    .display-md {
-      font-size: var(--typ-display-md-fs);
-      line-height: var(--typ-display-md-lh);
-      letter-spacing: var(--typ-display-md-ls);
-    }
-
-    .display-sm {
-      font-size: var(--typ-display-sm-fs);
-      line-height: var(--typ-display-sm-lh);
-      letter-spacing: var(--typ-display-sm-ls);
-    }
-    .headline-lg {
-      font-size: var(--typ-headline-lg-fs);
-      line-height: var(--typ-headline-lg-lh);
-      letter-spacing: var(--typ-headline-lg-ls);
-    }
-    .headline-md {
-      font-size: var(--typ-headline-md-fs);
-      line-height: var(--typ-headline-md-lh);
-      letter-spacing: var(--typ-headline-md-ls);
-    }
-    .headline-sm {
-      font-size: var(--typ-headline-sm-fs);
-      line-height: var(--typ-headline-sm-lh);
-      letter-spacing: var(--typ-headline-sm-ls);
-    }
-    .body-lg {
-      font-size: var(--typ-body-lg-fs);
-      line-height: var(--typ-body-lg-lh);
-      letter-spacing: var(--typ-body-lg-ls);
-    }
-    .body-md {
-      font-size: var(--typ-body-md-fs);
-      line-height: var(--typ-body-md-lh);
-      letter-spacing: var(--typ-body-md-ls);
-    }
-    .body-sm {
-      font-size: var(--typ-body-sm-fs);
-      line-height: var(--typ-body-sm-lh);
-      letter-spacing: var(--typ-body-sm-ls);
-    }
-
-    .label-lg {
-      font-size: var(--typ-label-lg-fs);
-      line-height: var(--typ-label-lg-lh);
-      letter-spacing: var(--typ-label-lg-ls);
-    }
-    .label-md {
-      font-size: var(--typ-label-md-fs);
-      line-height: var(--typ-label-md-lh);
-      letter-spacing: var(--typ-label-md-ls);
-    }
-    .label-sm {
-      font-size: var(--typ-label-sm-fs);
-      line-height: var(--typ-label-sm-lh);
-      letter-spacing: var(--typ-label-sm-ls);
-    }
-
-    .title-lg {
-      font-size: var(--typ-title-lg-fs);
-      line-height: var(--typ-title-lg-lh);
-      letter-spacing: var(--typ-title-lg-ls);
-    }
-    .title-md {
-      font-size: var(--typ-title-md-fs);
-      line-height: var(--typ-title-md-lh);
-      letter-spacing: var(--typ-title-md-ls);
-    }
-    .title-sm {
-      font-size: var(--typ-title-sm-fs);
-      line-height: var(--typ-title-sm-lh);
-      letter-spacing: var(--typ-title-sm-ls);
-    }
-
-    /* colors */
-    --md-sys-color-primary: rgb(23 107 83);
-    --md-sys-color-surface-tint: rgb(23 107 83);
-    --md-sys-color-on-primary: rgb(255 255 255);
-    --md-sys-color-primary-container: rgb(165 242 212);
-    --md-sys-color-on-primary-container: rgb(0 33 23);
-    --md-sys-color-secondary: rgb(93 87 145);
-    --md-sys-color-on-secondary: rgb(255 255 255);
-    --md-sys-color-secondary-container: rgb(228 223 255);
-    --md-sys-color-on-secondary-container: rgb(25 18 74);
-    --md-sys-color-tertiary: rgb(35 100 136);
-    --md-sys-color-on-tertiary: rgb(255 255 255);
-    --md-sys-color-tertiary-container: rgb(200 230 255);
-    --md-sys-color-on-tertiary-container: rgb(0 30 46);
-    --md-sys-color-error: rgb(186 26 26);
-    --md-sys-color-on-error: rgb(255 255 255);
-    --md-sys-color-error-container: rgb(255 218 214);
-    --md-sys-color-on-error-container: rgb(65 0 2);
-    --md-sys-color-background: rgb(245 251 246);
-    --md-sys-color-on-background: rgb(23 29 26);
-    --md-sys-color-surface: rgb(245 251 246);
-    --md-sys-color-on-surface: rgb(23 29 26);
-    --md-sys-color-surface-variant: rgb(219 229 222);
-    --md-sys-color-on-surface-variant: rgb(64 73 68);
-    --md-sys-color-outline: rgb(112 121 116);
-    --md-sys-color-outline-variant: rgb(191 201 195);
-    --md-sys-color-shadow: rgb(0 0 0);
-    --md-sys-color-scrim: rgb(0 0 0);
-    --md-sys-color-inverse-surface: rgb(44 50 47);
-    --md-sys-color-inverse-on-surface: rgb(236 242 237);
-    --md-sys-color-inverse-primary: rgb(137 214 185);
-    --md-sys-color-primary-fixed: rgb(165 242 212);
-    --md-sys-color-on-primary-fixed: rgb(0 33 23);
-    --md-sys-color-primary-fixed-dim: rgb(137 214 185);
-    --md-sys-color-on-primary-fixed-variant: rgb(0 81 61);
-    --md-sys-color-secondary-fixed: rgb(228 223 255);
-    --md-sys-color-on-secondary-fixed: rgb(25 18 74);
-    --md-sys-color-secondary-fixed-dim: rgb(198 191 255);
-    --md-sys-color-on-secondary-fixed-variant: rgb(69 64 120);
-    --md-sys-color-tertiary-fixed: rgb(200 230 255);
-    --md-sys-color-on-tertiary-fixed: rgb(0 30 46);
-    --md-sys-color-tertiary-fixed-dim: rgb(147 205 246);
-    --md-sys-color-on-tertiary-fixed-variant: rgb(0 76 109);
-    --md-sys-color-surface-dim: rgb(213 219 215);
-    --md-sys-color-surface-bright: rgb(245 251 246);
-    --md-sys-color-surface-container-lowest: rgb(255 255 255);
-    --md-sys-color-surface-container-low: rgb(239 245 240);
-    --md-sys-color-surface-container: rgb(233 239 234);
-    --md-sys-color-surface-container-high: rgb(228 234 229);
-    --md-sys-color-surface-container-highest: rgb(222 228 223);
-    --md-extended-color-custom-color1-color: rgb(85 100 35);
-    --md-extended-color-custom-color1-on-color: rgb(255 255 255);
-    --md-extended-color-custom-color1-color-container: rgb(216 235 154);
-    --md-extended-color-custom-color1-on-color-container: rgb(23 30 0);
 
     /* z-index */
     --z-max: 999;
@@ -243,67 +45,6 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --md-sys-color-primary: rgb(137 214 185);
-      --md-sys-color-surface-tint: rgb(137 214 185);
-      --md-sys-color-on-primary: rgb(0 56 42);
-      --md-sys-color-primary-container: rgb(0 81 61);
-      --md-sys-color-on-primary-container: rgb(165 242 212);
-      --md-sys-color-secondary: rgb(198 191 255);
-      --md-sys-color-on-secondary: rgb(46 41 95);
-      --md-sys-color-secondary-container: rgb(69 64 120);
-      --md-sys-color-on-secondary-container: rgb(228 223 255);
-      --md-sys-color-tertiary: rgb(147 205 246);
-      --md-sys-color-on-tertiary: rgb(0 52 76);
-      --md-sys-color-tertiary-container: rgb(0 76 109);
-      --md-sys-color-on-tertiary-container: rgb(200 230 255);
-      --md-sys-color-error: rgb(255 180 171);
-      --md-sys-color-on-error: rgb(105 0 5);
-      --md-sys-color-error-container: rgb(147 0 10);
-      --md-sys-color-on-error-container: rgb(255 218 214);
-      --md-sys-color-background: rgb(15 21 18);
-      --md-sys-color-on-background: rgb(222 228 223);
-      --md-sys-color-surface: rgb(15 21 18);
-      --md-sys-color-on-surface: rgb(222 228 223);
-      --md-sys-color-surface-variant: rgb(64 73 68);
-      --md-sys-color-on-surface-variant: rgb(191 201 195);
-      --md-sys-color-outline: rgb(137 147 141);
-      --md-sys-color-outline-variant: rgb(64 73 68);
-      --md-sys-color-shadow: rgb(0 0 0);
-      --md-sys-color-scrim: rgb(0 0 0);
-      --md-sys-color-inverse-surface: rgb(222 228 223);
-      --md-sys-color-inverse-on-surface: rgb(44 50 47);
-      --md-sys-color-inverse-primary: rgb(23 107 83);
-      --md-sys-color-primary-fixed: rgb(165 242 212);
-      --md-sys-color-on-primary-fixed: rgb(0 33 23);
-      --md-sys-color-primary-fixed-dim: rgb(137 214 185);
-      --md-sys-color-on-primary-fixed-variant: rgb(0 81 61);
-      --md-sys-color-secondary-fixed: rgb(228 223 255);
-      --md-sys-color-on-secondary-fixed: rgb(25 18 74);
-      --md-sys-color-secondary-fixed-dim: rgb(198 191 255);
-      --md-sys-color-on-secondary-fixed-variant: rgb(69 64 120);
-      --md-sys-color-tertiary-fixed: rgb(200 230 255);
-      --md-sys-color-on-tertiary-fixed: rgb(0 30 46);
-      --md-sys-color-tertiary-fixed-dim: rgb(147 205 246);
-      --md-sys-color-on-tertiary-fixed-variant: rgb(0 76 109);
-      --md-sys-color-surface-dim: rgb(15 21 18);
-      --md-sys-color-surface-bright: rgb(52 59 55);
-      --md-sys-color-surface-container-lowest: rgb(10 15 13);
-      --md-sys-color-surface-container-low: rgb(23 29 26);
-      --md-sys-color-surface-container: rgb(27 33 30);
-      --md-sys-color-surface-container-high: rgb(37 43 40);
-      --md-sys-color-surface-container-highest: rgb(48 54 51);
-      --md-extended-color-custom-color1-color: rgb(189 206 128);
-      --md-extended-color-custom-color1-on-color: rgb(41 53 0);
-      --md-extended-color-custom-color1-color-container: rgb(62 76 12);
-      --md-extended-color-custom-color1-on-color-container: rgb(216 235 154);
-    }
-  }
-
-  * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
   }
 
   html,
@@ -533,35 +274,42 @@
   }
 
   #root {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr;
-
-    grid-template-areas:
-      "main-nav-bar main-nav-bar"
-      "main main"
-      "footer footer";
-    min-height: 100%;
-    max-width: 1200px;
+    height: 100dvh;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 48px 1fr minmax(300px, 0.4fr);
+    grid-template-rows: auto 1fr 56px;
+    grid-template-areas:
+      "b b b"
+      "m m c"
+      "a a a";
+    gap: var(--spc-3);
+
+    container: root / inline-size;
   }
 
-  #root > header {
-    grid-area: main-nav-bar;
+  #root > header:first-child {
+    grid-area: a;
     padding: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    flex-direction: column;
 
     &.protected {
-      flex-direction: row;
+      flex-direction: column;
     }
   }
-
+  #root > header + header {
+    grid-area: b;
+    border-bottom: 1px solid gray;
+    display: flex;
+    justify-content: space-between;
+  }
   main {
-    grid-area: main;
+    grid-area: m;
     margin-bottom: 128px;
     padding: 8px;
+    overflow: auto;
 
     & > h1 {
       position: absolute;
@@ -571,10 +319,15 @@
     }
   }
 
+  main + aside {
+    grid-area: c;
+    border: 1px solid gray;
+  }
+
   main + footer {
     padding: 24px;
     background-color: var(--md-sys-color-inverse-surface);
-    grid-area: footer;
+    grid-area: d;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -586,138 +339,13 @@
   }
 }
 
-@layer reset {
-  /* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-  html,
-  body,
-  div,
-  span,
-  applet,
-  object,
-  iframe,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  blockquote,
-  pre,
-  a,
-  abbr,
-  acronym,
-  address,
-  big,
-  cite,
-  code,
-  del,
-  dfn,
-  em,
-  img,
-  ins,
-  kbd,
-  q,
-  s,
-  samp,
-  small,
-  strike,
-  strong,
-  sub,
-  sup,
-  tt,
-  var,
-  b,
-  u,
-  i,
-  center,
-  dl,
-  dt,
-  dd,
-  ol,
-  ul,
-  li,
-  fieldset,
-  form,
-  label,
-  legend,
-  table,
-  caption,
-  tbody,
-  tfoot,
-  thead,
-  tr,
-  th,
-  td,
-  article,
-  aside,
-  canvas,
-  details,
-  embed,
-  figure,
-  figcaption,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  output,
-  ruby,
-  section,
-  summary,
-  time,
-  mark,
-  audio,
-  video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-  }
-  /* HTML5 display-role reset for older browsers */
-  article,
-  aside,
-  details,
-  figcaption,
-  figure,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  section {
-    display: block;
-  }
-  body {
-    line-height: 1;
-  }
-  ol,
-  ul {
-    list-style: none;
-  }
-  blockquote,
-  q {
-    quotes: none;
-  }
-  blockquote:before,
-  blockquote:after,
-  q:before,
-  q:after {
-    content: "";
-    content: none;
-  }
-  table {
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-
-  button {
-    cursor: pointer;
+@layer responsive {
+  @media screen and (min-width: 1000px) {
+    #root {
+      grid-template-areas:
+        "b b b"
+        "a m c"
+        "a d d";
+    }
   }
 }
