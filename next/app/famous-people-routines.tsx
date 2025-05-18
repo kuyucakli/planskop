@@ -1,7 +1,7 @@
-import Card from "@/components/Card";
-import { getFamousPeopleWithRoutines } from "@/db/queries"
+import Card, { CardHeader, CardBody, CardFooter, CardImage } from "@/components/Card";
+import { getFamousPeopleWithRoutines } from "@/db/queries";
 import { FamousPersonRoutine, FamousPersonWithRoutines } from "@/db/schema";
-
+import { CldImage } from "next-cloudinary";
 
 const colors = [
     "rgb(0 255 153 / 36%)",
@@ -14,43 +14,41 @@ const colors = [
     "rgb(100 192 160 / 36%)",
     "rgb(90 140 203 / 36%)",
     "rgb(100 192 120 / 36%)",
-
-]
+];
 
 const FamousPeopleRoutines = async () => {
-
     const famousPeopleWithRoutines = await getFamousPeopleWithRoutines();
     const grouped = Object.values(
-        famousPeopleWithRoutines.reduce((acc, row) => {
-            if (!acc[row.personId]) {
-                acc[row.personId] = {
-                    id: row.personId,
-                    personName: row.personName,
-                    image: row.image,
-                    routines: [],
-                };
-            }
-            if (row.activityId) {
-                acc[row.personId].routines.push({
-                    activityId: row.activityId,
-                    activityName: row.activityName,
-                    startsAt: row.startsAt,
-                    endsAt: row.endsAt,
-                    famousPersonId: null,
-                });
-            }
-            return acc;
-        }, {} as Record<number, FamousPersonWithRoutines>)
+        famousPeopleWithRoutines.reduce(
+            (acc, row) => {
+                if (!acc[row.personId]) {
+                    acc[row.personId] = {
+                        id: row.personId,
+                        personName: row.personName,
+                        image: row.image,
+                        routines: [],
+                    };
+                }
+                if (row.activityId) {
+                    acc[row.personId].routines.push({
+                        activityId: row.activityId,
+                        activityName: row.activityName,
+                        startsAt: row.startsAt,
+                        endsAt: row.endsAt,
+                        famousPersonId: null,
+                    });
+                }
+                return acc;
+            },
+            {} as Record<number, FamousPersonWithRoutines>
+        )
     );
 
     function getFilledHoursFromRoutines(routines: FamousPersonRoutine[]) {
-
         const jsx = [];
         const dayHours = Array.from({ length: 24 }, (_, i) => i);
 
-
         const fillHoursInbetween = (startsAt: string, endsAt: string) => {
-
             const sH = parseInt(startsAt.split(":")[0], 10);
             const eH = parseInt(endsAt.split(":")[0], 10);
             const rVal = [];
@@ -58,13 +56,15 @@ const FamousPeopleRoutines = async () => {
                 rVal.push(i);
             }
             return rVal;
-        }
+        };
 
         let lastColorIndex = 0;
         let lastRoutine;
 
         for (const hour of dayHours) {
-            const activeRoutine = routines.find((r) => fillHoursInbetween(r.startsAt, r.endsAt).includes(hour));
+            const activeRoutine = routines.find((r) =>
+                fillHoursInbetween(r.startsAt, r.endsAt).includes(hour)
+            );
 
             if (lastRoutine != activeRoutine?.activityName) {
                 lastColorIndex++;
@@ -72,53 +72,56 @@ const FamousPeopleRoutines = async () => {
             }
 
             jsx.push(
-                <li className="size-7  flex justify-center items-center" data-active={activeRoutine ? activeRoutine.activityName : undefined} key={hour}>
-                    <span className="colored-segment" style={{ backgroundColor: colors[lastColorIndex - 1] }} />
+                <li
+                    className="size-7  flex justify-center items-center"
+                    data-active={activeRoutine ? activeRoutine.activityName : undefined}
+                    key={hour}
+                >
+                    <span
+                        className="colored-segment"
+                        style={{ backgroundColor: colors[lastColorIndex - 1] }}
+                    />
                     {hour}
                 </li>
-            )
-
-
-
+            );
         }
         return jsx;
     }
 
     return (
         <ul>
-            {
-                grouped.map(
-                    (f) => (
-                        <li key={f.id}>
-
-                            <Card
-                                imgUrl={f.image}
-                                altText=""
-                                heading={f.personName}
-                            >
-                                <ul>{f.routines.map((r, i) => <li className="text-xs">
-                                    <span className=" inline-block w-2 h-2 mr-2" style={{ backgroundColor: colors[i] }}></span>
-                                    {r.activityName}</li>)}</ul>
-                                <div className="text-fuchsia-300  p-4 text-xs ">
-
-                                    <ul className="flex  flex-wrap ">
-
-                                        {getFilledHoursFromRoutines(f.routines)}
-
-                                    </ul>
-
-                                </div>
-                            </Card>
-
-
-                        </li>
-                    )
-                )
-            }
+            {grouped.map((f) => (
+                <li key={f.id}>
+                    <Card>
+                        <CardHeader>
+                            <h2 className="text-xl my-2">{f.personName}</h2>
+                        </CardHeader>
+                        <CardBody className="flex gap-6">
+                            <CardImage path={f.image} altText={f.personName} />
+                            <ul>
+                                {f.routines.map((r, i) => (
+                                    <li key={i} className="text-xs">
+                                        <span
+                                            className=" inline-block w-2 h-2 mr-2"
+                                            style={{ backgroundColor: colors[i] }}
+                                        />
+                                        {r.activityName}
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardBody>
+                        <CardFooter>
+                            <div className="text-fuchsia-300  p-4 text-xs ">
+                                <ul className="flex  flex-wrap ">
+                                    {getFilledHoursFromRoutines(f.routines)}
+                                </ul>
+                            </div>
+                        </CardFooter>
+                    </Card>
+                </li>
+            ))}
         </ul>
-    )
-}
+    );
+};
 
-
-
-export { FamousPeopleRoutines }
+export { FamousPeopleRoutines };

@@ -27,7 +27,7 @@ export default async function Dashboard() {
     return (
         <>
             <section>
-                <h1 className="display-lg">Hello, {userId}</h1>
+                <h1 className="text-7xl font-kira-hareng">Hello, {userId}</h1>
                 <ul className={styles.Dashboard}>
                     <li >
 

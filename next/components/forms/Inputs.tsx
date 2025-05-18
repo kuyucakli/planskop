@@ -1,10 +1,16 @@
 import { PropsWithChildren } from "react"
+import { FieldError } from "./FormFieldError"
+import { FormState } from "@/lib/utils"
 
-type InputProps = { name: string, id: string, value: string, placeholder: string, className: string }
+type InputProps = { name: string, id?: string, placeholder?: string, className?: string, defaultValue: string | undefined, formState: FormState }
 
-const InputText = ({ name, id, value, placeholder, className }: InputProps) => {
+const InputText = ({ name, id, defaultValue, placeholder, className, formState }: InputProps) => {
     return (
-        <input type="text" name={name} id={id} className={className} placeholder={placeholder} value={value} />
+        <label>
+            <span>{name}</span>
+            <input type="text" name={name} id={id || name} className={className} placeholder={placeholder || name} defaultValue={defaultValue} />
+            <FieldError formState={formState} name={name} />
+        </label>
     )
 }
 
@@ -16,14 +22,14 @@ const InputTextArea = ({ children }: PropsWithChildren) => {
     )
 }
 
-const inputDateTimeLocal = ({ name, id, value, placeholder, className }: InputProps) => {
+const inputDateTimeLocal = ({ name, id, placeholder, className }: InputProps) => {
     return (
-        <input type="datetime-local" name={name} id={id} className={className} placeholder={placeholder} value={value} />
+        <input type="datetime-local" name={name} id={id} className={className} placeholder={placeholder} />
     )
 }
-const inputNumber = ({ name, id, value, placeholder, className }: InputProps) => {
+const inputNumber = ({ name, id, placeholder, className }: InputProps) => {
     return (
-        <input type="number" name={name} id={id} className={className} placeholder={placeholder} value={value} />
+        <input type="number" name={name} id={id} className={className} placeholder={placeholder} />
     )
 }
 

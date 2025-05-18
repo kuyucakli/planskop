@@ -35,7 +35,7 @@ export default async function RootLayout({
         <head>
           <link rel="icon" href="/favicon.ico" />
         </head>
-        <body className={`${robotoFlex.variable} ${kiraHareng.variable}`}>
+        <body className={`font-mono ${kiraHareng.variable}`}>
           <div id="root">
             <Header />
             <header className="p-2">
@@ -52,7 +52,7 @@ export default async function RootLayout({
             </main>
 
             <aside className="p-6 overflow-y-auto ">
-              <h1 className="text-7xl font-kira-hareng sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
+              <h1 className="text-4xl  sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
               <Suspense fallback={<Loading />}>
                 <FamousPeopleRoutines />
               </Suspense>

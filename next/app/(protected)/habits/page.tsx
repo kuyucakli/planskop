@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Page() {
     return (
         <>
-            <h1>{metadata.title as ReactNode}</h1>
+            <h1 className="text-6xl font-kira-hareng">{metadata.title as ReactNode}</h1>
 
         </>
     )

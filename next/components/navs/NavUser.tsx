@@ -20,15 +20,14 @@ export default async function NavUser() {
             <SignedIn>
                 <UserButton />
             </SignedIn>
-            <ul>
+            {/* <ul>
                 <li>
                     <PopoverSet>
                         <PopoverToggleBtn popoverTarget="user-popover">
-                            { }
-                            {/* <Avatar url={session.user?.image} name={session.user?.name} /> */}
+                    
                         </PopoverToggleBtn>
                         <Popover id="user-popover">
-                            {/* <Avatar url={session.user?.image} name={session.user?.name} useCaption /> */}
+                          
 
                             <ToggleThemeButton />
 
@@ -36,7 +35,7 @@ export default async function NavUser() {
                     </PopoverSet>
 
                 </li>
-            </ul>
+            </ul> */}
         </nav>
     )
 }

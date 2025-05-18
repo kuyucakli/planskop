@@ -24,7 +24,7 @@ async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: s
 
     return (
         <>
-            <h1 >{metadata.title as ReactNode}</h1>
+            <h1 className="font-kira-hareng text-6xl">{metadata.title as ReactNode}</h1>
             {
                 actionPlanRes
                     ?

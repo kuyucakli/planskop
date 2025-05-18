@@ -4,11 +4,12 @@ import { InsertActionPlan, UpdateActionPlan } from "@/db/schema";
 import { useActionState } from "react";
 import FormFieldsTimePlanning from "./FormFieldsTimePlanning";
 import { createActionPlan, updateActionPlan } from "../../lib/actions";
-import { SubmitButton } from "./SubmitButton";
 import { FieldError } from "./FormFieldError";
 import { EMPTY_FORM_STATE } from "@/lib/utils";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
+import { InputText } from "./Inputs";
+import { SubmitButton } from "./SubmitButton";
 
 
 
@@ -30,7 +31,11 @@ export function FormActionPlan(props: InsertActionPlan | UpdateActionPlan | {}) 
             {'id' in props && props.id && (
                 <input type="hidden" name="id" value={props.id} />
             )}
-            <label style={{ position: "sticky", top: 0, zIndex: 1 }}>
+            <InputText
+                name="title"
+                defaultValue={'title' in props ? props.title : ''} formState={formState}
+            />
+            {/* <label style={{ position: "sticky", top: 0, zIndex: 1 }}>
                 <span>Title</span>
                 <input
                     type="text"
@@ -42,7 +47,7 @@ export function FormActionPlan(props: InsertActionPlan | UpdateActionPlan | {}) 
                     placeholder="title"
                 />
                 <FieldError formState={formState} name="title" />
-            </label>
+            </label> */}
             <label>
                 <span>Content</span>
                 <textarea

@@ -43,7 +43,8 @@
   }
 
   [aria-hidden] {
-    display: none;
+    opacity: 0.8;
+    filter: blur(1px);
   }
 
   [disabled],
@@ -68,7 +69,6 @@
 
     & button {
       align-self: center;
-      cursor: pointer;
       border: none;
       & svg {
         vertical-align: middle;
@@ -240,6 +240,7 @@
   button {
     background-color: transparent;
     border: none;
+    cursor: pointer;
   }
 
   .btn-type-1 {
@@ -301,13 +302,6 @@
     border-radius: 8px;
     grid-area: m;
     overflow: auto;
-
-    & > h1 {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translate(-50%, 0);
-    }
   }
 
   main + aside {
