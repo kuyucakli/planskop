@@ -1,7 +1,7 @@
 import { RemindKind } from '@/pkg/planskop_rust';
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, index, timestamp, varchar, boolean, pgEnum, primaryKey } from 'drizzle-orm/pg-core';
-import { createSelectSchema, createUpdateSchema, createInsertSchema } from 'drizzle-zod';
+import { integer, pgTable, serial, text, index, timestamp, varchar, pgEnum, time } from 'drizzle-orm/pg-core';
+import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 
@@ -14,10 +14,20 @@ export const UserMessages = pgTable('user_messages', {
 
 
 export const actionPlanEnum = pgEnum('state', ['on-hold', 'will-begin', 'test']);
+
+
 export function enumToPgEnum(myEnum: any): [string, ...string[]] {
     return Object.values(myEnum).map((value: any) => `${value}`) as [string, ...string[]]
 }
-export const remindEnum = pgEnum("remind", enumToPgEnum(RemindKind));
+
+export const remindEnum = pgEnum("remind", [
+    'one_hour_before',
+    'two_hours_before',
+    'one_day_before',
+    'two_days_before',
+]);
+
+
 
 export const actionPlanTbl = pgTable('action_plan', {
     id: serial('id').primaryKey(),
@@ -29,7 +39,7 @@ export const actionPlanTbl = pgTable('action_plan', {
         .$onUpdate(() => new Date()),
     dtstart: timestamp('dtstart', { mode: "string" }).notNull(),
     until: timestamp('until', { mode: "string" }).notNull(),
-    userId: text('user_id').notNull().references(() => UserMessages.user_id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull(),
     nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
     remind: remindEnum("remind"),
     timezone: varchar('timezone').notNull(),
@@ -44,11 +54,16 @@ export const actionPlanCategoryTbl = pgTable('action_plan_category', {
     title: varchar('title', { length: 256 }).unique().notNull(),
 })
 
+export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ many }) => ({
+    actionPlans: many(actionPlanTbl),
+}));
+
+
+
 
 // 1. ZOD schemas generated from drizzle-zod
 export const baseInsertActionPlanSchema = createInsertSchema(actionPlanTbl);
 export const baseUpdateActionPlanSchema = createUpdateSchema(actionPlanTbl);
-
 // 2. For frontend forms
 export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
     title: z.string().min(3).max(255),
@@ -67,9 +82,7 @@ type InferInsert = typeof actionPlanTbl.$inferInsert;
 
 export type InsertActionPlan = InferInsert;
 
-// Omit<InferInsert, 'remind'> & {
-//     remind?: RemindKind;
-// };
+
 //export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;
 export type UpdateActionPlan = Partial<InsertActionPlan> & { id: number };
 export type SelectActionPlan = typeof actionPlanTbl.$inferSelect;
@@ -88,83 +101,46 @@ export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPl
 
 
 
-// export const userTbl = pgTable('user', {
-//     id: text("id")
-//         .primaryKey()
-//         .$defaultFn(() => crypto.randomUUID()),
-//     name: text('name'),
-//     email: text('email').unique(),
-//     emailVerified: timestamp("emailVerified", { mode: "date" }),
-//     image: text("image"),
 
-// });
+export const famousPeopleTbl = pgTable('famous_people', {
+    id: serial('id').primaryKey(),
+    image: text('image').notNull(),
+    personName: text('person_name').notNull(),
+    occupation: text('occupation').notNull(),
+    birth_year: integer('birth_year'),
+    content: text('content').notNull(),
+    source: text('source').notNull(),
+    notes: text('notes').notNull(),
+    wakeUpTime: time('wake_up_time'),
+    sleepTime: time('sleep_time'),
 
-// export const accountTbl = pgTable(
-//     "account",
-//     {
-//         userId: text("user_id")
-//             .notNull()
-//             .references(() => userTbl.id, { onDelete: "cascade" }),
-//         type: text("type").$type<AdapterAccountType>().notNull(),
-//         provider: text("provider").notNull(),
-//         providerAccountId: text("providerAccountId").notNull(),
-//         refresh_token: text("refresh_token"),
-//         access_token: text("access_token"),
-//         expires_at: integer("expires_at"),
-//         token_type: text("token_type"),
-//         scope: text("scope"),
-//         id_token: text("id_token"),
-//         session_state: text("session_state"),
-//     },
-//     (account) => ({
-//         compoundKey: primaryKey({
-//             columns: [account.provider, account.providerAccountId],
-//         }),
-//     })
-// )
+})
 
-// export const sessionTbl = pgTable("session", {
-//     sessionToken: text("session_token").primaryKey(),
-//     userId: text("user_id")
-//         .notNull()
-//         .references(() => userTbl.id, { onDelete: "cascade" }),
-//     expires: timestamp("expires", { mode: "date" }).notNull(),
-// })
+export const famousRoutineActivitiesTbl = pgTable('famous_routine_activities', {
+    activityId: serial('id').primaryKey(),
+    activityName: text('activity_name').notNull(),
+    startsAt: time('starts_at').notNull(),
+    endsAt: time('ends_at').notNull(),
+    famousPersonId: integer('famous_person_id').references(() => famousPeopleTbl.id, { onDelete: 'cascade' }),
+})
 
-// export const verificationTokenTbl = pgTable(
-//     "verification_token",
-//     {
-//         identifier: text("identifier").notNull(),
-//         token: text("token").notNull(),
-//         expires: timestamp("expires", { mode: "date" }).notNull(),
-//     },
-//     (verificationToken) => ({
-//         compositePk: primaryKey({
-//             columns: [verificationToken.identifier, verificationToken.token],
-//         }),
-//     })
-// )
 
-// export const authenticatorTbl = pgTable(
-//     "authenticator",
-//     {
-//         credentialID: text("credentialID").notNull().unique(),
-//         userId: text("user_id")
-//             .notNull()
-//             .references(() => userTbl.id, { onDelete: "cascade" }),
-//         providerAccountId: text("providerAccountId").notNull(),
-//         credentialPublicKey: text("credentialPublicKey").notNull(),
-//         counter: integer("counter").notNull(),
-//         credentialDeviceType: text("credentialDeviceType").notNull(),
-//         credentialBackedUp: boolean("credentialBackedUp").notNull(),
-//         transports: text("transports"),
-//     },
-//     (authenticator) => ({
-//         compositePK: primaryKey({
-//             columns: [authenticator.userId, authenticator.credentialID],
-//         }),
-//     })
-// )
+export const famousPeopleRelations = relations(famousPeopleTbl, ({ many }) => ({
+    activities: many(famousRoutineActivitiesTbl),
+}));
+
+
+export const famousRoutineActivitiesRelations = relations(famousRoutineActivitiesTbl, ({ one }) => ({
+    person: one(famousPeopleTbl, {
+        fields: [famousRoutineActivitiesTbl.famousPersonId],
+        references: [famousPeopleTbl.id],
+    }),
+}));
+
+export type FamousPersonRoutine = typeof famousRoutineActivitiesTbl.$inferSelect;
+
+export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect, 'id' | 'personName' | 'image'> & { routines: FamousPersonRoutine[] };
+
 
 
 // export const postTbl = pgTable('post', {
@@ -179,11 +155,9 @@ export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPl
 //         .notNull()
 //         .$onUpdate(() => new Date()),
 // });
-// --- Relations --- //
 
-// export const userRelations = relations(userTbl, ({ many }) => ({
-//     actionPlans: many(actionPlanTbl),
-// }));
+
+
 
 // export const actionPlanRelations = relations(actionPlanTbl, ({ one }) => ({
 //     user: one(userTbl, { fields: [actionPlanTbl.userId], references: [userTbl.id] }),
@@ -193,15 +167,4 @@ export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPl
 //     }),
 // }));
 
-// export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ many }) => ({
-//     actionPlans: many(actionPlanTbl),
-// }));
 
-
-// export type InsertUser = typeof userTbl.$inferInsert;
-// export type SelectUser = typeof userTbl.$inferSelect;
-
-// export type InsertPost = typeof postTbl.$inferInsert;
-// export type SelectPost = typeof postTbl.$inferSelect;
-
-//export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;

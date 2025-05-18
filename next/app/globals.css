@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-*: initial;
+  /* --color-*: initial; */
   --color-primary: oklch(0.67 0.13 175.13);
+  --color-primary-dark: oklch(0.5 0.04 182.1);
   --color-secondary: oklch(0.67 0.13 200);
   --color-purple: #3f3cbb;
   --color-midnight: #121063;
   --color-tahiti: #3ab7bf;
   --color-bermuda: #78dcca;
+
+  --font-kira-hareng: var(--font-kira-hareng);
+  --font-roboto-flex: var(--font-roboto-flex);
 }
 
 @layer system {
@@ -16,26 +20,10 @@
     /* related to browser default styles */
     color-scheme: light dark;
   }
-  :root,
   :root:has(input#toggle-theme:checked) {
-    --max-width: 1100px;
-    --border-radius: 12px;
-    --font-mono:
-      ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-      "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-      "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
-
-    --brk-p-0: 1200px;
-
-    --limited-width-0: 1200px;
-    --limited-width-1: 1000px;
-
     .color-filter-invertable {
       filter: invert(0);
     }
-
-    /* z-index */
-    --z-max: 999;
   }
 
   :root:has(input#toggle-theme:not(:checked)) {
@@ -241,7 +229,7 @@
 
   body {
     color: var(--md-sys-color-on-background);
-    background: var(--md-sys-color-background);
+    background: var(--color-primary-dark);
   }
 
   a {
@@ -274,21 +262,25 @@
   }
 
   #root {
-    height: 100dvh;
+    height: 90dvh;
     margin: 0 auto;
+    padding: 4px;
+    overflow: hidden;
     display: grid;
-    grid-template-columns: 48px 1fr minmax(300px, 0.4fr);
+    grid-template-columns: max-content 1fr minmax(300px, 0.4fr);
     grid-template-rows: auto 1fr 56px;
     grid-template-areas:
       "b b b"
       "m m c"
       "a a a";
-    gap: var(--spc-3);
+    gap: 8px;
 
     container: root / inline-size;
   }
 
   #root > header:first-child {
+    background-color: rgb(51, 57, 56);
+    border-radius: 8px;
     grid-area: a;
     padding: 8px;
     display: flex;
@@ -301,14 +293,13 @@
   }
   #root > header + header {
     grid-area: b;
-    border-bottom: 1px solid gray;
     display: flex;
     justify-content: space-between;
   }
   main {
+    background-color: rgb(51, 57, 56);
+    border-radius: 8px;
     grid-area: m;
-    margin-bottom: 128px;
-    padding: 8px;
     overflow: auto;
 
     & > h1 {
@@ -321,7 +312,9 @@
 
   main + aside {
     grid-area: c;
-    border: 1px solid gray;
+
+    background-color: rgb(51, 57, 56);
+    border-radius: 8px;
   }
 
   main + footer {
@@ -339,13 +332,46 @@
   }
 }
 
+@layer utils {
+  .blurred-top {
+    position: relative;
+  }
+  .blurred-top::before {
+    content: "";
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+
+    backdrop-filter: blur(8px);
+  }
+}
+
 @layer responsive {
   @media screen and (min-width: 1000px) {
     #root {
       grid-template-areas:
         "b b b"
         "a m c"
-        "a d d";
+        "a m c";
     }
   }
+}
+
+[data-active] {
+  position: relative;
+}
+
+[data-active] span.colored-segment {
+  content: "";
+  background-color: rgba(255, 192, 203, 0.355);
+  width: 100%;
+  height: 16px;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }

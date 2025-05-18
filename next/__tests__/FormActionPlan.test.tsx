@@ -25,7 +25,6 @@ describe("FormActionPlan", () => {
     it("renders create form with empty fields", async () => {
         // Render with empty props (create mode)
         const { findByPlaceholderText, findByTestId } = render(
-
             await FormActionPlan({})
         );
 

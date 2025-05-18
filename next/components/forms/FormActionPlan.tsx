@@ -14,7 +14,7 @@ import { useFormReset } from "@/hooks/useFormReset";
 
 export function FormActionPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
 
-    const [formState, formAction, isPending] = useActionState(createActionPlan, EMPTY_FORM_STATE);
+    const [formState, formAction] = useActionState(createActionPlan, EMPTY_FORM_STATE);
 
     const noScriptFallback = useToastMessage(formState);
     const formRef = useFormReset(formState);

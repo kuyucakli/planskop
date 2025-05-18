@@ -182,6 +182,5 @@ export default function FormFieldsTimePlanning({
 
 function getWeekdayName(dateStr?: string) {
     const dayIndex = new Date(dateStr || Date.now()).getDay();
-
     return WeekDays[weekDaysKeys[(dayIndex + 6) % 7]];
 }

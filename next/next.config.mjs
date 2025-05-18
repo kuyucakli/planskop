@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   webpack: (config) => {
     config.experiments = {
@@ -10,14 +11,7 @@ const nextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        port: "",
-        pathname: "/a/**",
-      },
-    ],
+    remotePatterns: [new URL("https://res.cloudinary.com/**")],
   },
 };
 

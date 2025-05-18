@@ -12,11 +12,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 4px;
   height: 40px;
-  padding: 0 8px;
 
-  & svg {
+  svg {
     fill: var(--color-primary);
+    flex: 0 1 auto;
+  }
+
+  span {
+    flex: 1 1 auto;
   }
 
   &[class="active"] svg {
@@ -26,6 +31,16 @@
 
 @container root ( inline-size > 1000px ) {
   .NavMain {
+    a {
+      width: 160px;
+    }
+    a svg {
+      flex: 0 1 48px;
+    }
+
+    a span {
+      flex: 1 1 0;
+    }
     & > ul {
       flex-direction: column;
     }

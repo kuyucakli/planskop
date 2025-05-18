@@ -1,8 +1,11 @@
 "use server"
 
-import { asc, between, eq, getTableColumns, sql } from 'drizzle-orm';
+import { asc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { db } from '@/db';
-import { InsertActionPlan, SelectActionPlan, UpdateActionPlan, actionPlanTbl, } from './schema';
+import {
+    InsertActionPlan, SelectActionPlan, UpdateActionPlan,
+    actionPlanTbl, famousPeopleTbl, famousRoutineActivitiesTbl
+} from './schema';
 import { revalidatePath } from 'next/cache';
 
 
@@ -92,13 +95,6 @@ export async function getActionPlans(userId: string, page = 1, pageSize = 5): Pr
 
 }
 
-// export async function getNextReminders() {
-//     // We can check for the actionPlan user has email or email verified
-//     return db.select({ userName: userTbl.name, userEmail: userTbl.email, nextRemindAtTime: actionPlanTbl.nextRemindAtTime, title: actionPlanTbl.title, timezone: actionPlanTbl.timezone, remind: actionPlanTbl.remind, id: actionPlanTbl.id, rrule: actionPlanTbl.rrule })
-//         .from(actionPlanTbl)
-//         .innerJoin(userTbl, eq(userTbl.id, actionPlanTbl.userId))
-//         .where(sql`${actionPlanTbl.nextRemindAtTime} >= (now() at time zone 'utc' - INTERVAL '4 minutes')`);
-// }
 
 
 export async function dbDeleteActionPlan(id: number) {
@@ -106,7 +102,6 @@ export async function dbDeleteActionPlan(id: number) {
     revalidatePath("/");
 
 }
-
 
 
 export async function dbCreateActionPlan(data: InsertActionPlan) {
@@ -122,5 +117,34 @@ export async function dbUpdateActionPlan(data: UpdateActionPlan) {
     }
 
 }
+
+
+export const getFamousPeopleWithRoutines = async () => {
+    return db
+        .select({
+            personId: famousPeopleTbl.id,
+            personName: famousPeopleTbl.personName,
+            image: famousPeopleTbl.image,
+            activityId: famousRoutineActivitiesTbl.activityId,
+            activityName: famousRoutineActivitiesTbl.activityName,
+            startsAt: famousRoutineActivitiesTbl.startsAt,
+            endsAt: famousRoutineActivitiesTbl.endsAt,
+        })
+        .from(famousPeopleTbl)
+        .innerJoin(famousRoutineActivitiesTbl, eq(famousPeopleTbl.id, famousRoutineActivitiesTbl.famousPersonId));
+}
+
+
+
+
+
+// export async function getNextReminders() {
+//     // We can check for the actionPlan user has email or email verified
+//     return db.select({ userName: userTbl.name, userEmail: userTbl.email, nextRemindAtTime: actionPlanTbl.nextRemindAtTime, title: actionPlanTbl.title, timezone: actionPlanTbl.timezone, remind: actionPlanTbl.remind, id: actionPlanTbl.id, rrule: actionPlanTbl.rrule })
+//         .from(actionPlanTbl)
+//         .innerJoin(userTbl, eq(userTbl.id, actionPlanTbl.userId))
+//         .where(sql`${actionPlanTbl.nextRemindAtTime} >= (now() at time zone 'utc' - INTERVAL '4 minutes')`);
+// }
+
 
 

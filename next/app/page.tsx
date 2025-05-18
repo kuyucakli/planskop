@@ -1,41 +1,14 @@
-import { redirect } from "next/navigation";
 import Banner from "@/components/Banner";
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db";
-import { createUserMessage, deleteUserMessage } from "@/lib/actions";
 
 
-export default async function Home() {
-  // const { userId } = await auth()
-  // if (!userId) throw new Error('User not found')
-  // const existingMessage = await db.query.UserMessages.findFirst({
-  //   where: (messages, { eq }) => eq(messages.user_id, userId),
-  // })
 
-  // if (userId) redirect("/dashboard");
+export default function Home() {
 
   return (
     <>
-
-      <h1>Neon + Clerk Example</h1>
-      {/* {existingMessage ? (
-        <div>
-          <p>{existingMessage.message}</p>
-          <form action={deleteUserMessage}>
-            <button>Delete Message</button>
-          </form>
-        </div>
-      ) : (
-        <form action={createUserMessage}>
-          <input type="text" name="message" placeholder="Enter a message" />
-          <button>Save Message</button>
-        </form>
-      )} */}
-
       <Banner>
-        <h1 className="display-sm">
-          Select from preset actions or craft your own. Plan and track your
-          actions to build lasting habits.
+        <h1 className="text-7xl font-kira-hareng">
+          Carpe Diem
         </h1>
 
         <svg

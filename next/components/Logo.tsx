@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react"
 
 const Logo = ({ onlyPictogram = false }: PropsWithChildren & { onlyPictogram?: boolean }) => {
     return (
-        <Link href={onlyPictogram ? "/dashboard" : "/"} className={styles.LogoMain}>
+        <Link href="/" className={styles.LogoMain}>
             {onlyPictogram
                 ?
                 <picture>
