@@ -1,7 +1,8 @@
-import Card, { CardHeader, CardBody, CardFooter, CardImage } from "@/components/Card";
+import Card, { CardHeader, CardBody, CardFooter, CardImage, CardFamousPersonSummary } from "@/components/Card";
+import HourlyRoutinesChart from "@/components/HourlyRoutinesChart";
 import { getFamousPeopleWithRoutines } from "@/db/queries";
 import { FamousPersonRoutine, FamousPersonWithRoutines } from "@/db/schema";
-import { CldImage } from "next-cloudinary";
+
 
 const colors = [
     "rgb(0 255 153 / 36%)",
@@ -92,32 +93,7 @@ const FamousPeopleRoutines = async () => {
         <ul>
             {grouped.map((f) => (
                 <li key={f.id}>
-                    <Card>
-                        <CardHeader>
-                            <h2 className="text-xl my-2">{f.personName}</h2>
-                        </CardHeader>
-                        <CardBody className="flex gap-6">
-                            <CardImage path={f.image} altText={f.personName} />
-                            <ul>
-                                {f.routines.map((r, i) => (
-                                    <li key={i} className="text-xs">
-                                        <span
-                                            className=" inline-block w-2 h-2 mr-2"
-                                            style={{ backgroundColor: colors[i] }}
-                                        />
-                                        {r.activityName}
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardBody>
-                        <CardFooter>
-                            <div className="text-fuchsia-300  p-4 text-xs ">
-                                <ul className="flex  flex-wrap ">
-                                    {getFilledHoursFromRoutines(f.routines)}
-                                </ul>
-                            </div>
-                        </CardFooter>
-                    </Card>
+                    <CardFamousPersonSummary famousPerson={f} />
                 </li>
             ))}
         </ul>

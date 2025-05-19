@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Logo from "@/components/Logo";
-import NavUser from "@/components/navs/NavUser";
 import { ClerkProvider } from '@clerk/nextjs'
-import { Kirang_Haerang } from "next/font/google";
-import { Roboto_Flex } from "next/font/google";
+import { CardFamousPersonSummary } from "@/components/Card";
 import { FamousPeopleRoutines } from "./famous-people-routines";
+import Header from "@/components/Header";
+import { Kirang_Haerang } from "next/font/google";
+import Logo from "@/components/Logo";
+import type { Metadata } from "next";
+import NavUser from "@/components/navs/NavUser";
+import { Roboto_Flex } from "next/font/google";
 import { Suspense } from "react";
-import Loading from "./loading";
+import { ThemeContextProvider } from "@/context/ThemeContext";
 import "./globals.css";
 
 const robotoFlex = Roboto_Flex({ subsets: ["latin"], display: "swap", variable: '--font-roboto-flex', });
@@ -31,6 +32,9 @@ export default async function RootLayout({
   return (
 
     <ClerkProvider>
+      <ThemeContextProvider>
+
+      </ThemeContextProvider>
       <html lang="en" >
         <head>
           <link rel="icon" href="/favicon.ico" />
@@ -53,7 +57,7 @@ export default async function RootLayout({
 
             <aside className="p-6 overflow-y-auto ">
               <h1 className="text-4xl  sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
-              <Suspense fallback={<Loading />}>
+              <Suspense fallback={Array(5).fill(<CardFamousPersonSummary famousPerson={{ image: "", personName: "", routines: [] }} isSkeletonView />)}>
                 <FamousPeopleRoutines />
               </Suspense>
             </aside>

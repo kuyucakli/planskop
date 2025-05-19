@@ -22,38 +22,42 @@ jest.mock("../components/forms/FormFieldsTimePlanning", () => ({
 }));
 
 describe("FormActionPlan", () => {
-    it("renders create form with empty fields", () => {
+    it("renders create form with empty fields", async () => {
         // Render with empty props (create mode)
-        const { findByPlaceholderText, findByTestId } = render(
-            FormActionPlan({})
+        render(
+            <FormActionPlan />
         );
 
-        expect(findByPlaceholderText("title")).toHaveValue("");
-        expect(findByPlaceholderText("content")).toHaveValue("");
-        // expect( findByTestId("form-fields-time-planning")).toBeInTheDocument();
+        const titleInput = await screen.findByPlaceholderText("title");
+        const contentInput = await screen.findByPlaceholderText("content");
+
+        expect(titleInput).toHaveValue("");
+        expect(contentInput).toHaveValue("");
         expect(screen.getByRole("button")).toHaveTextContent("Save");
     });
 
-    // it("renders update form with values", async () => {
-    //     const props = {
-    //         id: 1,
-    //         userId: "test-user",
-    //         title: "Test Title",
-    //         content: "Test Content",
-    //         dtstart: "2024-01-01",
-    //         until: "2024-12-31",
-    //         rrule: "FREQ=DAILY",
-    //         timezone: "UTC",
-    //         remind: "1",
-    //     };
+    it("renders update form with values", async () => {
+        const props = {
+            id: 1,
+            userId: "test-user",
+            title: "Test Title",
+            content: "Test Content",
+            dtstart: "2024-01-01",
+            until: "2024-12-31",
+            rrule: "FREQ=DAILY",
+            timezone: "UTC",
+            remind: "one_hour_before",
+        };
 
-    //     const { findByDisplayValue, findByTestId } = render(
-    //         await FormActionPlan(props)
-    //     );
+        render(
+            <FormActionPlan {...props} />
+        );
 
-    //     expect(await findByDisplayValue("Test Title")).toBeInTheDocument();
-    //     expect(await findByDisplayValue("Test Content")).toBeInTheDocument();
-    //     expect(await findByTestId("form-fields-time-planning")).toBeInTheDocument();
-    //     expect(screen.getByRole("button")).toHaveTextContent("Update");
-    // });
+        const titleInput = await screen.findByPlaceholderText("title");
+        const contentInput = await screen.findByPlaceholderText("content");
+
+        expect(titleInput).toHaveValue("Test Title");
+        expect(contentInput).toHaveValue("Test Content");
+        expect(screen.getByRole("button")).toHaveTextContent("Update");
+    });
 });
