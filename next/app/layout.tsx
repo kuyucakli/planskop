@@ -49,15 +49,15 @@ export default async function RootLayout({
               </form>
               <NavUser />
             </header>
-            <main className="limited-width p-8">
+            <main className="p-6 limited-width">
 
               {children}
 
             </main>
 
             <aside className="p-6 overflow-y-auto ">
-              <h1 className="text-4xl  sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
-              <Suspense fallback={Array(5).fill(<CardFamousPersonSummary famousPerson={{ image: "", personName: "", routines: [] }} isSkeletonView />)}>
+              <h1 className="text-4xl/16  l-h sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
+              <Suspense fallback={<CardFamousPersonSummary famousPerson={{ image: "", personName: "", routines: [] }} isSkeletonView />}>
                 <FamousPeopleRoutines />
               </Suspense>
             </aside>

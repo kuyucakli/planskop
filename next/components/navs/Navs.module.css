@@ -29,7 +29,7 @@
   }
 }
 
-@container root ( inline-size > 1000px ) {
+@container root ( inline-size > 1024px ) {
   .NavMain {
     a {
       width: 160px;

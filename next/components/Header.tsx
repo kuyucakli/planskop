@@ -6,7 +6,7 @@ import { NavMain } from "./navs/NavMain";
 const Header = async () => {
 
     return (
-        <header >
+        <header className="md:py-6">
 
 
             <NavMain />

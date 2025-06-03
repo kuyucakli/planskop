@@ -3,7 +3,7 @@
 import { UseThemeContext } from "@/context/ThemeContext";
 import { FamousPersonRoutine } from "@/db/schema";
 
-const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] }) => {
+const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [] }) => {
 
     const { colors } = UseThemeContext();
     function getFilledHoursFromRoutines(routines: FamousPersonRoutine[]) {
@@ -57,5 +57,8 @@ const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] }) 
         </div>
     )
 }
+
+
+
 
 export default HourlyRoutinesChart;

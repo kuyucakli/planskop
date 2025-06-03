@@ -10,6 +10,7 @@ import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
 import { InputText } from "./Inputs";
 import { SubmitButton } from "./SubmitButton";
+import HourlyRoutinesChart from "../HourlyRoutinesChart";
 
 
 
@@ -22,10 +23,13 @@ export function FormActionPlan(props: InsertActionPlan | UpdateActionPlan | {}) 
 
     return (
 
+
         <form
             ref={formRef}
             action={formAction}
         >
+
+            <HourlyRoutinesChart routines={[]} />
             {JSON.stringify(formState)}
             <input type="hidden" name="userId" value={-1} />
             {'id' in props && props.id && (
@@ -35,19 +39,6 @@ export function FormActionPlan(props: InsertActionPlan | UpdateActionPlan | {}) 
                 name="title"
                 defaultValue={'title' in props ? props.title : ''} formState={formState}
             />
-            {/* <label style={{ position: "sticky", top: 0, zIndex: 1 }}>
-                <span>Title</span>
-                <input
-                    type="text"
-                    name="title"
-                    id="title"
-                    // required
-                    // min={2}
-                    defaultValue={'title' in props ? props.title : ''}
-                    placeholder="title"
-                />
-                <FieldError formState={formState} name="title" />
-            </label> */}
             <label>
                 <span>Content</span>
                 <textarea
