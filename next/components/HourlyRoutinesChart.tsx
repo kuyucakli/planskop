@@ -3,22 +3,39 @@
 import { UseThemeContext } from "@/context/ThemeContext";
 import { FamousPersonRoutine } from "@/db/schema";
 
+
+export const fillHoursInbetween = (startsAt: string, endsAt: string) => {
+    let sH = parseInt(startsAt.split(":")[0], 10);
+    let eH = parseInt(endsAt.split(":")[0], 10);
+
+    const rVal = [];
+
+    if (eH < sH) eH += 24;
+
+    for (let i = sH; i <= eH; i++) {
+        rVal.push(i >= 24 ? i % 24 : i);
+    }
+    return rVal;
+};
+
+
 const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [] }) => {
 
     const { colors } = UseThemeContext();
+
+    const colorsLegendForRoutines = routines.reduce((acc, curr, index) => {
+        if (!acc[curr.activityId]) {
+            acc[curr.activityId] = colors[index];
+        }
+
+        return acc;
+
+    }, {} as Record<number, string>)
+
     function getFilledHoursFromRoutines(routines: FamousPersonRoutine[]) {
         const jsx = [];
         const dayHours = Array.from({ length: 24 }, (_, i) => i);
 
-        const fillHoursInbetween = (startsAt: string, endsAt: string) => {
-            const sH = parseInt(startsAt.split(":")[0], 10);
-            const eH = parseInt(endsAt.split(":")[0], 10);
-            const rVal = [];
-            for (let i = sH; i <= eH; i++) {
-                rVal.push(i);
-            }
-            return rVal;
-        };
 
         let lastColorIndex = 0;
         let lastRoutine;
@@ -41,9 +58,9 @@ const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [
                 >
                     <span
                         className="colored-segment"
-                        style={{ backgroundColor: colors[lastColorIndex - 1] }}
+                        style={{ backgroundColor: activeRoutine ? colorsLegendForRoutines[activeRoutine.activityId] : "" }}
                     />
-                    {hour}
+                    {hour < 10 ? `0${hour}` : hour}
                 </li>
             );
         }

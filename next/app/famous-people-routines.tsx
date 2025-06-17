@@ -1,21 +1,8 @@
-import Card, { CardHeader, CardBody, CardFooter, CardImage, CardFamousPersonSummary } from "@/components/Card";
-import HourlyRoutinesChart from "@/components/HourlyRoutinesChart";
+import { CardFamousPersonSummary } from "@/components/Card";
+import { FamousPersonWithRoutines } from "@/db/schema";
 import { getFamousPeopleWithRoutines } from "@/db/queries";
-import { FamousPersonRoutine, FamousPersonWithRoutines } from "@/db/schema";
 
 
-const colors = [
-    "rgb(0 255 153 / 36%)",
-    "rgb(48 200 180 / 36%)",
-    "rgb(255 215 73 / 64%)",
-    "rgb(100 120 203 / 36%)",
-    "rgb(100 192 203 / 36%)",
-    "rgb(150 192 203 / 36%)",
-    "rgb(100 140 203 / 36%)",
-    "rgb(100 192 160 / 36%)",
-    "rgb(90 140 203 / 36%)",
-    "rgb(100 192 120 / 36%)",
-];
 
 const FamousPeopleRoutines = async () => {
     const famousPeopleWithRoutines = await getFamousPeopleWithRoutines();
@@ -43,51 +30,9 @@ const FamousPeopleRoutines = async () => {
             },
             {} as Record<number, FamousPersonWithRoutines>
         )
+
     );
 
-    function getFilledHoursFromRoutines(routines: FamousPersonRoutine[]) {
-        const jsx = [];
-        const dayHours = Array.from({ length: 24 }, (_, i) => i);
-
-        const fillHoursInbetween = (startsAt: string, endsAt: string) => {
-            const sH = parseInt(startsAt.split(":")[0], 10);
-            const eH = parseInt(endsAt.split(":")[0], 10);
-            const rVal = [];
-            for (let i = sH; i <= eH; i++) {
-                rVal.push(i);
-            }
-            return rVal;
-        };
-
-        let lastColorIndex = 0;
-        let lastRoutine;
-
-        for (const hour of dayHours) {
-            const activeRoutine = routines.find((r) =>
-                fillHoursInbetween(r.startsAt, r.endsAt).includes(hour)
-            );
-
-            if (lastRoutine != activeRoutine?.activityName) {
-                lastColorIndex++;
-                lastRoutine = activeRoutine?.activityName;
-            }
-
-            jsx.push(
-                <li
-                    className="size-7  flex justify-center items-center"
-                    data-active={activeRoutine ? activeRoutine.activityName : undefined}
-                    key={hour}
-                >
-                    <span
-                        className="colored-segment"
-                        style={{ backgroundColor: colors[lastColorIndex - 1] }}
-                    />
-                    {hour}
-                </li>
-            );
-        }
-        return jsx;
-    }
 
     return (
         <ul>

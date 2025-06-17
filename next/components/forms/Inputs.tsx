@@ -2,13 +2,13 @@ import { PropsWithChildren } from "react"
 import { FieldError } from "./FormFieldError"
 import { FormState } from "@/lib/utils"
 
-type InputProps = { name: string, id?: string, placeholder?: string, className?: string, defaultValue: string | undefined, formState: FormState }
+type InputProps = { name: string, id?: string, placeholder?: string, className?: string, defaultValue: string | undefined, autoComplete?: string, formState: FormState }
 
-const InputText = ({ name, id, defaultValue, placeholder, className, formState }: InputProps) => {
+const InputText = ({ name, id, defaultValue, autoComplete, placeholder, className, formState }: InputProps) => {
     return (
         <label>
             <span>{name}</span>
-            <input type="text" name={name} id={id || name} className={className} placeholder={placeholder || name} defaultValue={defaultValue} />
+            <input type="text" name={name} id={id || name} className={className} placeholder={placeholder || name} defaultValue={defaultValue} autoComplete={autoComplete} />
             <FieldError formState={formState} name={name} />
         </label>
     )
