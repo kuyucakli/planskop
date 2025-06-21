@@ -58,6 +58,7 @@
     flex-direction: column;
     max-width: 500px;
     gap: var(--spc-8);
+    font-size: 0.9rem;
 
     & * {
       color: inherit;
@@ -68,8 +69,6 @@
     }
 
     & button {
-      align-self: center;
-      border: none;
       & svg {
         vertical-align: middle;
       }
@@ -88,14 +87,14 @@
       position: absolute;
       top: 24px;
       left: 8px;
-      font-size: 1.2rem;
+
       transition: all 0.2s ease-in;
     }
     &
       label:has(:focus, :valid, :is(textarea, input):not(:placeholder-shown))
       > span {
       top: 4px;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
 
     & label > :is(input, textarea) {
@@ -104,7 +103,7 @@
 
     & input:is([type="text"]) {
       height: 60px;
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
 
     & ::placeholder {
@@ -238,8 +237,6 @@
   }
 
   button {
-    background-color: transparent;
-    border: none;
     cursor: pointer;
   }
 

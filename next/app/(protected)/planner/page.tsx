@@ -6,7 +6,7 @@ import { SelectActionPlan } from "@/db/schema";
 
 
 export const metadata: Metadata = {
-    title: "😎 Planner, I've a plan...",
+    title: "😎 I want to fill my day with...",
 };
 
 async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {

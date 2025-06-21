@@ -55,7 +55,7 @@ export async function createActionPlan(prevState: FormState, formData: FormData)
         return fromErrorToFormState(err);
     }
     revalidatePath("/dashboard");
-    return toFormState('SUCCESS', 'Message created');;
+    return toFormState('SUCCESS', 'Message created');
 }
 
 

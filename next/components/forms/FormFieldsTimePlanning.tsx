@@ -64,7 +64,7 @@ export default function FormFieldsTimePlanning({
         <>
 
             {/* Starts At ( dtstart ) */}
-            <label htmlFor="dtstart">
+            {/* <label htmlFor="dtstart">
                 Starts At
                 <input
                     type="datetime-local"
@@ -74,10 +74,10 @@ export default function FormFieldsTimePlanning({
                     onChange={handleChange}
                     min={new Date().getDate()}
                 />
-            </label>
+            </label> */}
 
             {/* Until */}
-            <label htmlFor="until">
+            {/* <label htmlFor="until">
                 Until
                 <input
                     type="datetime-local"
@@ -87,20 +87,20 @@ export default function FormFieldsTimePlanning({
                     min={rrules["dtstart"]}
                     onChange={handleChange}
                 />
-            </label>
+            </label> */}
 
             {/* Count */}
-            <label htmlFor="count">
+            {/* <label htmlFor="count">
                 Count
                 <input type="number" name="count" id="count" min="1" defaultValue={rrules.count} />
-            </label>
+            </label> */}
 
 
             {/* Interval */}
-            <label htmlFor="interval">
+            {/* <label htmlFor="interval">
                 Interval
                 <input type="number" name="interval" id="interval" min="1" defaultValue={rrules.interval} />
-            </label>
+            </label> */}
 
 
             {/* Frequency */}
@@ -179,6 +179,8 @@ export default function FormFieldsTimePlanning({
         </>
     );
 }
+
+
 
 function getWeekdayName(dateStr?: string) {
     const dayIndex = new Date(dateStr || Date.now()).getDay();
