@@ -43,11 +43,11 @@ export default async function RootLayout({
           <div id="root">
             <Header />
             <header className="p-2">
-              <Logo onlyPictogram />
+              {/* <Logo onlyPictogram /> */}
+              <NavUser />
               <form>
                 <input type="text" name="search" id="search" placeholder="search" />
               </form>
-              <NavUser />
             </header>
             <main className="p-6 limited-width">
 

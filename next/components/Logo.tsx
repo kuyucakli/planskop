@@ -8,10 +8,11 @@ const Logo = ({ onlyPictogram = false }: PropsWithChildren & { onlyPictogram?: b
         <Link href="/" className={styles.LogoMain}>
             {onlyPictogram
                 ?
-                <picture>
-                    <source srcSet="/planskop-logo/sm-on-dark-planskop-pictogram.png" media="(prefers-color-scheme: dark)" />
-                    <Image src="/planskop-logo/sm-on-light-planskop-pictogram.png" width="32" height="32" alt="Planksop logo" />
-                </picture>
+                // <picture>
+                //     <source srcSet="/planskop-logo/sm-on-dark-planskop-pictogram.png" media="(prefers-color-scheme: dark)" />
+                //     <Image src="/planskop-logo/sm-on-light-planskop-pictogram.png" width="32" height="32" alt="Planksop logo" />
+                // </picture>
+                null
 
                 :
                 <picture>

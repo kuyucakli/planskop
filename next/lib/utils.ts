@@ -57,7 +57,10 @@ const fromErrorToFormState = (error: unknown) => {
     }
 };
 
-function resolvePath<T>(obj: any, path: string): T | undefined {
+
+type FormattedFieldError = { _errors: string[] };
+
+function resolvePath(obj: any, path: string): FormattedFieldError | undefined | undefined {
     if (!path) return obj;
     const keys = path
         .replace(/\[(\w+)\]/g, '.$1') // convert [0] to .0
