@@ -1,12 +1,12 @@
 import { FormState } from "@/lib/utils";
 import { InputText } from "./Inputs"
 
-type Props = { options: string[], formState: FormState }
+type Props = { label?: string, options: readonly string[], formState: FormState }
 
-const FormComboBox = ({ name, id, defaultValue, options, formState, required, placeholder }: React.InputHTMLAttributes<HTMLInputElement> & Props) => {
+const FormComboBox = ({ name, id, label, defaultValue, options, formState, required, placeholder, onChange }: React.InputHTMLAttributes<HTMLInputElement> & Props) => {
     return (
         <>
-            <InputText name={name} list={name + "_list"} defaultValue={defaultValue} formState={formState} required={required} placeholder={placeholder} className="basis-128" />
+            <InputText name={name} label={label} list={name + "_list"} defaultValue={defaultValue} formState={formState} required={required} placeholder={placeholder} />
 
             <datalist id={name + "_list"}>
                 {options.map(o => <option key={o} value={o} />)}

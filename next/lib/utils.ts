@@ -33,7 +33,7 @@ const fromErrorToFormState = (error: unknown) => {
         return {
             status: 'ERROR' as const,
             message: '',
-            fieldErrors: error.flatten().fieldErrors,
+            fieldErrors: error.format(),
             timestamp: Date.now(),
         };
         // if another error instance, return error message
@@ -57,5 +57,16 @@ const fromErrorToFormState = (error: unknown) => {
     }
 };
 
+function resolvePath<T>(obj: any, path: string): T | undefined {
+    if (!path) return obj;
+    const keys = path
+        .replace(/\[(\w+)\]/g, '.$1') // convert [0] to .0
+        .replace(/^\./, '')           // remove leading dot
+        .split('.');
+
+    return keys.reduce((acc, key) => acc?.[key], obj);
+}
+
+
 export type { FormState }
-export { fromErrorToFormState, toFormState, EMPTY_FORM_STATE };
+export { fromErrorToFormState, toFormState, resolvePath, EMPTY_FORM_STATE };

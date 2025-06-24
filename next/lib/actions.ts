@@ -14,9 +14,6 @@ import { FormState, fromErrorToFormState, toFormState } from './utils'
 // import { ActionPlanEmailTemplate } from '@/components/EmailTemplates';
 // import { Resend } from 'resend';
 
-
-
-
 export async function createUserMessage(formData: FormData) {
     const { userId } = await auth()
     if (!userId) throw new Error('User not found')
@@ -51,7 +48,6 @@ export async function createActionPlan(prevState: FormState, formData: FormData)
         await dbCreateActionPlan(actionPlanObj);
 
     } catch (err) {
-
         return fromErrorToFormState(err);
     }
     revalidatePath("/dashboard");

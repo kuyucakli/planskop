@@ -10,7 +10,7 @@ const Logo = ({ onlyPictogram = false }: PropsWithChildren & { onlyPictogram?: b
                 ?
                 <picture>
                     <source srcSet="/planskop-logo/sm-on-dark-planskop-pictogram.png" media="(prefers-color-scheme: dark)" />
-                    <Image src="/planskop-logo/sm-on-light-planskop-pictogram.png" width="48" height="48" alt="Planksop logo" />
+                    <Image src="/planskop-logo/sm-on-light-planskop-pictogram.png" width="32" height="32" alt="Planksop logo" />
                 </picture>
 
                 :

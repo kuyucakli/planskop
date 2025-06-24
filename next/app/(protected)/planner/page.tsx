@@ -1,12 +1,12 @@
 import { Metadata } from "next";
-import { FormActionPlan } from "@/components/forms/FormActionPlan";
+import { FormDailyPlan } from "@/components/forms/FormDailyPlan";
 import { ReactNode } from "react";
 import { getActionPlan } from "@/db/queries";
 import { SelectActionPlan } from "@/db/schema";
 
 
 export const metadata: Metadata = {
-    title: "😎 I want to fill my day with...",
+    title: "I want to fill my day with...",
 };
 
 async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
@@ -28,9 +28,9 @@ async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: s
             {
                 actionPlanRes
                     ?
-                    <FormActionPlan  {...actionPlanRes[0]} />
+                    <FormDailyPlan  {...actionPlanRes[0]} />
                     :
-                    <FormActionPlan />
+                    <FormDailyPlan />
             }
 
         </>

@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  webpack: (config) => {
-    config.experiments = {
-      asyncWebAssembly: true,
-      layers: true,
-    };
-
-    return config;
+  turbopack: {
+    // Example: adding an alias and custom file extension
+    resolveAlias: {
+      underscore: "lodash",
+    },
+    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
 
   images: {

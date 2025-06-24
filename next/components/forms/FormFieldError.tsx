@@ -1,4 +1,5 @@
 import { FormState } from '@/lib/utils';
+import { resolvePath } from '@/lib/utils';
 
 type FieldErrorProps = {
     formState: FormState;
@@ -6,9 +7,11 @@ type FieldErrorProps = {
 };
 
 const FieldError = ({ formState, name }: FieldErrorProps) => {
+    console.log(formState, name)
     return (
         <span className="text-xs text-red-400">
-            {formState.fieldErrors[name]?.[0]}
+            {resolvePath(formState.fieldErrors, name)?._errors[0]}
+            {/* {formState.fieldErrors[name]?._errors[0]} */}
         </span>
     );
 };

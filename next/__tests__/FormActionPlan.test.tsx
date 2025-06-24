@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { FormActionPlan } from "../components/forms/FormActionPlan";
+import { FormDailyPlan } from "../components/forms/FormDailyPlan";
 import '@testing-library/jest-dom';
 
 
@@ -21,18 +21,18 @@ jest.mock("../lib/actions", () => ({
 //     default: () => React.createElement('div', { 'data-testid': 'form-fields-time-planning' })
 // }));
 
-describe("FormActionPlan", () => {
+describe("FormDailyPlan", () => {
     it("renders create form with empty fields", () => {
         // Render with empty props (create mode)
         render(
-            <FormActionPlan />
+            <FormDailyPlan />
         );
 
         const titleInput = screen.getByPlaceholderText("Action Title");
         expect(titleInput).toHaveValue("");
         expect(screen.getByRole("button")).toHaveTextContent("Save");
     });
-    
+
     it("renders update form with values", () => {
         const props = {
             id: 1,
@@ -40,7 +40,7 @@ describe("FormActionPlan", () => {
         }
 
         render(
-            <FormActionPlan {...props} />
+            <FormDailyPlan {...props} />
         );
 
         const titleInput = screen.getByPlaceholderText("Action Title");
@@ -63,7 +63,7 @@ describe("FormActionPlan", () => {
     //     };
 
     //     render(
-    //         <FormActionPlan {...props} />
+    //         <FormDailyPlan {...props} />
     //     );
 
     //     const titleInput = await screen.findByPlaceholderText("title");

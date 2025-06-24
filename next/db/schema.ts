@@ -1,4 +1,4 @@
-import { RemindKind } from '@/pkg/planskop_rust';
+import { DATA_I_CAN_ACTIONS } from "@/data";
 import { relations } from 'drizzle-orm';
 import { integer, pgTable, serial, text, index, timestamp, varchar, pgEnum, time } from 'drizzle-orm/pg-core';
 import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
@@ -143,28 +143,158 @@ export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect,
 
 
 
-// export const postTbl = pgTable('post', {
-//     id: serial('id').primaryKey(),
-//     title: text('title').notNull(),
-//     content: text('content').notNull(),
-//     userId: text('user_id')
-//         .notNull()
-//         .references(() => userTbl.id, { onDelete: 'cascade' }),
-//     createdAt: timestamp('created_at').notNull().defaultNow(),
-//     updatedAt: timestamp('updated_at')
-//         .notNull()
-//         .$onUpdate(() => new Date()),
-// });
+const ALLOWED_TIMES = [
+    "00:00",
+    "00:15",
+    "00:30",
+    "00:45",
+    "01:00",
+    "01:15",
+    "01:30",
+    "01:45",
+    "02:00",
+    "02:15",
+    "02:30",
+    "02:45",
+    "03:00",
+    "03:15",
+    "03:30",
+    "03:45",
+    "04:00",
+    "04:15",
+    "04:30",
+    "04:45",
+    "05:00",
+    "05:15",
+    "05:30",
+    "05:45",
+    "06:00",
+    "06:15",
+    "06:30",
+    "06:45",
+    "07:00",
+    "07:15",
+    "07:30",
+    "07:45",
+    "08:00",
+    "08:15",
+    "08:30",
+    "08:45",
+    "09:00",
+    "09:15",
+    "09:30",
+    "09:45",
+    "10:00",
+    "10:15",
+    "10:30",
+    "10:45",
+    "11:00",
+    "11:15",
+    "11:30",
+    "11:45",
+    "12:00",
+    "12:15",
+    "12:30",
+    "12:45",
+    "13:00",
+    "13:15",
+    "13:30",
+    "13:45",
+    "14:00",
+    "14:15",
+    "14:30",
+    "14:45",
+    "15:00",
+    "15:15",
+    "15:30",
+    "15:45",
+    "16:00",
+    "16:15",
+    "16:30",
+    "16:45",
+    "17:00",
+    "17:15",
+    "17:30",
+    "17:45",
+    "18:00",
+    "18:15",
+    "18:30",
+    "18:45",
+    "19:00",
+    "19:15",
+    "19:30",
+    "19:45",
+    "20:00",
+    "20:15",
+    "20:30",
+    "20:45",
+    "21:00",
+    "21:15",
+    "21:30",
+    "21:45",
+    "22:00",
+    "22:15",
+    "22:30",
+    "22:45",
+    "23:00",
+    "23:15",
+    "23:30",
+    "23:45"
+] as const;
+
+const ALLOWED_DURATIONS = [
+    "15 min",
+    "30 min",
+    "45 min",
+    "1 hour",
+    "1 hour 15 min",
+    "1½ hours",
+    "1 hour 45 min",
+    "2 hours",
+    "2 hours 15 min",
+    "2½ hours",
+    "2 hours 45 min",
+    "3 hours",
+    "3 hours 15 min",
+    "3½ hours",
+    "3 hours 45 min",
+    "4 hours",
+    "4 hours 15 min",
+    "4½ hours",
+    "4 hours 45 min",
+    "5 hours",
+    "5 hours 15 min",
+    "5½ hours",
+    "5 hours 45 min",
+    "6 hours"
+] as const;
 
 
 
+const dailyActionSlotSchema = z.object({
+    id: z.string().optional(),
+    title: z.enum(DATA_I_CAN_ACTIONS, {
+        errorMap: (issue) => ({ message: 'Select from the list' })
+    }),
+    description: z.string().max(50).optional(),
+    at: z.enum(ALLOWED_TIMES, {
+        errorMap: (issue) => ({ message: 'Select from the list' })
+    }),
+    for: z.enum(ALLOWED_DURATIONS, {
+        errorMap: (issue) => ({ message: 'Select from the list' })
+    }),
+});
 
-// export const actionPlanRelations = relations(actionPlanTbl, ({ one }) => ({
-//     user: one(userTbl, { fields: [actionPlanTbl.userId], references: [userTbl.id] }),
-//     category: one(actionPlanCategoryTbl, {
-//         fields: [actionPlanTbl.categoryId],
-//         references: [actionPlanCategoryTbl.id],
-//     }),
-// }));
+const dailyActionsFormSchema = insertActionPlanSchema.merge(
+    z.object({
+        slots: z
+            .array(dailyActionSlotSchema)
+            .min(1, "You must add at least one daily action slot.")
+            .max(5, "You can add up to 5 daily action slots."),
+    })
+);
 
+
+
+export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema };
 
