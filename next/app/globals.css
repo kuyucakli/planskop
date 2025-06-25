@@ -74,10 +74,13 @@
     background-color: rgb(51, 57, 56);
     border-radius: 8px;
     grid-area: a;
+    position: fixed;
+    bottom: 0;
+    left: 0;
     display: flex;
     align-items: center;
     flex-direction: column;
-
+    width: 100%;
     &.protected {
       flex-direction: column;
     }
@@ -128,13 +131,18 @@
 @layer responsive {
   @media screen and (min-width: 768px) {
     #root {
-      grid-template-rows: auto 1fr 56px;
+      grid-template-rows: auto 1fr auto;
       grid-template-areas:
         "b b b"
         "m m c"
         "a a a";
       height: 100dvh;
       overflow: hidden;
+    }
+
+    #root > header:first-child {
+      position: static;
+      width: unset;
     }
   }
   @media screen and (min-width: 1024px) {
