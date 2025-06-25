@@ -54,13 +54,12 @@
   }
 
   #root {
-    height: 90dvh;
+    height: auto;
     margin: 0 auto;
     padding: 4px;
-    overflow: hidden;
     display: grid;
     grid-template-columns: max-content 1fr minmax(300px, 0.4fr);
-    grid-template-rows: auto 1fr 56px;
+    grid-template-rows: auto auto auto 56px;
     grid-template-areas:
       "b b b"
       "m m m"
@@ -75,7 +74,6 @@
     background-color: rgb(51, 57, 56);
     border-radius: 8px;
     grid-area: a;
-
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -93,20 +91,12 @@
     background-color: rgb(51, 57, 56);
     border-radius: 8px;
     grid-area: m;
-    overflow: auto;
   }
 
   main + aside {
     grid-area: c;
-
     background-color: rgb(51, 57, 56);
     border-radius: 8px;
-  }
-
-  main + footer {
-    padding: 24px;
-    background-color: var(--md-sys-color-inverse-surface);
-    grid-area: d;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -138,10 +128,13 @@
 @layer responsive {
   @media screen and (min-width: 768px) {
     #root {
+      grid-template-rows: auto 1fr 56px;
       grid-template-areas:
         "b b b"
         "m m c"
         "a a a";
+      height: 100dvh;
+      overflow: hidden;
     }
   }
   @media screen and (min-width: 1024px) {

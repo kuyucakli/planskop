@@ -60,16 +60,24 @@ const fromErrorToFormState = (error: unknown) => {
 
 type FormattedFieldError = { _errors: string[] };
 
-function resolvePath(obj: any, path: string): FormattedFieldError | undefined | undefined {
-    if (!path) return obj;
+function resolvePath<T = FormattedFieldError>(
+    obj: unknown,
+    path: string
+): T | undefined {
+    if (!obj || typeof path !== "string") return undefined;
+
     const keys = path
-        .replace(/\[(\w+)\]/g, '.$1') // convert [0] to .0
-        .replace(/^\./, '')           // remove leading dot
-        .split('.');
+        .replace(/\[(\w+)\]/g, ".$1")
+        .replace(/^\./, "")
+        .split(".");
 
-    return keys.reduce((acc, key) => acc?.[key], obj);
+    return keys.reduce<Record<string, unknown> | undefined>((acc, key) => {
+        if (acc && typeof acc === "object") {
+            return acc[key] as Record<string, unknown>;
+        }
+        return undefined;
+    }, obj as Record<string, unknown>) as T | undefined;
 }
-
 
 export type { FormState }
 export { fromErrorToFormState, toFormState, resolvePath, EMPTY_FORM_STATE };

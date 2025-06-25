@@ -14,7 +14,7 @@ describe("resolvePath", () => {
 
     it("should handle empty paths", () => {
         const obj = { a: { b: { c: 42 } } };
-        expect(resolvePath(obj, "")).toBe(obj);
+        expect(resolvePath(obj, "")).toBeUndefined();
     });
 
     it("should handle paths with array indices", () => {
@@ -27,7 +27,7 @@ describe("resolvePath", () => {
         expect(resolvePath(obj, "a.b.c.d")).toBeUndefined();
     });
 
-    it("should", () => {
+    it("should work with zod formatted error obj", () => {
         const obj = {
             "_errors": [],
             "title": {
@@ -82,7 +82,7 @@ describe("resolvePath", () => {
                 "_errors": []
             }
         }
-        expect(resolvePath(obj, "slots[0].at")).toBe(["hi"]);
+        expect(resolvePath(obj, "slots[0].at")).toStrictEqual({ "_errors": ["hi"] });
 
 
     })
