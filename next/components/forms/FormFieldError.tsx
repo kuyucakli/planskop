@@ -7,9 +7,9 @@ type FieldErrorProps = {
 };
 
 const FieldError = ({ formState, name }: FieldErrorProps) => {
-    console.log(formState, name)
+
     return (
-        <span className="text-xs text-red-400">
+        <span className="form-field-error text-xs text-red-400 block my-2">
             {resolvePath(formState.fieldErrors, name)?._errors[0]}
             {/* {formState.fieldErrors[name]?._errors[0]} */}
         </span>

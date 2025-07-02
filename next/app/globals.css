@@ -155,18 +155,3 @@
   }
 }
 
-[data-active] {
-  position: relative;
-}
-
-[data-active] span.colored-segment {
-  content: "";
-  background-color: rgba(255, 192, 203, 0.355);
-  width: 100%;
-  height: 16px;
-  border-radius: 2px;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}

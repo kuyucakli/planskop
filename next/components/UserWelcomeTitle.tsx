@@ -6,8 +6,8 @@ export const UserWelcomeTitle = () => {
     const { user } = useUser();
 
     return (
-        <span className="text-xs">
-            {user?.firstName || user?.username}'s Routines
-        </span>
+        <span className="text-xs ml-4 capitalize">
+            {user?.firstName || user?.username}<span className="normal-case">'s</span> routines
+        </span >
     );
 }

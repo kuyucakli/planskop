@@ -2,10 +2,10 @@
 import { CldImage } from "next-cloudinary";
 import ColorLegend from "./ColorLegend";
 import { FamousPersonWithRoutines } from "@/db/schema";
-import HourlyRoutinesChart from "./HourlyRoutinesChart";
 import { PropsWithChildren } from "react";
 import styles from "./Card.module.css";
 import { UseThemeContext } from "@/context/ThemeContext";
+import { ChartFamousDailyRoutines } from "./charts/";
 
 const Card = ({ children, className }: PropsWithChildren & { className?: string }) => {
     return (
@@ -87,7 +87,7 @@ const CardFamousPersonSummary = ({
                 />
             </CardBody>
             <CardFooter>
-                <HourlyRoutinesChart routines={routines} />
+                <ChartFamousDailyRoutines routines={routines} compact />
             </CardFooter>
         </Card>
     );

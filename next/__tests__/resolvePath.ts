@@ -3,6 +3,11 @@ import { resolvePath } from "@/lib/utils";
 
 describe("resolvePath", () => {
     it("should return the value at the given path", () => {
+        const obj = { a: ["value"] };
+        expect(resolvePath(obj, "a")).toStrictEqual(["value"]);
+    });
+
+    it("should return the value at the given path", () => {
         const obj = { a: { b: { c: 42 } } };
         expect(resolvePath(obj, "a.b.c")).toBe(42);
     });

@@ -7,9 +7,9 @@ type InputProps = { autoComplete?: string, label?: string, formState: FormState 
 const InputText = ({ name, id, label, placeholder, defaultValue, autoComplete, className, formState, list, required }: React.InputHTMLAttributes<HTMLInputElement> & InputProps) => {
 
     return (
-        <label className={className}>
+        <label className="basis-full">
             <span>{label || name}</span>
-            <input type="text" name={name} id={id || name} placeholder={placeholder || name} defaultValue={defaultValue} autoComplete={autoComplete} list={list || ""} required={!!required} />
+            <input type="text" name={name} id={id || name} placeholder={placeholder} defaultValue={defaultValue} autoComplete={autoComplete} list={list || ""} required={!!required} className={`py-2 px-2  mt-0 h-10  bg-transparent border appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 border-gray-400 rounded-2xl  ${className}`} />
             <FieldError formState={formState} name={name || ""} />
         </label>
     )

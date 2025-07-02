@@ -1,4 +1,5 @@
 import { ZodError } from 'zod';
+import type { AllowedTime, AllowedDuration } from '@/db/schema';
 
 type FormState = {
     status: 'UNSET' | 'SUCCESS' | 'ERROR';
@@ -79,5 +80,81 @@ function resolvePath<T = FormattedFieldError>(
     }, obj as Record<string, unknown>) as T | undefined;
 }
 
+
+
+
+const timeStrToMinutes = (timeString: AllowedTime): number | undefined => {
+    if (typeof timeString != "string") return;
+    const parts = timeString.split(":");
+    if (parts.length !== 2) return;
+
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+
+    if (isNaN(hours) || isNaN(minutes)) return;
+
+    return hours * 60 + minutes;
+
+}
+
+
+const unicodeFractions: Record<string, number> = {
+    "½": 0.5,
+    "¼": 0.25,
+    "¾": 0.75,
+    "⅓": 1 / 3,
+    "⅔": 2 / 3,
+};
+
+function parseFractionalNumber(str: string): number {
+    const match = str.match(/^(\d+)?([½¼¾⅓⅔])?$/);
+    if (!match) return NaN;
+
+    const [, wholeStr, fracChar] = match;
+    const whole = wholeStr ? parseInt(wholeStr, 10) : 0;
+    const fraction = fracChar ? unicodeFractions[fracChar] ?? 0 : 0;
+
+    return whole + fraction;
+}
+
+function extractMinutesFromDuration(input: AllowedDuration): number | undefined {
+    if (typeof input != "string") return;
+    const reg = /(?:(\d*[½¼¾⅓⅔]?)\s*hour[s]?)?\s*(?:(\d+)\s*min[s]?)?/;
+    const match = input.match(reg);
+    if (!match) return undefined;
+
+    const hoursStr = match[1];
+    const minutesStr = match[2];
+
+    if (!hoursStr && !minutesStr) return undefined;
+
+    const hours = hoursStr ? parseFractionalNumber(hoursStr) : 0;
+    const minutes = minutesStr ? parseInt(minutesStr, 10) : 0;
+
+    return Math.round(hours * 60 + minutes);
+}
+
+function extractTimeRange(
+    start: AllowedTime,
+    duration: AllowedDuration,
+    step: number = 15
+): Set<number> {
+    const range: Set<number> = new Set();
+    const startMinutes = timeStrToMinutes(start);
+    const durationMinutes = extractMinutesFromDuration(duration);
+
+    if (startMinutes === undefined || durationMinutes === undefined) {
+        return range;
+    }
+
+
+    for (let m = startMinutes; m <= durationMinutes + startMinutes; m += step) {
+        const MINUTES_IN_DAY = 1440;
+        const normalized = m % MINUTES_IN_DAY;
+        range.add(normalized);
+    }
+    return range;
+}
+
 export type { FormState }
-export { fromErrorToFormState, toFormState, resolvePath, EMPTY_FORM_STATE };
+export { fromErrorToFormState, toFormState, resolvePath, timeStrToMinutes, extractMinutesFromDuration, extractTimeRange, EMPTY_FORM_STATE, };

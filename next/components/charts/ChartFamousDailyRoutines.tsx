@@ -2,7 +2,7 @@
 
 import { UseThemeContext } from "@/context/ThemeContext";
 import { FamousPersonRoutine } from "@/db/schema";
-
+import styles from "./Charts.module.css";
 
 export const fillHoursInbetween = (startsAt: string, endsAt: string) => {
     let sH = parseInt(startsAt.split(":")[0], 10);
@@ -19,7 +19,7 @@ export const fillHoursInbetween = (startsAt: string, endsAt: string) => {
 };
 
 
-const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [] }) => {
+const ChartFamousDailyRoutines = ({ routines, compact = false }: { routines: FamousPersonRoutine[], compact?: boolean }) => {
 
     const { colors } = UseThemeContext();
 
@@ -35,7 +35,6 @@ const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [
     function getFilledHoursFromRoutines(routines: FamousPersonRoutine[]) {
         const jsx = [];
         const dayHours = Array.from({ length: 24 }, (_, i) => i);
-
 
         let lastColorIndex = 0;
         let lastRoutine;
@@ -57,25 +56,22 @@ const HourlyRoutinesChart = ({ routines }: { routines: FamousPersonRoutine[] | [
                     key={hour}
                 >
                     <span
-                        className="colored-segment"
+                        className={activeRoutine && `${styles.ColoredSegment}`}
                         style={{ backgroundColor: activeRoutine ? colorsLegendForRoutines[activeRoutine.activityId] : "" }}
                     />
-                    {hour < 10 ? `0${hour}` : hour}
+                    {`${hour}`.padStart(2, '0')}
                 </li>
             );
         }
         return jsx;
     }
     return (
-        <div className="text-fuchsia-300  p-4 text-xs ">
-            <ul className="flex  flex-wrap ">
+        <div className={`p-4  text-fuchsia-300   text-xs ${styles.ChartContainer} ${compact ? styles.Compact : ""}`}>
+            <ul className="flex  flex-wrap shadow-sm shadow-black/50">
                 {getFilledHoursFromRoutines(routines)}
             </ul>
         </div>
     )
 }
 
-
-
-
-export default HourlyRoutinesChart;
+export { ChartFamousDailyRoutines };

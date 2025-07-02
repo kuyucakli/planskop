@@ -1,4 +1,5 @@
 import { DATA_I_CAN_ACTIONS } from "@/data";
+import { extractTimeRange } from "@/lib/utils";
 import { relations } from 'drizzle-orm';
 import { integer, pgTable, serial, text, index, timestamp, varchar, pgEnum, time } from 'drizzle-orm/pg-core';
 import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
@@ -29,22 +30,22 @@ export const remindEnum = pgEnum("remind", [
 
 
 
-export const actionPlanTbl = pgTable('action_plan', {
+export const dailyPlanTbl = pgTable('action_plan', {
     id: serial('id').primaryKey(),
     title: text('title').notNull(),
-    content: text('content').notNull(),
-    rrule: varchar('rrule').notNull(),
+    content: text('content'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-        .$onUpdate(() => new Date()),
     dtstart: timestamp('dtstart', { mode: "string" }).notNull(),
-    until: timestamp('until', { mode: "string" }).notNull(),
-    userId: text('user_id').notNull(),
     nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
+    rrule: varchar('rrule').notNull(),
     remind: remindEnum("remind"),
     timezone: varchar('timezone').notNull(),
-    categoryId: integer('action_plan_category_id')
-        .references(() => actionPlanCategoryTbl.id, { onDelete: 'cascade' }),
+    until: timestamp('until', { mode: "string" }).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+        .$onUpdate(() => new Date()),
+    userId: text('user_id').notNull(),
+    // categoryId: integer('action_plan_category_id')
+    //     .references(() => actionPlanCategoryTbl.id, { onDelete: 'cascade' }),
 }, (table) => ([index("next_remind_at_time_idx").on(table.nextRemindAtTime),]))
 
 
@@ -55,18 +56,18 @@ export const actionPlanCategoryTbl = pgTable('action_plan_category', {
 })
 
 export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ many }) => ({
-    actionPlans: many(actionPlanTbl),
+    actionPlans: many(dailyPlanTbl),
 }));
 
 
 
 
 // 1. ZOD schemas generated from drizzle-zod
-export const baseInsertActionPlanSchema = createInsertSchema(actionPlanTbl);
-export const baseUpdateActionPlanSchema = createUpdateSchema(actionPlanTbl);
+export const baseInsertActionPlanSchema = createInsertSchema(dailyPlanTbl);
+export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
 // 2. For frontend forms
 export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
-    title: z.string().min(3).max(255),
+    title: z.string().min(3).max(30),
     count: z.string().optional(),
     interval: z.string().optional(),
     frequency: z.string().optional(),
@@ -78,14 +79,14 @@ export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
 });
 
 // 3. Drizzle types — from the table (for DB access)
-type InferInsert = typeof actionPlanTbl.$inferInsert;
+type InferInsert = typeof dailyPlanTbl.$inferInsert;
 
 export type InsertActionPlan = InferInsert;
 
 
 //export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;
 export type UpdateActionPlan = Partial<InsertActionPlan> & { id: number };
-export type SelectActionPlan = typeof actionPlanTbl.$inferSelect;
+export type SelectActionPlan = typeof dailyPlanTbl.$inferSelect;
 
 // 4. Zod inference types — used in form validation / API inputs
 export type InsertActionPlanInput = z.infer<typeof insertActionPlanSchema>;
@@ -98,7 +99,6 @@ export type InsertActionPlanAlbum = typeof actionPlanCategoryTbl.$inferInsert;
 export type SelectActionPlanAlbum = typeof actionPlanCategoryTbl.$inferSelect;
 
 export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPlans: SelectActionPlan[] })[];
-
 
 
 
@@ -138,6 +138,7 @@ export const famousRoutineActivitiesRelations = relations(famousRoutineActivitie
 }));
 
 export type FamousPersonRoutine = typeof famousRoutineActivitiesTbl.$inferSelect;
+
 
 export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect, 'id' | 'personName' | 'image'> & { routines: FamousPersonRoutine[] };
 
@@ -241,6 +242,7 @@ const ALLOWED_TIMES = [
     "23:30",
     "23:45"
 ] as const;
+type AllowedTime = (typeof ALLOWED_TIMES)[number];
 
 const ALLOWED_DURATIONS = [
     "15 min",
@@ -268,8 +270,38 @@ const ALLOWED_DURATIONS = [
     "5 hours 45 min",
     "6 hours"
 ] as const;
+type AllowedDuration = (typeof ALLOWED_DURATIONS)[number];
 
+const REPEAT_DURATIONS = [
+    "1 day",
+    "2 days",
+    "3 days",
+    "4 days",
+    "5 days",
+    "6 days",
+    "1 week",
+    "2 weeks",
+    "3 weeks",
+    "1 month",
+    "2 months",
+    "3 months",
+    "6 months",
+    "7 months",
+    "8 months",
+    "9 months",
+    "10 months",
+    "11 months",
+    "1 year"
+] as const;
+type RepeatDurations = (typeof REPEAT_DURATIONS)[number];
 
+const REMIND_AT = [
+    "Morning",
+    "Afternoon",
+    "Evening",
+    "Night"
+] as const;
+type remindAt = (typeof REMIND_AT)[number];
 
 const dailyActionSlotSchema = z.object({
     id: z.string().optional(),
@@ -285,16 +317,75 @@ const dailyActionSlotSchema = z.object({
     }),
 });
 
+type DailyActionSlot = z.infer<typeof dailyActionSlotSchema>;
+
 const dailyActionsFormSchema = insertActionPlanSchema.merge(
     z.object({
         slots: z
             .array(dailyActionSlotSchema)
             .min(1, "You must add at least one daily action slot.")
-            .max(5, "You can add up to 5 daily action slots."),
+            .max(5, "You can add up to 5 daily action slots.")
+            .superRefine((slots, ctx) => {
+                const startTimes = new Set();
+                const reserved: number[] = [];
+                const titleToIndex = new Map<string, number>();
+
+
+
+                slots.forEach((slot, index) => {
+                    if (startTimes.has(slot.at)) {
+                        ctx.addIssue({
+                            code: z.ZodIssueCode.custom,
+                            message: `Start time "${slot.at}" is duplicated`,
+                            path: [index, 'at'],
+                        });
+                    } else {
+                        startTimes.add(slot.at);
+                    }
+
+                    const slotTimeRange = extractTimeRange(slot.at, slot.for, 15);
+
+                    for (const time of slotTimeRange) {
+                        if (reserved.includes(time)) {
+                            ctx.addIssue({
+                                code: z.ZodIssueCode.custom,
+                                message: `Time slot "${slot.at} - ${slot.for}" overlaps with another action`,
+                                path: [index, 'for'],
+                            });
+                        } else {
+                            reserved.push(time);
+                        }
+                    }
+
+
+
+                    const title = slot.title;
+                    console.log(title, performance.now())
+                    if (titleToIndex.has(title)) {
+
+                        const firstIndex = titleToIndex.get(title)!;
+
+                        ctx.addIssue({
+                            code: z.ZodIssueCode.custom,
+                            message: `Title "${title}" is duplicated`,
+                            path: [index, "title"],
+                        });
+
+                        ctx.addIssue({
+                            code: z.ZodIssueCode.custom,
+                            message: `Title "${title}" is also used here`,
+                            path: [firstIndex, "title"],
+                        });
+                    } else {
+                        titleToIndex.set(title, index);
+                    }
+
+                });
+            })
     })
 );
 
 
 
-export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema };
+export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema, REPEAT_DURATIONS, REMIND_AT, type DailyActionSlot, type AllowedTime, type AllowedDuration, type RepeatDurations, type remindAt };
 

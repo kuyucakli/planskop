@@ -4,7 +4,7 @@ import { asc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import {
     InsertActionPlan, SelectActionPlan, UpdateActionPlan,
-    actionPlanTbl, famousPeopleTbl, famousRoutineActivitiesTbl
+    dailyPlanTbl, famousPeopleTbl, famousRoutineActivitiesTbl
 } from './schema';
 import { revalidatePath } from 'next/cache';
 
@@ -71,7 +71,7 @@ import { revalidatePath } from 'next/cache';
 // }
 
 export async function getActionPlan(id: number) {
-    return db.select().from(actionPlanTbl).where(eq(actionPlanTbl.id, id));
+    return db.select().from(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
 }
 
 export async function getActionPlans(userId: string, page = 1, pageSize = 5): Promise<Partial<SelectActionPlan>[] | null> {
@@ -79,11 +79,11 @@ export async function getActionPlans(userId: string, page = 1, pageSize = 5): Pr
     try {
         return db
             .select({
-                ...getTableColumns(actionPlanTbl),
+                ...getTableColumns(dailyPlanTbl),
             })
-            .from(actionPlanTbl)
-            .where(eq(actionPlanTbl.userId, userId))
-            .orderBy(asc(actionPlanTbl.title), asc(actionPlanTbl.id))
+            .from(dailyPlanTbl)
+            .where(eq(dailyPlanTbl.userId, userId))
+            .orderBy(asc(dailyPlanTbl.title), asc(dailyPlanTbl.id))
             .limit(pageSize)
             .offset((page - 1) * pageSize);
     }
@@ -98,19 +98,19 @@ export async function getActionPlans(userId: string, page = 1, pageSize = 5): Pr
 
 
 export async function dbDeleteActionPlan(id: number) {
-    await db.delete(actionPlanTbl).where(eq(actionPlanTbl.id, id));
+    await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
     revalidatePath("/");
 
 }
 
 
 export async function dbCreateActionPlan(data: InsertActionPlan) {
-    await db.insert(actionPlanTbl).values(data);
+    await db.insert(dailyPlanTbl).values(data);
 }
 
 export async function dbUpdateActionPlan(data: UpdateActionPlan) {
     try {
-        await db.update(actionPlanTbl).set(data).where(eq(actionPlanTbl.id, data.id));
+        await db.update(dailyPlanTbl).set(data).where(eq(dailyPlanTbl.id, data.id));
         console.log("updated with", data.nextRemindAtTime);
     } catch (err) {
         console.log(err);

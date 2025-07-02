@@ -40,7 +40,7 @@ export default async function RootLayout({
           <link rel="icon" href="/favicon.ico" />
         </head>
         <body className={`font-mono ${kiraHareng.variable}`}>
-          <div id="root">
+          <div id="root" className="md:overflow-hidden">
             <Header />
             <header className="p-2">
               {/* <Logo onlyPictogram /> */}
@@ -49,7 +49,7 @@ export default async function RootLayout({
                 <input type="text" name="search" id="search" placeholder="search" />
               </form>
             </header>
-            <main className="p-6 limited-width">
+            <main className="p-6 limited-width overflow-y-auto">
 
               {children}
 

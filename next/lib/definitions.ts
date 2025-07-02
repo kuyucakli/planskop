@@ -34,6 +34,6 @@ type Rrules = {
 
 
 
+type timeString = `${number}:${number}`;
 
-
-export { Frequency, WeekDays, type Rrules };
+export { Frequency, WeekDays, type Rrules, type timeString };
