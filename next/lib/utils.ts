@@ -137,11 +137,14 @@ function extractMinutesFromDuration(input: AllowedDuration): number | undefined 
 function extractTimeRange(
     start: AllowedTime,
     duration: AllowedDuration,
-    step: number = 15
+    step: number = 15,
+    excludeStart: boolean = false,
+    excludeEnd: boolean = false,
 ): Set<number> {
     const range: Set<number> = new Set();
     const startMinutes = timeStrToMinutes(start);
     const durationMinutes = extractMinutesFromDuration(duration);
+
 
     if (startMinutes === undefined || durationMinutes === undefined) {
         return range;
@@ -152,6 +155,14 @@ function extractTimeRange(
         const MINUTES_IN_DAY = 1440;
         const normalized = m % MINUTES_IN_DAY;
         range.add(normalized);
+    }
+
+    if (excludeStart) {
+        range.delete(startMinutes);
+    }
+
+    if (excludeEnd) {
+        range.delete(durationMinutes + startMinutes);
     }
     return range;
 }

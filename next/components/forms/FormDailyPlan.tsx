@@ -89,7 +89,7 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
                 }
             />
 
-            <FormFieldsTimePlanning />
+            <FormFieldsTimePlanning formState={formState} />
 
             <footer className="text-center p-8 pb-16" >
                 <SubmitButton
@@ -156,10 +156,10 @@ const ActionSlotList = ({ formState }: { formState: FormState }) => {
             <input type="text" name="slots" readOnly defaultValue={JSON.stringify(actionSlots)} />
 
             <div className="relative h-24">
-                <div className="absolute opacity-20">
+                <div className="absolute opacity-80 w-full">
                     <ChartDailyActionSlots actionSlots={actionSlots as DailyActionSlot[]} />
                 </div>
-                <div className="absolute">
+                <div className="absolute w-full">
                     <ChartDailyActionSlots interval={60} showContent />
                 </div>
             </div>

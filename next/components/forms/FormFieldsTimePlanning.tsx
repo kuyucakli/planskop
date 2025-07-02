@@ -5,6 +5,7 @@ import { ChangeEvent, PropsWithChildren, useState } from "react";
 import { WeekDays, Rrules, Frequency } from "@/lib/definitions";
 import { REMIND_AT, REPEAT_DURATIONS, SelectActionPlan } from "@/db/schema";
 import FormComboBox from "./FormComboBox";
+import { FormState } from "@/lib/utils";
 
 
 const weekDaysKeys = Object.keys(WeekDays) as Array<keyof typeof WeekDays>;
@@ -14,8 +15,9 @@ export default function FormFieldsTimePlanning({
     until,
     rrule,
     timezone,
-    remind
-}: PropsWithChildren<Partial<SelectActionPlan>>) {
+    remind,
+    formState
+}: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
     const { get_local_now, get_timezones, get_local_timezone } = useWasm() || {};
 
     const countMatch = rrule?.match(/COUNT=(\d+)/);
@@ -69,19 +71,18 @@ export default function FormFieldsTimePlanning({
                 label="Repeat For"
                 className="basis-full border-0 border-b-2 rounded-none"
                 options={REPEAT_DURATIONS}
-                formState={{}}
+                formState={formState}
                 required={true}
                 placeholder="1 week"
             />
 
 
-            {/* Remind */}
             <FormComboBox
                 name={`remind`}
                 label="Remind At"
                 className="basis-full border-0 border-b-2 rounded-none"
                 options={REMIND_AT}
-                formState={{}}
+                formState={formState}
                 required={true}
                 placeholder="Morning"
             />

@@ -6,8 +6,8 @@
   overflow: hidden;
 
   border-radius: 64px;
-  width: 354px;
-  height: 72px;
+  /* width: 354px;
+  height: 72px; */
 }
 
 .ChartContainer > ul > li {

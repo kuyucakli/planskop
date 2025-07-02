@@ -12,9 +12,10 @@ const ChartDailyActionSlots = ({ actionSlots, compact = false, interval = 15, sh
     let reservedMinutes: Set<number> | undefined;
     if (actionSlots) {
         reservedMinutes = actionSlots.reduce((acc, actionSLot) => {
-            extractTimeRange(actionSLot.at, actionSLot.for).forEach((t) => acc.add(t));
+            extractTimeRange(actionSLot.at, actionSLot.for, 15, false, true).forEach((t) => acc.add(t));
             return acc;
         }, new Set<number>());
+
     }
 
     const minutesInDay = 24 * 60;
@@ -25,6 +26,7 @@ const ChartDailyActionSlots = ({ actionSlots, compact = false, interval = 15, sh
 
     const boxWidthInFlexRow = 100 / (minutesInDay / interval * 0.5);
 
+
     console.log(reservedMinutes)
 
     return (
@@ -33,8 +35,8 @@ const ChartDailyActionSlots = ({ actionSlots, compact = false, interval = 15, sh
                 {dayMinutesByInterval.map((m) => (
                     <MinuteBox
                         key={m}
-                        className="border-1 flex justify-center items-center"
-                        content={showContent ? m + "" : ""}
+                        className="border-1 flex"
+                        content={showContent ? (Math.floor(m / 60) + "").padStart(2, "0") + ":00" : ""}
                         style={{ width: `${boxWidthInFlexRow}%` }}
                         active={reservedMinutes ? reservedMinutes.has(m) : false}
                     />
@@ -54,9 +56,9 @@ const MinuteBox = ({ content, className, active = false, style }: React.LiHTMLAt
 
         active
             ?
-            <li className={`bg-amber-200 border-1 border-amber-200 flex justify-center items-center  ${className}`} style={style}> {content}</li >
+            <li className={`bg-amber-200 border-1 border-amber-200 flex    ${className}`} style={style}> {content}</li >
             :
-            <li className={`border-1 border-gray-500 flex justify-center items-center  ${className}`} style={style}>  {content}</li>
+            <li className={`border-1 border-gray-500 flex    ${className}`} style={style}>  {content}</li>
 
 
     )
