@@ -1,36 +1,19 @@
 'use server'
 
 import { auth } from '@clerk/nextjs/server'
-import { insertActionPlanSchema, updateActionPlanSchema, UserMessages } from '../db/schema'
+import { dailyActionsFormSchema, insertActionPlanSchema, updateActionPlanSchema } from '../db/schema'
 import { db } from '../db'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache';
 import { dbCreateActionPlan, dbDeleteActionPlan, dbUpdateActionPlan } from '@/db/queries';
 import * as _wasm from "@/pkg/planskop_rust";
 import { ZodSchema, z } from 'zod';
-import { FormState, fromErrorToFormState, toFormState } from './utils'
+import { FormState, fromErrorToFormState, parseFormDataToNestedObject, toFormState } from './utils'
 
 
 // import { ActionPlanEmailTemplate } from '@/components/EmailTemplates';
 // import { Resend } from 'resend';
 
-export async function createUserMessage(formData: FormData) {
-    const { userId } = await auth()
-    if (!userId) throw new Error('User not found')
-
-    const message = formData.get('message') as string
-    await db.insert(UserMessages).values({
-        user_id: userId,
-        message,
-    })
-}
-
-export async function deleteUserMessage() {
-    const { userId } = await auth()
-    if (!userId) throw new Error('User not found')
-
-    await db.delete(UserMessages).where(eq(UserMessages.user_id, userId))
-}
 
 
 
@@ -40,12 +23,9 @@ export async function createActionPlan(prevState: FormState, formData: FormData)
 
 
     try {
-        validateRes = insertActionPlanSchema.parse({
-            title: formData.get('title'),
-            text: formData.get('content'),
-        });
-        const actionPlanObj = await prepareActionPlanData(formData, insertActionPlanSchema);
-        await dbCreateActionPlan(actionPlanObj);
+        const flattenedFormData = formDataToObject(formData);
+        validateRes = insertActionPlanSchema.parse(flattenedFormData);
+        await dbCreateActionPlan(flattenedFormData);
 
     } catch (err) {
         return fromErrorToFormState(err);
@@ -55,16 +35,19 @@ export async function createActionPlan(prevState: FormState, formData: FormData)
 }
 
 
-export async function updateActionPlan(formData: FormData) {
+export async function updateActionPlan(prevState: FormState, formData: FormData) {
     const actionPlanObj = await prepareActionPlanData(formData, updateActionPlanSchema);
 
     try {
+        const flattenedFormData = parseFormDataToNestedObject(formData);
         await dbUpdateActionPlan(actionPlanObj);
 
     } catch (err) {
         console.log(err);
     }
     revalidatePath("/dashboard");
+    return toFormState('SUCCESS', 'Message created');
+
 
 }
 
@@ -100,21 +83,21 @@ async function prepareActionPlanData<TSchema extends ZodSchema<any>>(
     const actionPlanObj = schema.parse(rawObj);
 
 
-    const byweekdayStr = formData.getAll("byweekday").join(",") || undefined;
+    // const byweekdayStr = formData.getAll("byweekday").join(",") || undefined;
 
     // Extract known fields
-    const { dtstart, until, count, interval, frequency, timezone, remind } = actionPlanObj;
+    // const { dtstart, until, count, interval, frequency, timezone, remind } = actionPlanObj;
 
     // Subtract the timezone offset from dtstart
-    const dtstartNoOffset = subtract_gmt_offset(dtstart, timezone);
+    // const dtstartNoOffset = subtract_gmt_offset(dtstart, timezone);
 
     // Create the iCal rule using the wasm function
-    actionPlanObj.rrule = format_ical(dtstartNoOffset, until, frequency, interval, count, byweekdayStr);
+    // actionPlanObj.rrule = format_ical(dtstartNoOffset, until, frequency, interval, count, byweekdayStr);
 
     // Set the next reminder time if applicable
-    if (remind) {
-        actionPlanObj.nextRemindAtTime = get_next_remind_dt(actionPlanObj.rrule, remind);
-    }
+    // if (remind) {
+    //     actionPlanObj.nextRemindAtTime = get_next_remind_dt(actionPlanObj.rrule, remind);
+    // }
 
     return actionPlanObj;
 }

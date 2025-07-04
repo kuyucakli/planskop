@@ -1,39 +1,42 @@
-.ToggleThemeBtn {
+.ToggleButton {
   appearance: none;
   -webkit-appearance: none;
   position: relative;
-  --border-width: 1px;
+  --border-width: 2px;
   cursor: pointer;
 }
 
-.ToggleThemeBtn::before {
+.ToggleButton::before {
   content: "";
   display: block;
-  width: 32px;
-  height: 16px;
-  border: var(--border-width) solid var(--md-sys-color-outline);
-  border-radius: 8px;
+  width: 44px;
+  height: 24px;
+  border: var(--border-width) solid gray;
+  border-radius: 16px;
+  transition: all 0.2s ease-out;
 }
 
-.ToggleThemeBtn::after {
+.ToggleButton::after {
   content: "";
   display: block;
-  width: 16px;
-  height: 16px;
-  background-color: var(--md-sys-color-primary);
+  height: calc(100% - 2 * var(--border-width));
+  aspect-ratio: 1;
+  background-color: rgba(124, 124, 124, 0.526);
   border-radius: 50%;
+  transform: translateX(0%);
   position: absolute;
   top: var(--border-width);
-  left: var(--border-width);
+  left: calc(var(--border-width));
+  transition: all 0.25s ease-in-out;
 }
 
-.ToggleThemeBtn:checked::after {
-  left: 16px;
+.ToggleButton:checked::before {
+  background-color: blue;
+  border-color: blue;
 }
 
-label:has(.ToggleThemeBtn)::after {
-  content: "dark theme";
-}
-label:has(.ToggleThemeBtn:checked)::after {
-  content: "light theme";
+.ToggleButton:checked::after {
+  left: 100%;
+  transform: translateX(calc(-100% - var(--border-width)));
+  background-color: rgb(255, 255, 255);
 }

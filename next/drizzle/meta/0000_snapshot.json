@@ -1,0 +1,323 @@
+{
+  "id": "d020457d-42f6-4b6e-89a7-bda32b2e07c2",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.action_plan_category": {
+      "name": "action_plan_category",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "action_plan_category_title_unique": {
+          "name": "action_plan_category_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "title"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.action_plan": {
+      "name": "action_plan",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "dtstart": {
+          "name": "dtstart",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "is_public": {
+          "name": "is_public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "next_remind_at_time": {
+          "name": "next_remind_at_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slots": {
+          "name": "slots",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remind": {
+          "name": "remind",
+          "type": "remind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "repeat": {
+          "name": "repeat",
+          "type": "repeat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "next_remind_at_time_idx": {
+          "name": "next_remind_at_time_idx",
+          "columns": [
+            {
+              "expression": "next_remind_at_time",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.famous_people": {
+      "name": "famous_people",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "person_name": {
+          "name": "person_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "occupation": {
+          "name": "occupation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wake_up_time": {
+          "name": "wake_up_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sleep_time": {
+          "name": "sleep_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.famous_routine_activities": {
+      "name": "famous_routine_activities",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "activity_name": {
+          "name": "activity_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starts_at": {
+          "name": "starts_at",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ends_at": {
+          "name": "ends_at",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "famous_person_id": {
+          "name": "famous_person_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "famous_routine_activities_famous_person_id_famous_people_id_fk": {
+          "name": "famous_routine_activities_famous_person_id_famous_people_id_fk",
+          "tableFrom": "famous_routine_activities",
+          "tableTo": "famous_people",
+          "columnsFrom": [
+            "famous_person_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.remind": {
+      "name": "remind",
+      "schema": "public",
+      "values": [
+        "Morning",
+        "Afternoon",
+        "Evening",
+        "Night"
+      ]
+    },
+    "public.repeat": {
+      "name": "repeat",
+      "schema": "public",
+      "values": [
+        "1 day",
+        "2 days",
+        "3 days",
+        "4 days",
+        "5 days",
+        "6 days",
+        "1 week",
+        "2 weeks",
+        "3 weeks",
+        "1 month",
+        "2 months",
+        "3 months",
+        "6 months",
+        "7 months",
+        "8 months",
+        "9 months",
+        "10 months",
+        "11 months",
+        "1 year"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

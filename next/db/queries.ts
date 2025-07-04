@@ -111,7 +111,7 @@ export async function dbCreateActionPlan(data: InsertActionPlan) {
 export async function dbUpdateActionPlan(data: UpdateActionPlan) {
     try {
         await db.update(dailyPlanTbl).set(data).where(eq(dailyPlanTbl.id, data.id));
-        console.log("updated with", data.nextRemindAtTime);
+
     } catch (err) {
         console.log(err);
     }

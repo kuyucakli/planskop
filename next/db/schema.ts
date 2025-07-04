@@ -1,147 +1,9 @@
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import { extractTimeRange } from "@/lib/utils";
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, index, timestamp, varchar, pgEnum, time } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, index, timestamp, date, varchar, pgEnum, time, boolean } from 'drizzle-orm/pg-core';
 import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-
-
-export const UserMessages = pgTable('user_messages', {
-    user_id: text('user_id').primaryKey().notNull(),
-    createTs: timestamp('create_ts').defaultNow().notNull(),
-    message: text('message').notNull(),
-})
-
-
-
-export const actionPlanEnum = pgEnum('state', ['on-hold', 'will-begin', 'test']);
-
-
-export function enumToPgEnum(myEnum: any): [string, ...string[]] {
-    return Object.values(myEnum).map((value: any) => `${value}`) as [string, ...string[]]
-}
-
-export const remindEnum = pgEnum("remind", [
-    'one_hour_before',
-    'two_hours_before',
-    'one_day_before',
-    'two_days_before',
-]);
-
-
-
-export const dailyPlanTbl = pgTable('action_plan', {
-    id: serial('id').primaryKey(),
-    title: text('title').notNull(),
-    content: text('content'),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    dtstart: timestamp('dtstart', { mode: "string" }).notNull(),
-    nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
-    rrule: varchar('rrule').notNull(),
-    remind: remindEnum("remind"),
-    timezone: varchar('timezone').notNull(),
-    until: timestamp('until', { mode: "string" }).notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-        .$onUpdate(() => new Date()),
-    userId: text('user_id').notNull(),
-    // categoryId: integer('action_plan_category_id')
-    //     .references(() => actionPlanCategoryTbl.id, { onDelete: 'cascade' }),
-}, (table) => ([index("next_remind_at_time_idx").on(table.nextRemindAtTime),]))
-
-
-
-export const actionPlanCategoryTbl = pgTable('action_plan_category', {
-    id: serial('id').primaryKey(),
-    title: varchar('title', { length: 256 }).unique().notNull(),
-})
-
-export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ many }) => ({
-    actionPlans: many(dailyPlanTbl),
-}));
-
-
-
-
-// 1. ZOD schemas generated from drizzle-zod
-export const baseInsertActionPlanSchema = createInsertSchema(dailyPlanTbl);
-export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
-// 2. For frontend forms
-export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
-    title: z.string().min(3).max(30),
-    count: z.string().optional(),
-    interval: z.string().optional(),
-    frequency: z.string().optional(),
-    //remind: z.nativeEnum(RemindKind).optional(), // for dropdowns etc.
-});
-
-export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
-    id: z.number(), // required for `.where(...)`
-});
-
-// 3. Drizzle types — from the table (for DB access)
-type InferInsert = typeof dailyPlanTbl.$inferInsert;
-
-export type InsertActionPlan = InferInsert;
-
-
-//export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;
-export type UpdateActionPlan = Partial<InsertActionPlan> & { id: number };
-export type SelectActionPlan = typeof dailyPlanTbl.$inferSelect;
-
-// 4. Zod inference types — used in form validation / API inputs
-export type InsertActionPlanInput = z.infer<typeof insertActionPlanSchema>;
-export type UpdateActionPlanInput = z.infer<typeof updateActionPlanSchema>;
-
-
-
-
-export type InsertActionPlanAlbum = typeof actionPlanCategoryTbl.$inferInsert;
-export type SelectActionPlanAlbum = typeof actionPlanCategoryTbl.$inferSelect;
-
-export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPlans: SelectActionPlan[] })[];
-
-
-
-export const famousPeopleTbl = pgTable('famous_people', {
-    id: serial('id').primaryKey(),
-    image: text('image').notNull(),
-    personName: text('person_name').notNull(),
-    occupation: text('occupation').notNull(),
-    birth_year: integer('birth_year'),
-    content: text('content').notNull(),
-    source: text('source').notNull(),
-    notes: text('notes').notNull(),
-    wakeUpTime: time('wake_up_time'),
-    sleepTime: time('sleep_time'),
-
-})
-
-export const famousRoutineActivitiesTbl = pgTable('famous_routine_activities', {
-    activityId: serial('id').primaryKey(),
-    activityName: text('activity_name').notNull(),
-    startsAt: time('starts_at').notNull(),
-    endsAt: time('ends_at').notNull(),
-    famousPersonId: integer('famous_person_id').references(() => famousPeopleTbl.id, { onDelete: 'cascade' }),
-})
-
-
-export const famousPeopleRelations = relations(famousPeopleTbl, ({ many }) => ({
-    activities: many(famousRoutineActivitiesTbl),
-}));
-
-
-export const famousRoutineActivitiesRelations = relations(famousRoutineActivitiesTbl, ({ one }) => ({
-    person: one(famousPeopleTbl, {
-        fields: [famousRoutineActivitiesTbl.famousPersonId],
-        references: [famousPeopleTbl.id],
-    }),
-}));
-
-export type FamousPersonRoutine = typeof famousRoutineActivitiesTbl.$inferSelect;
-
-
-export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect, 'id' | 'personName' | 'image'> & { routines: FamousPersonRoutine[] };
-
 
 
 const ALLOWED_TIMES = [
@@ -303,6 +165,139 @@ const REMIND_AT = [
 ] as const;
 type remindAt = (typeof REMIND_AT)[number];
 
+
+
+export const remindEnum = pgEnum("remind", REMIND_AT);
+export const repeatEnum = pgEnum("repeat", REPEAT_DURATIONS);
+
+
+export const dailyPlanTbl = pgTable('action_plan', {
+    id: serial('id').primaryKey(),
+    title: text('title').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    dtstart: date('dtstart', { mode: "string" }).notNull().defaultNow(),
+    isPublic: boolean('is_public'),
+    // nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
+    slots: varchar('slots').notNull(),
+    // rrule: varchar('rrule').notNull(),
+    remind: remindEnum("remind"),
+    repeat: repeatEnum("repeat"),
+    timezone: varchar('timezone').notNull(),
+    // until: timestamp('until', { mode: "string" }).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+        .$onUpdate(() => new Date()),
+    userId: text('user_id').notNull(),
+    // categoryId: integer('action_plan_category_id')
+    //     .references(() => actionPlanCategoryTbl.id, { onDelete: 'cascade' }),
+}, /*(table) => ([index("next_remind_at_time_idx").on(table.nextRemindAtTime),]) */)
+
+
+
+export const actionPlanCategoryTbl = pgTable('action_plan_category', {
+    id: serial('id').primaryKey(),
+    title: varchar('title', { length: 256 }).unique().notNull(),
+})
+
+export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ many }) => ({
+    actionPlans: many(dailyPlanTbl),
+}));
+
+
+
+
+// 1. ZOD schemas generated from drizzle-zod
+export const baseInsertActionPlanSchema = createInsertSchema(dailyPlanTbl);
+export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
+// 2. For frontend forms
+export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
+    title: z.string().min(3).max(30),
+    isPublic: z
+        .union([z.literal("on"), z.undefined()])
+        .transform((val) => val === "on"),
+    dtstart: z
+        .string()
+        .min(1, "Date is required")
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
+        .refine((val) => {
+            const date = new Date(val);
+            return !isNaN(date.getTime());
+        }, {
+            message: "Invalid date",
+        })
+});
+
+export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
+    id: z.number(), // required for `.where(...)`
+});
+
+// 3. Drizzle types — from the table (for DB access)
+type InferInsert = typeof dailyPlanTbl.$inferInsert;
+
+export type InsertActionPlan = InferInsert;
+
+
+//export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;
+export type UpdateActionPlan = Partial<InsertActionPlan> & { id: number };
+export type SelectActionPlan = typeof dailyPlanTbl.$inferSelect;
+
+// 4. Zod inference types — used in form validation / API inputs
+export type InsertActionPlanInput = z.infer<typeof insertActionPlanSchema>;
+export type UpdateActionPlanInput = z.infer<typeof updateActionPlanSchema>;
+
+
+
+
+export type InsertActionPlanAlbum = typeof actionPlanCategoryTbl.$inferInsert;
+export type SelectActionPlanAlbum = typeof actionPlanCategoryTbl.$inferSelect;
+
+export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPlans: SelectActionPlan[] })[];
+
+
+
+export const famousPeopleTbl = pgTable('famous_people', {
+    id: serial('id').primaryKey(),
+    image: text('image').notNull(),
+    personName: text('person_name').notNull(),
+    occupation: text('occupation').notNull(),
+    birth_year: integer('birth_year'),
+    content: text('content').notNull(),
+    source: text('source').notNull(),
+    notes: text('notes').notNull(),
+    wakeUpTime: time('wake_up_time'),
+    sleepTime: time('sleep_time'),
+
+})
+
+export const famousRoutineActivitiesTbl = pgTable('famous_routine_activities', {
+    activityId: serial('id').primaryKey(),
+    activityName: text('activity_name').notNull(),
+    startsAt: time('starts_at').notNull(),
+    endsAt: time('ends_at').notNull(),
+    famousPersonId: integer('famous_person_id').references(() => famousPeopleTbl.id, { onDelete: 'cascade' }),
+})
+
+
+export const famousPeopleRelations = relations(famousPeopleTbl, ({ many }) => ({
+    activities: many(famousRoutineActivitiesTbl),
+}));
+
+
+export const famousRoutineActivitiesRelations = relations(famousRoutineActivitiesTbl, ({ one }) => ({
+    person: one(famousPeopleTbl, {
+        fields: [famousRoutineActivitiesTbl.famousPersonId],
+        references: [famousPeopleTbl.id],
+    }),
+}));
+
+export type FamousPersonRoutine = typeof famousRoutineActivitiesTbl.$inferSelect;
+
+
+export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect, 'id' | 'personName' | 'image'> & { routines: FamousPersonRoutine[] };
+
+
+
+
+
 const dailyActionSlotSchema = z.object({
     id: z.string().optional(),
     title: z.enum(DATA_I_CAN_ACTIONS, {
@@ -331,7 +326,6 @@ const dailyActionsFormSchema = insertActionPlanSchema.merge(
                 const titleToIndex = new Map<string, number>();
 
 
-
                 slots.forEach((slot, index) => {
                     if (startTimes.has(slot.at)) {
                         ctx.addIssue({
@@ -343,7 +337,7 @@ const dailyActionsFormSchema = insertActionPlanSchema.merge(
                         startTimes.add(slot.at);
                     }
 
-                    const slotTimeRange = extractTimeRange(slot.at, slot.for, 15);
+                    const slotTimeRange = extractTimeRange(slot.at, slot.for, 15, false, true);
 
                     for (const time of slotTimeRange) {
                         if (reserved.includes(time)) {
@@ -360,7 +354,7 @@ const dailyActionsFormSchema = insertActionPlanSchema.merge(
 
 
                     const title = slot.title;
-                    console.log(title, performance.now())
+
                     if (titleToIndex.has(title)) {
 
                         const firstIndex = titleToIndex.get(title)!;

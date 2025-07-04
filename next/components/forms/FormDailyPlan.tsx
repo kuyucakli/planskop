@@ -11,7 +11,7 @@ import {
 import { ChartDailyActionSlots } from "@/components/charts";
 import { createActionPlan, updateActionPlan } from "../../lib/actions";
 import { DATA_I_CAN_ACTIONS } from "@/data";
-import { EMPTY_FORM_STATE, FormState, fromErrorToFormState } from "@/lib/utils";
+import { EMPTY_FORM_STATE, FormState, fromErrorToFormState, parseFormDataToNestedObject, parseSlotKey, toFormState } from "@/lib/utils";
 import FormComboBox from "./FormComboBox";
 import FormFieldsTimePlanning from "./FormFieldsTimePlanning";
 import "./Form.css";
@@ -23,22 +23,23 @@ import { useFormReset } from "@/hooks/useFormReset";
 import usePrevious from "@/hooks/usePreviousValue";
 import { useActionState, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { ToggleButton } from "../Buttons";
 
 export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
     const { user } = useUser();
-    const { id: userId } = user || { id: -1 };
-
     const [formClientState, setFormClientState] =
         useState<FormState>(EMPTY_FORM_STATE);
+    const formTypeAction = "id" in props ? updateActionPlan : createActionPlan
     const [formState, formAction] = useActionState(
-        createActionPlan,
+        formTypeAction,
         EMPTY_FORM_STATE
     );
+
 
     const noScriptFallback = useToastMessage(formState);
     const formRef = useFormReset(formState);
     const disableSaveButton =
-        formState.status == "UNSET" || !!formState.fieldErrors["slots"];
+        formClientState.status !== "SUCCESS";
 
     const validateSlots = () => {
         if (!formRef.current) return false;
@@ -46,12 +47,10 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         try {
             const formData = new FormData(formRef.current);
             const flattenedFormData = parseFormDataToNestedObject(formData);
-            console.log(flattenedFormData, "****0*9090")
             const result = dailyActionsFormSchema.parse(flattenedFormData);
-
+            setFormClientState(toFormState("SUCCESS", ""));
         } catch (err) {
             setFormClientState(fromErrorToFormState(err));
-
         }
     };
 
@@ -64,10 +63,10 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
             }}
             className="flex flex-col gap-y-8 text-sm max-w-3xl mx-auto"
         >
-            <input type="hidden" name="userId" value={userId} />
+            <input type="hidden" name="userId" defaultValue={user?.id} />
 
             {"id" in props && props.id && (
-                <input type="hidden" name="id" value={props.id} />
+                <input type="hidden" name="id" defaultValue={props.id} />
             )}
 
             <InputText
@@ -82,14 +81,15 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
             />
 
 
-
             <ActionSlotList
                 formState={
                     formClientState.status == "ERROR" ? formClientState : formState
                 }
             />
 
-            <FormFieldsTimePlanning formState={formState} />
+            <FormFieldsTimePlanning formState={formClientState.status == "ERROR" ? formClientState : formState} />
+
+            <ToggleButton id="isPublic" label="Make my daily plan public" formState={formClientState.status == "ERROR" ? formClientState : formState} />
 
             <footer className="text-center p-8 pb-16" >
                 <SubmitButton
@@ -152,8 +152,7 @@ const ActionSlotList = ({ formState }: { formState: FormState }) => {
 
             <h2 className="text-md">Add daily actions:</h2>
 
-
-            <input type="text" name="slots" readOnly defaultValue={JSON.stringify(actionSlots)} />
+            <input type="text" id="slots" name="slots" readOnly hidden defaultValue={JSON.stringify(actionSlots)} />
 
             <div className="relative h-24">
                 <div className="absolute opacity-80 w-full">
@@ -299,34 +298,5 @@ const ActionSlotFieldset = ({
 };
 
 
-function parseSlotKey(key: string): { index: string; field: string } | null {
-    const match = key.match(/^slots\[(\d+)\]\.(\w+)$/);
-    if (!match) return null;
-
-    const [, indexStr, field] = match;
-    return {
-        index: indexStr,
-        field,
-    };
-}
-
-function parseFormDataToNestedObject(formData: FormData) {
-    const result: Record<string, any> = {};
-
-    for (const [key, value] of formData.entries()) {
-        const slotKey = parseSlotKey(key);
-
-        if (slotKey) {
-            const { index, field } = slotKey;
-            result.slots ??= [];
-            result.slots[index] ??= {};
-            result.slots[index][field] = value;
-        } else {
-            if (key !== "slots") result[key] = value;
-        }
-    }
-
-    return result;
-}
 
 

@@ -12,13 +12,11 @@ export const metadata: Metadata = {
 async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
 
 
-    let actionPlanRes: SelectActionPlan[] | undefined;
+    let actionPlans: SelectActionPlan[] | undefined;
     const actionPlanId = (await searchParams).actionPlanId;
 
     if (actionPlanId) {
-
-        actionPlanRes = await getActionPlan(Number(actionPlanId));
-
+        actionPlans = await getActionPlan(Number(actionPlanId));
     }
 
 
@@ -26,9 +24,9 @@ async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: s
         <>
             <h1 className="font-kira-hareng text-6xl text-center mb-12">{metadata.title as ReactNode}</h1>
             {
-                actionPlanRes
+                actionPlans
                     ?
-                    <FormDailyPlan  {...actionPlanRes[0]} />
+                    <FormDailyPlan  {...actionPlans[0]} />
                     :
                     <FormDailyPlan />
             }

@@ -74,6 +74,7 @@ function resolvePath<T = FormattedFieldError>(
 
     return keys.reduce<Record<string, unknown> | undefined>((acc, key) => {
         if (acc && typeof acc === "object") {
+
             return acc[key] as Record<string, unknown>;
         }
         return undefined;
@@ -167,5 +168,39 @@ function extractTimeRange(
     return range;
 }
 
+function parseSlotKey(key: string): { index: string; field: string } | null {
+    const match = key.match(/^slots\[(\d+)\]\.(\w+)$/);
+    if (!match) return null;
+
+    const [, indexStr, field] = match;
+    return {
+        index: indexStr,
+        field,
+    };
+}
+
+function parseFormDataToNestedObject(formData: FormData) {
+    const result: Record<string, any> = {};
+
+    for (const [key, value] of formData.entries()) {
+        const slotKey = parseSlotKey(key);
+
+        if (slotKey) {
+            const { index, field } = slotKey;
+            result.slots ??= [];
+            result.slots[index] ??= {};
+            result.slots[index][field] = value;
+        } else {
+            if (key !== "slots") result[key] = value;
+        }
+    }
+
+    return result;
+}
+
+
 export type { FormState }
-export { fromErrorToFormState, toFormState, resolvePath, timeStrToMinutes, extractMinutesFromDuration, extractTimeRange, EMPTY_FORM_STATE, };
+export {
+    fromErrorToFormState, toFormState, resolvePath, timeStrToMinutes, extractMinutesFromDuration, extractTimeRange, parseFormDataToNestedObject,
+    parseSlotKey, EMPTY_FORM_STATE,
+};
