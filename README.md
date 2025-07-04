@@ -4,6 +4,19 @@
 
 ---
 
+## 🧰 Built With
+
+| Feature            | Stack                             |
+| ------------------ | --------------------------------- |
+| Frontend           | Next.js 14 (App Router), React 19 |
+| Forms & Validation | Server Actions + Zod              |
+| Database           | Drizzle ORM + PostgreSQL          |
+| Authentication     | Clerk.js                          |
+| Repeating Logic    | Rust + WebAssembly (RRULE)        |
+| Styling            | Tailwind CSS                      |
+
+---
+
 ## ✨ What It Does
 
 - 🗓️ Plan your day using short, time-based action slots
@@ -26,16 +39,17 @@ Planskop is influenced by how many artists, writers, and thinkers shaped their d
 
 You won’t find endless checklists here — just a quiet space to repeat what matters, one day at a time.
 
-## 🧰 Built With
+---
 
-| Feature            | Stack                             |
-| ------------------ | --------------------------------- |
-| Frontend           | Next.js 14 (App Router), React 19 |
-| Forms & Validation | Server Actions + Zod              |
-| Database           | Drizzle ORM + PostgreSQL          |
-| Authentication     | Clerk.js                          |
-| Repeating Logic    | Rust + WebAssembly (RRULE)        |
-| Styling            | Tailwind CSS                      |
+## 🧪 Testing
+
+Planskop uses [Jest](https://jestjs.io/) with TypeScript support via `ts-jest`.
+
+Tests focus on:
+
+- Zod schema validation (form parsing, slot logic)
+- Utility functions (e.g. time range calculations)
+- Optional: server actions and WebAssembly logic (planned)
 
 ---
 
