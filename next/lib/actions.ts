@@ -1,7 +1,7 @@
 'use server'
 
 import { auth } from '@clerk/nextjs/server'
-import { dailyActionsFormSchema, insertActionPlanSchema, updateActionPlanSchema } from '../db/schema'
+import { dailyActionsFormSchema, InsertActionPlan, insertActionPlanSchema, updateActionPlanSchema } from '../db/schema'
 import { db } from '../db'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache';
@@ -25,7 +25,7 @@ export async function createActionPlan(prevState: FormState, formData: FormData)
     try {
         const flattenedFormData = formDataToObject(formData);
         validateRes = insertActionPlanSchema.parse(flattenedFormData);
-        await dbCreateActionPlan(flattenedFormData);
+        await dbCreateActionPlan(flattenedFormData as InsertActionPlan);
 
     } catch (err) {
         return fromErrorToFormState(err);
@@ -62,7 +62,7 @@ export async function deleteActionPlan(id: number) {
 
 
 
-function formDataToObject(formData: FormData): Record<string, FormDataEntryValue> {
+function formDataToObject(formData: FormData): Record<string, unknown> {
     const obj: Record<string, FormDataEntryValue> = {};
     for (const [key, value] of formData.entries()) {
         obj[key] = value;
