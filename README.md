@@ -4,52 +4,30 @@
 
 ---
 
-## 🧰 Built With
-
-| Feature            | Stack                             |
-| ------------------ | --------------------------------- |
-| Frontend           | Next.js 14 (App Router), React 19 |
-| Forms & Validation | Server Actions + Zod              |
-| Database           | Drizzle ORM + PostgreSQL          |
-| Authentication     | Clerk.js                          |
-| Repeating Logic    | Rust + WebAssembly (RRULE)        |
-| Styling            | Tailwind CSS                      |
-
----
-
 ## ✨ What It Does
 
 - 🗓️ Plan your day using short, time-based action slots
 - 🔁 Define habits that repeat (e.g. every weekday, or every Monday)
 - 🌍 Timezone-aware — reminders adjust to your local time
 - ✅ Validates overlapping or duplicate actions
-- 🙋‍♀️ User login via [Clerk.js](https://clerk.dev) (email or OAuth)
+- 🙋‍♀️ User login via [Clerk.js](https://clerk.dev)
+- 🖼️ Media uploads (e.g. avatars, icons) via [Cloudinary](https://cloudinary.com/)
+- 💾 Data stored per user in a [Neon](https://neon.tech/) PostgreSQL database
 
 ---
 
-## 💡 Inspiration
+## 🧰 Built With
 
-Planskop is influenced by how many artists, writers, and thinkers shaped their days around a few key actions.
-
-> _“I write every morning. That’s when I’m freshest. The rest of the day is for walking, reading, and not ruining the morning.”_  
-> — **Haruki Murakami**
-
-> _“Routine, in an intelligent man, is a sign of ambition.”_  
-> — **W.H. Auden**
-
-You won’t find endless checklists here — just a quiet space to repeat what matters, one day at a time.
-
----
-
-## 🧪 Testing
-
-Planskop uses [Jest](https://jestjs.io/) with TypeScript support via `ts-jest`.
-
-Tests focus on:
-
-- Zod schema validation (form parsing, slot logic)
-- Utility functions (e.g. time range calculations)
-- Optional: server actions and WebAssembly logic (planned)
+| Feature            | Stack                               |
+| ------------------ | ----------------------------------- |
+| Frontend           | Next.js 14 (App Router), React 19   |
+| Forms & Validation | Server Actions + Zod                |
+| Database           | Drizzle ORM + PostgreSQL (via Neon) |
+| Authentication     | Clerk.js                            |
+| Repeating Logic    | Rust + WebAssembly (RRULE)          |
+| Styling            | Tailwind CSS                        |
+| Media Storage      | Cloudinary                          |
+| Testing            | Jest + ts-jest                      |
 
 ---
 
@@ -60,7 +38,7 @@ git clone https://github.com/YOUR_USERNAME/planskop.git
 cd planskop
 
 pnpm install
-cp .env.example .env   # Add Clerk and DB credentials
+cp .env.example .env   # Add Clerk, Cloudinary, and Neon credentials
 
 pnpm dev
 ```
