@@ -67,11 +67,10 @@
       "a a a";
     gap: 8px;
 
-    container: root / inline-size;
+    /* container: root / inline-size; */
   }
 
   #root > .main-nav-bar {
-    border: 380px solid red;
     border-radius: 8px;
     position: fixed;
     bottom: 0px;
