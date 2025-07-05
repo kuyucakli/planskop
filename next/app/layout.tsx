@@ -1,7 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import { CardFamousPersonSummary } from "@/components/Card";
 import { FamousPeopleRoutines } from "./famous-people-routines";
-import Header from "@/components/Header";
+import MainNavBar from "@/components/MainNavBar";
 import { Kirang_Haerang } from "next/font/google";
 import Logo from "@/components/Logo";
 import type { Metadata } from "next";
@@ -41,7 +41,7 @@ export default async function RootLayout({
         </head>
         <body className={`font-mono ${kiraHareng.variable}`}>
           <div id="root" className="md:overflow-hidden">
-            <Header />
+            <MainNavBar />
             <header className="p-2">
               {/* <Logo onlyPictogram /> */}
               <NavUser />

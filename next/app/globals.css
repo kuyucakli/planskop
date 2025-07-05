@@ -70,8 +70,7 @@
     container: root / inline-size;
   }
 
-  #root > header:first-child {
-    background-color: rgb(51, 57, 56);
+  #root > .main-nav-bar {
     border-radius: 8px;
     grid-area: a;
     position: fixed;
@@ -85,7 +84,7 @@
       flex-direction: column;
     }
   }
-  #root > header + header {
+  #root > .main-nav-bar + header {
     grid-area: b;
     display: flex;
     justify-content: space-between;
@@ -140,11 +139,12 @@
       overflow: hidden;
     }
 
-    #root > header:first-child {
+    #root > .main-nav-bar {
       position: static;
       width: unset;
     }
   }
+
   @media screen and (min-width: 1024px) {
     #root {
       grid-template-areas:
@@ -154,4 +154,3 @@
     }
   }
 }
-
