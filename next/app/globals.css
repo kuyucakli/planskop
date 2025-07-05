@@ -74,8 +74,9 @@
     border-radius: 8px;
     grid-area: a;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
     flex-direction: column;
