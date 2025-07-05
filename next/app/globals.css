@@ -71,11 +71,11 @@
   }
 
   #root > .main-nav-bar {
-    border: 80px solid red;
+    border: 380px solid red;
     border-radius: 8px;
     position: fixed;
-    bottom: 64px;
-    left: 10px;
+    bottom: 0px;
+    left: 0px;
     z-index: 1000;
     display: flex;
     align-items: center;
