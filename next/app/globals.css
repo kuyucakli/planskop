@@ -58,7 +58,7 @@
     margin: 0 auto;
     padding: 4px;
     display: grid;
-    grid-template-columns: max-content 1fr minmax(300px, 0.4fr);
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto auto auto 56px;
     grid-template-areas:
       "b b b"
@@ -129,6 +129,7 @@
 @layer responsive {
   @media screen and (min-width: 768px) {
     #root {
+      grid-template-columns: max-content 1fr minmax(300px, 0.4fr);
       grid-template-rows: auto 1fr auto;
       grid-template-areas:
         "b b b"
@@ -148,6 +149,7 @@
 
   @media screen and (min-width: 1024px) {
     #root {
+      grid-template-columns: max-content 1fr minmax(300px, 0.4fr);
       grid-template-areas:
         "b b b"
         "a m c"

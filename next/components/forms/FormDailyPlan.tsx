@@ -206,9 +206,9 @@ const ActionSlotFieldset = ({
 
     return (
         <fieldset
-            className="flex flex-col gap-x-4  rounded-lg p-6 m-2"
+            className="flex flex-col gap-x-4  rounded-lg p-6 m-2 border-2"
         >
-            <div className="flex flex-row gap-x-4">
+            <div className="flex flex-row gap-x-4 ">
                 <FormComboBox
                     name={`slots[${id}].title`}
                     label="I can"
