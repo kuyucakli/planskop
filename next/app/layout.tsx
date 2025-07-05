@@ -45,9 +45,7 @@ export default async function RootLayout({
             <header className="p-2">
               {/* <Logo onlyPictogram /> */}
               <NavUser />
-              <form>
-                <input type="text" name="search" id="search" placeholder="search" />
-              </form>
+
             </header>
             <main className="p-6 limited-width overflow-y-auto">
 

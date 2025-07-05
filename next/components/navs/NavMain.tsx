@@ -10,9 +10,7 @@ export function NavMain() {
     const pathName = usePathname();
 
     return (
-        <nav className={`${styles.Nav} ${styles.NavMain}`}>
-
-
+        <nav className={`${styles.Nav} ${styles.NavMain} `}>
             <ul>
 
                 <li>
