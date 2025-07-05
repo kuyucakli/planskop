@@ -72,11 +72,10 @@
 
   #root > .main-nav-bar {
     border-radius: 8px;
-
     position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
+    bottom: 64px;
+    left: 10px;
+
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -131,7 +130,6 @@
 @layer responsive {
   @media screen and (min-width: 768px) {
     #root {
-      border: 2px solid red;
       grid-template-rows: auto 1fr auto;
       grid-template-areas:
         "b b b"
