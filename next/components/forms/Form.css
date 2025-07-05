@@ -33,3 +33,12 @@ span:has(+ select:not([value=""]):valid.floating-label) {
   position: absolute;
   bottom: -1.5rem;
 }
+
+fieldset {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+select {
+  max-width: 100%;
+}

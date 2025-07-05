@@ -47,7 +47,7 @@ export default async function RootLayout({
               <NavUser />
 
             </header>
-            <main className="p-6 limited-width overflow-y-auto">
+            <main className="p-3 md:p-6 limited-width overflow-y-auto">
 
               {children}
 

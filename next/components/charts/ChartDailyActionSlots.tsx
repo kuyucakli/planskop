@@ -32,7 +32,7 @@ const ChartDailyActionSlots = ({ actionSlots, compact = false, interval = 15, sh
     const boxWidthInFlexRow = 100 / (minutesInDay / interval * 0.5);
 
     return (
-        <div className={` p-4  text-gray-500   text-xs ${styles.ChartContainer} ${compact ? styles.Compact : ""}`}>
+        <div className={` text-gray-500   text-xs ${styles.ChartContainer} ${compact ? styles.Compact : ""}`}>
             <ul className="flex  flex-wrap shadow-sm shadow-black/50">
                 {dayMinutesByInterval.map((m, index) => {
                     const isActive = !!reservedMinutes?.has(m)
