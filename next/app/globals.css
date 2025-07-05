@@ -71,11 +71,10 @@
   }
 
   #root > .main-nav-bar {
-    border-radius: 8px;
     position: fixed;
     bottom: 0px;
     left: 0px;
-    z-index: 1000;
+
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -140,6 +139,7 @@
     }
 
     #root > .main-nav-bar {
+      border-radius: 8px;
       grid-area: a;
       position: static;
       width: unset;

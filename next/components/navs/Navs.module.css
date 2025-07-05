@@ -1,10 +1,14 @@
 .NavMain {
   background-color: var(--md-sys-color-surface);
-  border-radius: 16px;
+  width: 100%;
 
-  & > ul {
+  ul {
     display: flex;
     flex-direction: row;
+  }
+
+  & > ul > li {
+    flex: 1 1 0;
   }
 }
 
@@ -13,15 +17,11 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
-  height: 40px;
+  height: 48px;
 
   svg {
     fill: var(--color-primary);
-    flex: 0 1 auto;
-  }
-
-  span {
-    flex: 1 1 auto;
+    width: 20px;
   }
 
   &[class="active"] svg {
@@ -29,8 +29,10 @@
   }
 }
 
-@container root ( inline-size > 1024px ) {
+@media screen and (width >= 1024px) {
   .NavMain {
+    border-radius: 16px;
+
     a {
       width: 160px;
     }
