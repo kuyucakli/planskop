@@ -72,7 +72,7 @@
 
   #root > .main-nav-bar {
     border-radius: 8px;
-    grid-area: a;
+
     position: fixed;
     top: 0;
     left: 0;
@@ -141,6 +141,7 @@
     }
 
     #root > .main-nav-bar {
+      grid-area: a;
       position: static;
       width: unset;
     }
