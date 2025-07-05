@@ -131,6 +131,7 @@
 @layer responsive {
   @media screen and (min-width: 768px) {
     #root {
+      border: 2px solid red;
       grid-template-rows: auto 1fr auto;
       grid-template-areas:
         "b b b"
