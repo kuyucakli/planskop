@@ -1,63 +1,65 @@
 'use server'
 
-import { auth } from '@clerk/nextjs/server'
-import { dailyActionsFormSchema, InsertActionPlan, insertActionPlanSchema, updateActionPlanSchema } from '../db/schema'
-import { db } from '../db'
-import { eq } from 'drizzle-orm'
+import { InsertActionPlan, UpdateActionPlan, insertActionPlanSchema, updateActionPlanSchema } from '../db/schema'
 import { revalidatePath } from 'next/cache';
 import { dbCreateActionPlan, dbDeleteActionPlan, dbUpdateActionPlan } from '@/db/queries';
 import * as _wasm from "@/pkg/planskop_rust";
 import { ZodSchema, z } from 'zod';
-import { FormState, fromErrorToFormState, parseFormDataToNestedObject, toFormState } from './utils'
+import { FormState, fromErrorToFormState, parseFormDataToNestedObject, } from './utils'
+import { redirect } from 'next/navigation'
 
-
-// import { ActionPlanEmailTemplate } from '@/components/EmailTemplates';
-// import { Resend } from 'resend';
 
 
 
 
 export async function createActionPlan(prevState: FormState, formData: FormData) {
 
-    let validateRes;
-
-
     try {
         const flattenedFormData = formDataToObject(formData);
-        validateRes = insertActionPlanSchema.parse(flattenedFormData);
+        insertActionPlanSchema.parse(flattenedFormData);
         await dbCreateActionPlan(flattenedFormData as InsertActionPlan);
 
     } catch (err) {
         return fromErrorToFormState(err);
     }
     revalidatePath("/dashboard");
-    return toFormState('SUCCESS', 'Message created');
+    redirect("/habits?succes=" + "success message");
+    // return toFormState('SUCCESS', 'Message created');
 }
 
 
 export async function updateActionPlan(prevState: FormState, formData: FormData) {
-    const actionPlanObj = await prepareActionPlanData(formData, updateActionPlanSchema);
+    // const actionPlanObj = await prepareActionPlanData(formData, updateActionPlanSchema);
 
     try {
         const flattenedFormData = parseFormDataToNestedObject(formData);
-        await dbUpdateActionPlan(actionPlanObj);
+        updateActionPlanSchema.parse(flattenedFormData);
+        await dbUpdateActionPlan(flattenedFormData as UpdateActionPlan);
 
     } catch (err) {
-        console.log(err);
+        return fromErrorToFormState(err);
     }
     revalidatePath("/dashboard");
-    return toFormState('SUCCESS', 'Message created');
+    redirect("/habits?succes=" + "success message");
+    // return toFormState('SUCCESS', 'Message updated');
 
 
 }
 
-export async function deleteActionPlan(id: number) {
+export async function deleteActionPlan(formData: FormData) {
     try {
+        const id = Number(formData.get("id"));
+        if (Number.isNaN(id) || id < 0) {
+            throw new Error("Invalid Id");
+        };
         await dbDeleteActionPlan(id);
+
     } catch (err) {
-        console.log(err);
+        return;
     }
-    revalidatePath("/dashboard");
+    revalidatePath("/habits");
+    redirect("/habits?succes=" + "success message");
+
 }
 
 
@@ -83,77 +85,6 @@ async function prepareActionPlanData<TSchema extends ZodSchema<any>>(
     const actionPlanObj = schema.parse(rawObj);
 
 
-    // const byweekdayStr = formData.getAll("byweekday").join(",") || undefined;
-
-    // Extract known fields
-    // const { dtstart, until, count, interval, frequency, timezone, remind } = actionPlanObj;
-
-    // Subtract the timezone offset from dtstart
-    // const dtstartNoOffset = subtract_gmt_offset(dtstart, timezone);
-
-    // Create the iCal rule using the wasm function
-    // actionPlanObj.rrule = format_ical(dtstartNoOffset, until, frequency, interval, count, byweekdayStr);
-
-    // Set the next reminder time if applicable
-    // if (remind) {
-    //     actionPlanObj.nextRemindAtTime = get_next_remind_dt(actionPlanObj.rrule, remind);
-    // }
-
     return actionPlanObj;
 }
 
-// const resend = new Resend(process.env.RESEND_PLANSKOP_API_KEY);
-
-// export async function testing() {
-//     const { will_send_reminder_email, get_next_remind_dt, calc_with_remind_kind, with_timezone_offset, get_local_now, RemindKind, Operation } = _wasm;
-//     get_local_now();
-//     try {
-//         const remindersRes = await getNextReminders();
-
-//         console.table(remindersRes)
-//         for (const r of remindersRes) {
-
-//             //r.nextRemindAtTime format is 2024-09-26 19:00:00+00 (drizzle postgres?)
-//             const t = r.nextRemindAtTime.split(" ").join("T").split("+")[0] + "Z";
-
-//             const sendReminder = will_send_reminder_email(t, r.timezone, RemindKind[r.remind]);
-
-
-
-//             let actionPlanDt = calc_with_remind_kind(t, RemindKind[r.remind], Operation.Add);
-
-
-
-//             actionPlanDt = with_timezone_offset(actionPlanDt, r.timezone);
-
-
-//             //const test = get_next_remind_dt(r.rrule, RemindKind[r.remind], t as string);
-//             console.log(sendReminder, "ssssssss--------")
-
-//             if (sendReminder) {
-//                 const { data, error } = await resend.emails.send({
-//                     from: 'Planskop - Burak <planskop@kuyucakli.com>',
-//                     to: [r.userEmail as string],
-//                     subject: `Your action ${r.title} is on ${actionPlanDt}`,
-//                     react: ActionPlanEmailTemplate({ userName: r.userName, title: r.title, dt: actionPlanDt }),
-//                 });
-//                 console.log(data, error, "-*-*--0-0*-")
-//                 if (data) {
-//                     const nextRemindAtTime = get_next_remind_dt(r.rrule, RemindKind[r.remind], t);
-//                     dbUpdateActionPlan(
-//                         {
-//                             id: r.id,
-//                             nextRemindAtTime
-//                         }
-//                     );
-//                 }
-//             }
-//         }
-
-
-//     } catch (err) {
-//         return "err";
-
-//     }
-//     return "ok";
-// }

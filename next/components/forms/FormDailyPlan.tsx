@@ -5,6 +5,7 @@ import {
     ALLOWED_TIMES,
     dailyActionsFormSchema,
     DailyActionSlot,
+    dailyActionsUpdateFormSchema,
     InsertActionPlan,
     UpdateActionPlan,
 } from "@/db/schema";
@@ -24,8 +25,12 @@ import usePrevious from "@/hooks/usePreviousValue";
 import { useActionState, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { ToggleButton } from "../Buttons";
+import { IconClose, IconInfo } from "../Icons";
+
+
 
 export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
+
     const { user } = useUser();
     const [formClientState, setFormClientState] =
         useState<FormState>(EMPTY_FORM_STATE);
@@ -34,12 +39,12 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         formTypeAction,
         EMPTY_FORM_STATE
     );
-
-
     const noScriptFallback = useToastMessage(formState);
     const formRef = useFormReset(formState);
     const disableSaveButton =
         formClientState.status !== "SUCCESS";
+
+    console.log(formClientState, "0009933", props);
 
     const validateSlots = () => {
         if (!formRef.current) return false;
@@ -47,7 +52,13 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         try {
             const formData = new FormData(formRef.current);
             const flattenedFormData = parseFormDataToNestedObject(formData);
-            const result = dailyActionsFormSchema.parse(flattenedFormData);
+            if ("id" in props) {
+                dailyActionsUpdateFormSchema.parse(flattenedFormData);
+
+            } else {
+                dailyActionsFormSchema.parse(flattenedFormData);
+
+            }
             setFormClientState(toFormState("SUCCESS", ""));
         } catch (err) {
             setFormClientState(fromErrorToFormState(err));
@@ -55,90 +66,105 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
     };
 
     return (
-        <form
-            ref={formRef}
-            action={formAction}
-            onChange={() => {
-                validateSlots();
-            }}
-            className="flex flex-col gap-y-8 text-sm max-w-3xl mx-auto"
-        >
-            <input type="hidden" name="userId" defaultValue={user?.id} />
+        <>
+            <form
 
-            {"id" in props && props.id && (
-                <input type="hidden" name="id" defaultValue={props.id} />
-            )}
+                ref={formRef}
+                action={formAction}
+                onChange={() => {
+                    validateSlots();
+                }}
+                className="flex flex-col gap-y-8 text-sm max-w-3xl mx-auto"
+            >
+                <input type="hidden" name="userId" defaultValue={user?.id} />
 
-            <InputText
-                id="title"
-                name="title"
-                className="floating-label w-full"
-                formState={
-                    formClientState.status == "ERROR" ? formClientState : formState
-                }
-                defaultValue={"title" in props ? props.title : ""}
-                placeholder=""
-            />
+                {"id" in props && props.id && (
+                    <input type="hidden" name="id" readOnly defaultValue={props.id} />
+                )}
 
-
-            <ActionSlotList
-                formState={
-                    formClientState.status == "ERROR" ? formClientState : formState
-                }
-            />
-
-            <FormFieldsTimePlanning formState={formClientState.status == "ERROR" ? formClientState : formState} />
-
-            <ToggleButton id="isPublic" label="Make my daily plan public" formState={formClientState.status == "ERROR" ? formClientState : formState} />
-
-            <footer className="text-center p-8 pb-16" >
-                <SubmitButton
-                    className="w-full"
-                    disabled={disableSaveButton}
-                    label={"id" in props && props.id ? "Update" : "Save"}
-                    loadingLabel="Pending..."
-
+                <InputText
+                    id="title"
+                    name="title"
+                    className="floating-label w-full"
+                    formState={
+                        formClientState.status == "ERROR" ? formClientState : formState
+                    }
+                    defaultValue={"title" in props ? props.title : ""}
+                    placeholder=""
                 />
-            </footer>
 
-            {noScriptFallback}
-        </form>
+
+                <ActionSlotList
+                    defaultValue={"slots" in props ? props.slots : undefined}
+                    formState={
+                        formClientState.status == "ERROR" ? formClientState : formState
+                    }
+                />
+
+                <FormFieldsTimePlanning formState={formClientState.status == "ERROR" ? formClientState : formState} {...props} />
+
+                <ToggleButton id="isPublic" label="Make my daily plan public" formState={formClientState.status == "ERROR" ? formClientState : formState} defaultChecked={"isPublic" in props ? !!props.isPublic : undefined} />
+
+                <footer className="text-center p-8 pb-16">
+                    <SubmitButton
+                        className="w-full"
+                        disabled={disableSaveButton}
+                        label={"id" in props && props.id ? "Update" : "Save"}
+                        loadingLabel="Pending..."
+                    />
+                </footer>
+                {noScriptFallback}
+            </form>
+
+        </>
     );
 }
 
-const ActionSlotList = ({ formState }: { formState: FormState }) => {
+const ActionSlotList = ({ formState, defaultValue }: { formState: FormState, defaultValue?: DailyActionSlot[] | undefined }) => {
 
-    const [actionSlots, setActionSlots] = useState([{ id: "0" }]);
+
+    const slotsDefault = defaultValue ? defaultValue : [{ id: "0", title: "", at: "", duration: "" }];
+    const [actionSlots, setActionSlots] = useState(slotsDefault);
 
     const handleAddSlot = () => {
-        setActionSlots([...actionSlots, { id: actionSlots.length + "" }]);
+        setActionSlots([...actionSlots, { id: actionSlots.length + "", title: "", duration: "", at: "" }]);
     };
 
     const handleDeleteSlot = (id: string) => {
 
-        setActionSlots(actionSlots.filter((a) => a.id != id));
+        console.log(id, actionSlots, typeof id, actionSlots.filter((a) => a.id !== id))
+        const filtered = actionSlots.filter((a) => a.id !== id);
+        setActionSlots(filtered);
     };
 
     const updateSlot = (slotKey: string, value: string) => {
+
         const parsedSlotKey = parseSlotKey(slotKey);
+
+
         if (!parsedSlotKey) return;
 
         const updated = actionSlots.map((s) => {
+
             if (s.id == parsedSlotKey.index) {
+
                 return { ...s, [parsedSlotKey.field]: value }
             }
             return s;
         })
+
 
         setActionSlots(updated);
 
     }
 
     const prevActionSlotCount = usePrevious(actionSlots.length);
+
+
     const disableAddMoreButton =
         prevActionSlotCount != actionSlots.length ||
         actionSlots.length >= 5 ||
-        formState.status == "UNSET" ||
+        // formState.status == "UNSET" ||
         !!formState.fieldErrors["slots"];
 
     return (
@@ -152,7 +178,8 @@ const ActionSlotList = ({ formState }: { formState: FormState }) => {
 
             <h2 className="text-md">Add daily actions:</h2>
 
-            <input type="text" id="slots" name="slots" readOnly hidden defaultValue={JSON.stringify(actionSlots)} />
+
+            <input type="text" id="slots" name="slots" readOnly hidden value={JSON.stringify(actionSlots) || ""} />
 
             <div className="relative h-24">
                 <div className="absolute opacity-80 w-full">
@@ -163,13 +190,15 @@ const ActionSlotList = ({ formState }: { formState: FormState }) => {
                 </div>
             </div>
 
-            {actionSlots.map((a, index) => (
+            {actionSlots.map((a) => (
                 <ActionSlotFieldset
-                    key={index}
-                    title=""
+                    key={a.id}
+                    title={a?.title || ""}
+                    at={a?.at || ""}
+                    duration={a?.duration || ""}
                     description=""
                     formState={formState}
-                    id={index + ""}
+                    id={a.id}
                     deleteSlot={handleDeleteSlot}
                     showBtnDelete={actionSlots.length > 1}
                 />
@@ -190,6 +219,8 @@ const ActionSlotList = ({ formState }: { formState: FormState }) => {
 const ActionSlotFieldset = ({
     id,
     title,
+    at,
+    duration,
     description,
     formState,
     deleteSlot,
@@ -198,6 +229,8 @@ const ActionSlotFieldset = ({
     id: string;
     title: string;
     description: string;
+    at: string
+    duration: string
     showBtnDelete: boolean;
     formState: FormState;
     deleteSlot: (id: string) => void;
@@ -217,6 +250,7 @@ const ActionSlotFieldset = ({
                     formState={formState}
                     required={true}
                     placeholder="swim"
+                    defaultValue={title}
                 />
                 <FormComboBox
                     name={`slots[${id}].at`}
@@ -226,15 +260,17 @@ const ActionSlotFieldset = ({
                     formState={formState}
                     required={true}
                     placeholder="12:00"
+                    defaultValue={at}
                 />
                 <FormComboBox
-                    name={`slots[${id}].for`}
-                    label="for"
+                    name={`slots[${id}].duration`}
+                    label="duration"
                     className=" border-0 border-b-2 rounded-none block"
                     options={ALLOWED_DURATIONS}
                     formState={formState}
                     required={true}
-                    placeholder="One Hour"
+                    placeholder="1 Hour"
+                    defaultValue={duration}
                 />
             </div>
 
@@ -246,20 +282,14 @@ const ActionSlotFieldset = ({
                     }}
                     className="flex items-center gap-x-2"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                    <IconInfo
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                        className="size-6"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
-                        />
-                    </svg>
+                        className="size-5"
+                    />
+
                 </button>
                 <textarea
                     name={`slots[${id}].description`}
@@ -273,30 +303,19 @@ const ActionSlotFieldset = ({
             {showBtnDelete && (
                 <button
                     type="button"
+                    className="self-end"
                     onClick={(e) => {
                         deleteSlot(id);
                     }}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                        />
-                    </svg>
+                    <IconClose
+                        height="20px" viewBox="0 -960 960 960" width="20px" fill="#EA3323"
+                    />
+
                 </button>
             )}
         </fieldset>
     );
 };
-
-
 
 

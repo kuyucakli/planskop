@@ -5,7 +5,10 @@ import { getFamousPeopleWithRoutines } from "@/db/queries";
 
 
 const FamousPeopleRoutines = async () => {
+    
     const famousPeopleWithRoutines = await getFamousPeopleWithRoutines();
+
+
     const grouped = Object.values(
         famousPeopleWithRoutines.reduce(
             (acc, row) => {

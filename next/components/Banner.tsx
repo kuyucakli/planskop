@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 
 export default function Banner({ children }: PropsWithChildren) {
     return (
-        <section>
+        <section className="bg-zinc-500">
             {children}
         </section>
     )

@@ -3,7 +3,7 @@ import { ReactElement } from "react"
 /*
 Material Icons -> https://fonts.google.com/icons
 */
-const IconSvgBase = ({ fill, children }: { fill?: string, children: ReactElement<SVGPathElement> }) => <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" >{children}</svg>
+const IconSvgBase = ({ children, ...props }: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" {...props}>{children}</svg>
 
 const IconHome = ({ fill = "e8eaed" }) => (
     <IconSvgBase fill={fill}><path d="M252-212h85v-251h286v251h85v-342L480-725 252-554v342ZM126-86v-531l354-266 354 265.67V-86H512v-266h-64v266H126Zm354-382Z" /></IconSvgBase>
@@ -15,8 +15,8 @@ const IconUserCircle = () => (
 )
 
 
-const IconLogout = () => (
-    <IconSvgBase>
+const IconLogout = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}>
         <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
     </IconSvgBase>
 )
@@ -47,6 +47,23 @@ const IconAdd = () => (
 )
 
 
+const IconInfo = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+        />
+    </IconSvgBase>
+)
+
+const IconClose = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}>
+        <path d="m338-288-50-50 141-142-141-141 50-50 142 141 141-141 50 50-141 141 141 142-50 50-141-141-142 141Z" />
+    </IconSvgBase>
+)
+
+
 
 
 export {
@@ -58,5 +75,7 @@ export {
     IconSave,
     IconCancel,
     IconAdd,
+    IconInfo,
+    IconClose,
 };
 

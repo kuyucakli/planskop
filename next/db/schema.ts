@@ -1,7 +1,7 @@
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import { extractTimeRange } from "@/lib/utils";
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, index, timestamp, date, varchar, pgEnum, time, boolean } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, index, timestamp, date, varchar, pgEnum, time, boolean, json } from 'drizzle-orm/pg-core';
 import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -178,7 +178,7 @@ export const dailyPlanTbl = pgTable('action_plan', {
     dtstart: date('dtstart', { mode: "string" }).notNull().defaultNow(),
     isPublic: boolean('is_public'),
     // nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
-    slots: varchar('slots').notNull(),
+    slots: json('slots').notNull().$type<DailyActionSlot[]>(),
     // rrule: varchar('rrule').notNull(),
     remind: remindEnum("remind"),
     repeat: repeatEnum("repeat"),
@@ -208,11 +208,11 @@ export const actionPlanCategoryRelations = relations(actionPlanCategoryTbl, ({ m
 // 1. ZOD schemas generated from drizzle-zod
 export const baseInsertActionPlanSchema = createInsertSchema(dailyPlanTbl);
 export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
-// 2. For frontend forms
-export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
+// 2. Shared extension for form validation
+const sharedActionPlanFields = {
     title: z.string().min(3).max(30),
     isPublic: z
-        .union([z.literal("on"), z.undefined()])
+        .union([z.literal("on"), z.boolean()])
         .transform((val) => val === "on"),
     dtstart: z
         .string()
@@ -223,11 +223,15 @@ export const insertActionPlanSchema = baseInsertActionPlanSchema.extend({
             return !isNaN(date.getTime());
         }, {
             message: "Invalid date",
-        })
-});
+        }),
+};
+
+// 3. Final form schemas
+export const insertActionPlanSchema = baseInsertActionPlanSchema.extend(sharedActionPlanFields);
 
 export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
-    id: z.number(), // required for `.where(...)`
+    id: z.preprocess((val) => Number(val), z.number().int().positive()), // required for update
+    ...sharedActionPlanFields,
 });
 
 // 3. Drizzle types — from the table (for DB access)
@@ -299,7 +303,7 @@ export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect,
 
 
 const dailyActionSlotSchema = z.object({
-    id: z.string().optional(),
+    id: z.string(),
     title: z.enum(DATA_I_CAN_ACTIONS, {
         errorMap: (issue) => ({ message: 'Select from the list' })
     }),
@@ -307,79 +311,85 @@ const dailyActionSlotSchema = z.object({
     at: z.enum(ALLOWED_TIMES, {
         errorMap: (issue) => ({ message: 'Select from the list' })
     }),
-    for: z.enum(ALLOWED_DURATIONS, {
+    duration: z.enum(ALLOWED_DURATIONS, {
         errorMap: (issue) => ({ message: 'Select from the list' })
     }),
 });
 
 type DailyActionSlot = z.infer<typeof dailyActionSlotSchema>;
 
+const dailyActionsFormSchemaBase = z.object({
+    slots: z
+        .array(dailyActionSlotSchema)
+        .min(1, "You must add at least one daily action slot.")
+        .max(5, "You can add up to 5 daily action slots.")
+        .superRefine((slots, ctx) => {
+            const startTimes = new Set();
+            const reserved: number[] = [];
+            const titleToIndex = new Map<string, number>();
+
+
+            slots.forEach((slot, index) => {
+                if (startTimes.has(slot.at)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: `Start time "${slot.at}" is duplicated`,
+                        path: [index, 'at'],
+                    });
+                } else {
+                    startTimes.add(slot.at);
+                }
+
+                const slotTimeRange = extractTimeRange(slot.at, slot.duration, 15, false, true);
+
+                for (const time of slotTimeRange) {
+                    if (reserved.includes(time)) {
+                        ctx.addIssue({
+                            code: z.ZodIssueCode.custom,
+                            message: `Time slot "${slot.at} - ${slot.duration}" overlaps with another action`,
+                            path: [index, 'duration'],
+                        });
+                    } else {
+                        reserved.push(time);
+                    }
+                }
+
+
+
+                const title = slot.title;
+
+                if (titleToIndex.has(title)) {
+
+                    const firstIndex = titleToIndex.get(title)!;
+
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: `Title "${title}" is duplicated`,
+                        path: [index, "title"],
+                    });
+
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: `Title "${title}" is also used here`,
+                        path: [firstIndex, "title"],
+                    });
+                } else {
+                    titleToIndex.set(title, index);
+                }
+
+            });
+        })
+});
+
 const dailyActionsFormSchema = insertActionPlanSchema.merge(
-    z.object({
-        slots: z
-            .array(dailyActionSlotSchema)
-            .min(1, "You must add at least one daily action slot.")
-            .max(5, "You can add up to 5 daily action slots.")
-            .superRefine((slots, ctx) => {
-                const startTimes = new Set();
-                const reserved: number[] = [];
-                const titleToIndex = new Map<string, number>();
-
-
-                slots.forEach((slot, index) => {
-                    if (startTimes.has(slot.at)) {
-                        ctx.addIssue({
-                            code: z.ZodIssueCode.custom,
-                            message: `Start time "${slot.at}" is duplicated`,
-                            path: [index, 'at'],
-                        });
-                    } else {
-                        startTimes.add(slot.at);
-                    }
-
-                    const slotTimeRange = extractTimeRange(slot.at, slot.for, 15, false, true);
-
-                    for (const time of slotTimeRange) {
-                        if (reserved.includes(time)) {
-                            ctx.addIssue({
-                                code: z.ZodIssueCode.custom,
-                                message: `Time slot "${slot.at} - ${slot.for}" overlaps with another action`,
-                                path: [index, 'for'],
-                            });
-                        } else {
-                            reserved.push(time);
-                        }
-                    }
-
-
-
-                    const title = slot.title;
-
-                    if (titleToIndex.has(title)) {
-
-                        const firstIndex = titleToIndex.get(title)!;
-
-                        ctx.addIssue({
-                            code: z.ZodIssueCode.custom,
-                            message: `Title "${title}" is duplicated`,
-                            path: [index, "title"],
-                        });
-
-                        ctx.addIssue({
-                            code: z.ZodIssueCode.custom,
-                            message: `Title "${title}" is also used here`,
-                            path: [firstIndex, "title"],
-                        });
-                    } else {
-                        titleToIndex.set(title, index);
-                    }
-
-                });
-            })
-    })
+    dailyActionsFormSchemaBase
 );
 
+const dailyActionsUpdateFormSchema = updateActionPlanSchema.merge(
+    dailyActionsFormSchemaBase
+)
 
 
-export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema, REPEAT_DURATIONS, REMIND_AT, type DailyActionSlot, type AllowedTime, type AllowedDuration, type RepeatDurations, type remindAt };
+
+export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema, dailyActionsUpdateFormSchema, REPEAT_DURATIONS, REMIND_AT, type DailyActionSlot, type AllowedTime, type AllowedDuration, type RepeatDurations, type remindAt };
 

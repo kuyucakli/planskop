@@ -41,12 +41,12 @@ export function ToggleThemeButton() {
 
 type toggleButtonProps = { ariaLabel?: string, label?: string, formState: FormState }
 
-export function ToggleButton({ ariaLabel, label, id, name, formState }: React.InputHTMLAttributes<HTMLInputElement> & toggleButtonProps) {
+export function ToggleButton({ ariaLabel, label, id, name, formState, defaultChecked }: React.InputHTMLAttributes<HTMLInputElement> & toggleButtonProps) {
 
     return (
         <label aria-label={ariaLabel} className="flex items-center">
             {label && <span className="mr-3">{label}</span>}
-            <input id={id || name} name={name || id} type="checkbox" className={styles.ToggleButton} defaultChecked={false} />
+            <input id={id || name} name={name || id} type="checkbox" className={styles.ToggleButton} defaultChecked={!!defaultChecked} />
 
             <FieldError name={name || id || ""} formState={formState} />
         </label>

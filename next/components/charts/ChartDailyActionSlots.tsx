@@ -8,13 +8,15 @@ import { extractTimeRange } from "@/lib/utils";
 
 
 const ChartDailyActionSlots = ({ actionSlots, compact = false, interval = 15, showContent = false }: { actionSlots?: DailyActionSlot[], compact?: boolean, interval?: number, showContent?: boolean }) => {
+
+
     const { colors } = UseThemeContext();
     const colorIndexes: Record<number, string> = {};
     let reservedMinutes: Set<number> | undefined;
     if (actionSlots) {
         reservedMinutes = actionSlots.reduce((acc, actionSLot, index) => {
 
-            extractTimeRange(actionSLot.at, actionSLot.for, 15, false, true).forEach((t) => {
+            extractTimeRange(actionSLot.at, actionSLot.duration, 15, false, true).forEach((t) => {
                 acc.add(t)
                 colorIndexes[t] = colors[index];
             });

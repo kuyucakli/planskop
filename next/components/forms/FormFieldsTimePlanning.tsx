@@ -11,12 +11,16 @@ import { FieldError } from "./FormFieldError";
 
 const weekDaysKeys = Object.keys(WeekDays) as Array<keyof typeof WeekDays>;
 
-export default function FormFieldsTimePlanning({
-    dtstart,
-    timezone,
-    remind,
-    formState
-}: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
+export default function
+    FormFieldsTimePlanning({
+        dtstart,
+        timezone,
+        repeat,
+        remind,
+        formState,
+
+
+    }: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
     const { get_local_now, get_timezones, get_local_timezone } = useWasm() || {};
 
     // const countMatch = rrule?.match(/COUNT=(\d+)/);
@@ -42,13 +46,14 @@ export default function FormFieldsTimePlanning({
     return (
         <>
             <label htmlFor="dtstart">Start Daily Plan At:
-                <input type="date" id="dtstart" name="dtstart"></input>
+                <input type="date" id="dtstart" name="dtstart" defaultValue={dtstart || ""}></input>
                 <FieldError name="dtstart" formState={formState} />
             </label>
 
             <FormComboBox
                 name={`repeat`}
                 label="Repeat For"
+                defaultValue={repeat || ""}
                 className="basis-full border-0 border-b-2 rounded-none"
                 options={REPEAT_DURATIONS}
                 formState={formState}
@@ -60,6 +65,7 @@ export default function FormFieldsTimePlanning({
             <FormComboBox
                 name={`remind`}
                 label="Remind At"
+                defaultValue={remind || ""}
                 className="basis-full border-0 border-b-2 rounded-none"
                 options={REMIND_AT}
                 formState={formState}
@@ -73,7 +79,7 @@ export default function FormFieldsTimePlanning({
 
                 <select id="timezone" name="timezone" defaultValue={timezone || userSystemTimezone} >
 
-                    <option value={userSystemTimezone}>{userSystemTimezone}</option>
+                    <option value={timezone || userSystemTimezone}>{userSystemTimezone}</option>
 
                     {get_timezones().split(", ").map((t) => (
 

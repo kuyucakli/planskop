@@ -184,16 +184,23 @@ function parseFormDataToNestedObject(formData: FormData) {
 
     for (const [key, value] of formData.entries()) {
         const slotKey = parseSlotKey(key);
-
+        console.log("key:", key, "value:", value)
         if (slotKey) {
             const { index, field } = slotKey;
             result.slots ??= [];
             result.slots[index] ??= {};
             result.slots[index][field] = value;
+            result.slots[index]["id"] = index;
         } else {
             if (key !== "slots") result[key] = value;
         }
     }
+
+    if (!("isPublic" in result)) {
+        result.isPublic = false;
+    }
+
+    console.log("parsed:", result)
 
     return result;
 }
