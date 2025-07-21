@@ -205,7 +205,7 @@ function parseFormDataToNestedObject(formData: FormData) {
 
 
 function addAllowedDuration(startDate: Date, duration: string | null | undefined): Date {
-    if (!startDate) return startDate;
+    if (!startDate || !duration) return startDate;
     const result = new Date(startDate.getTime());
     const match = duration.match(/(\d+)\s*(day|week|month|year)s?/i);
     if (!match) throw new Error("Invalid duration");
