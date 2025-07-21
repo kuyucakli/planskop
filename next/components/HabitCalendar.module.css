@@ -1,0 +1,12 @@
+.HabitCalendar {
+  container: habit-calendar;
+  display: flex;
+  position: relative;
+  overflow-x: auto;
+  margin: 0 -10px;
+}
+
+.HabitCalendar > li {
+  flex: 1 0 80dvw;
+  max-width: 300px;
+}

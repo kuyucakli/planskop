@@ -200,7 +200,35 @@ function parseFormDataToNestedObject(formData: FormData) {
         result.isPublic = false;
     }
 
-    console.log("parsed:", result)
+    return result;
+}
+
+
+function addAllowedDuration(startDate: Date, duration: string | null | undefined): Date {
+    if (!startDate) return startDate;
+    const result = new Date(startDate.getTime());
+    const match = duration.match(/(\d+)\s*(day|week|month|year)s?/i);
+    if (!match) throw new Error("Invalid duration");
+
+    const [_, numStr, unit] = match;
+    const amount = parseInt(numStr, 10);
+
+    switch (unit.toLowerCase()) {
+        case "day":
+            result.setDate(result.getDate() + amount);
+            break;
+        case "week":
+            result.setDate(result.getDate() + amount * 7);
+            break;
+        case "month":
+            result.setMonth(result.getMonth() + amount);
+            break;
+        case "year":
+            result.setFullYear(result.getFullYear() + amount);
+            break;
+        default:
+            throw new Error("Unsupported duration unit");
+    }
 
     return result;
 }
@@ -209,5 +237,5 @@ function parseFormDataToNestedObject(formData: FormData) {
 export type { FormState }
 export {
     fromErrorToFormState, toFormState, resolvePath, timeStrToMinutes, extractMinutesFromDuration, extractTimeRange, parseFormDataToNestedObject,
-    parseSlotKey, EMPTY_FORM_STATE,
+    parseSlotKey, EMPTY_FORM_STATE, addAllowedDuration
 };

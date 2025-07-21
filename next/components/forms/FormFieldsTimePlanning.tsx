@@ -21,26 +21,12 @@ export default function
 
 
     }: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
-    const { get_local_now, get_timezones, get_local_timezone } = useWasm() || {};
+    const { get_timezones, get_local_timezone } = useWasm() || {};
 
-    // const countMatch = rrule?.match(/COUNT=(\d+)/);
-    // const intervalMatch = rrule?.match(/INTERVAL=(\d+)/);
-    // const byweekdayMatch = rrule?.match(/BYDAY=([A-Z,]+);/);
-
-    // const [rrules, setRrules] = useState<Rrules>({
-    //     dtstart: dtstart || "",
-    //     frequency: byweekdayMatch ? Frequency.Weekly : Frequency.Daily,
-    //     until: "",
-    //     count: countMatch ? countMatch[1] : "",
-    //     interval: intervalMatch ? intervalMatch[1] : "",
-    //     byweekday: byweekdayMatch ? byweekdayMatch[1].split(",") as WeekDays[] : [getWeekdayName()],
-    // });
 
     const userSystemTimezone = get_local_timezone ? get_local_timezone() : undefined;
 
-
-
-    if (!get_local_now || !get_timezones) return "loading";
+    if (!get_timezones) return "loading";
 
 
     return (

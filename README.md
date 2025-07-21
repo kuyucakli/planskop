@@ -1,10 +1,10 @@
-# 🧭 Planskop
+# Planskop
 
 **Planskop** is a small, focused app for planning your day around a few meaningful habits or actions. It’s built for personal use — simple enough to stay out of your way, but structured enough to help you follow through.
 
 ---
 
-## ✨ What It Does
+## What It Does
 
 - 🗓️ Plan your day using short, time-based action slots
 - 🔁 Define habits that repeat (e.g. every weekday, or every Monday)
@@ -16,7 +16,7 @@
 
 ---
 
-## 🧰 Built With
+## Built With
 
 | Feature            | Stack                               |
 | ------------------ | ----------------------------------- |
@@ -42,3 +42,16 @@ cp .env.example .env   # Add Clerk, Cloudinary, and Neon credentials
 
 pnpm dev
 ```
+
+## To Do's
+
+- Home Page, one famous routine.
+- Home Page one famous detail page + summary popup on hover
+- Home Recent user habits
+- Add more dummy users
+- Add media table
+- Add like table
+- Countdown for day and hours
+- Add image
+- Rewards
+- Levels

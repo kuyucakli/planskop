@@ -9,7 +9,7 @@ export const UserWelcomeTitle = () => {
     return (
         <span className="text-xs ml-4 capitalize">
             <Link href="/">
-                {user?.firstName || user?.username}<span className="normal-case">'s</span> routines
+                {user?.firstName || user?.username || user?.primaryEmailAddress?.emailAddress.split("@")[0]}<span className="normal-case">'s</span> Habits
             </Link>
         </span >
     );

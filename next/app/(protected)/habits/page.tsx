@@ -3,11 +3,15 @@ import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { deleteActionPlan } from "@/lib/actions";
 import { FormDelete } from "@/components/forms/FormDelete";
+import { HabitCalendar } from "@/components/HabitCalendar";
+
+
+
+
 
 export const metadata: Metadata = {
-    title: "😎 My Habits",
+    title: "My Daily Plans",
 };
 
 
@@ -30,21 +34,20 @@ export default async function Page({ searchParams }: {
             <h1 className="text-6xl font-kira-hareng">{metadata.title as ReactNode}</h1>
 
             <section className="mt-6">
-                <h1 className="text-2xl">Your Daily Plans:</h1>
+
                 <ul>
                     {content?.map(c => {
 
                         return (
                             <li key={c.id}>
-                                <h2>
+                                <h2 className="text-3xl">
                                     <Link href={`/planner/?actionPlanId=${c.id}`}>{c.title}</Link>
                                 </h2>
-                                <p>{c.repeat}</p>
-                                <ul>
-                                    {c.slots.map((s, index) => <li key={index}>{s.duration}, {s.at}, {s.title}</li>)}
-                                </ul>
-                                <FormDelete id={c.id} />
+                                <p>Starting from, {new Date(c.dtstart).toLocaleDateString("en-US", { year: "numeric", month: "long", weekday: "long", day: "numeric", })}</p>
+                                <p>For {c.repeat}:</p>
 
+                                <HabitCalendar dailyPlan={c} />
+                                <FormDelete id={c.id} />
                             </li>
                         )
 
@@ -52,6 +55,7 @@ export default async function Page({ searchParams }: {
 
 
                 </ul>
+
             </section>
 
         </>

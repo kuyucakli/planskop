@@ -34,8 +34,6 @@ async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: s
                     </>
 
                 )
-
-
             }
 
             {!actionPlanId && <FormDailyPlan />}

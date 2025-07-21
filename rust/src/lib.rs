@@ -194,9 +194,16 @@ pub fn format_ical(
     count: Option<String>,
     by_week_day: Option<String>,
 ) -> String {
+    fn parse_date_or_datetime(input: &str) -> NaiveDateTime {
+        NaiveDateTime::parse_from_str(input, "%Y-%m-%dT%H:%M")
+            .or_else(|_| {
+                NaiveDate::parse_from_str(input, "%Y-%m-%d")
+                    .map(|date| date.and_hms_opt(0, 0, 0).expect("Invalid default time"))
+            })
+            .expect("Failed to parse date or datetime")
+    }
     // Parse the incoming dtstart in "YYYY-MM-DDTHH:MM" format
-    let parsed_dtstart =
-        NaiveDateTime::parse_from_str(&dtstart, "%Y-%m-%dT%H:%M").expect("Failed to parse dtstart");
+    let parsed_dtstart = parse_date_or_datetime(&dtstart);
 
     // Convert dtstart to UTC format and iCalendar format
     let formatted_dtstart = Utc
@@ -224,8 +231,7 @@ pub fn format_ical(
     }
 
     if let Some(until) = until {
-        let parsed_until =
-            NaiveDateTime::parse_from_str(&until, "%Y-%m-%dT%H:%M").expect("Failed to parse until");
+        let parsed_until = parse_date_or_datetime(&until);
         let formatted_until = Utc
             .from_utc_datetime(&parsed_until)
             .format("%Y%m%dT%H%M%SZ")
@@ -362,11 +368,4 @@ fn get_offset_from_gmt_str(gmt_str: &str) -> i32 {
     }
 
     0
-}
-
-mod candle_test;
-
-#[wasm_bindgen]
-pub fn test_the_candle() {
-    candle_test::test();
 }

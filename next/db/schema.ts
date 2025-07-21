@@ -1,7 +1,7 @@
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import { extractTimeRange } from "@/lib/utils";
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, index, timestamp, date, varchar, pgEnum, time, boolean, json } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, index, timestamp, date, varchar, pgEnum, time, boolean, json, unique } from 'drizzle-orm/pg-core';
 import { createUpdateSchema, createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -389,6 +389,27 @@ const dailyActionsUpdateFormSchema = updateActionPlanSchema.merge(
     dailyActionsFormSchemaBase
 )
 
+
+export const actionPhotos = pgTable("action_photos", {
+    id: serial("id").primaryKey(),
+    userId: text('user_id').notNull(),
+    actionDate: date("action_date").notNull(), // e.g. 2025-07-17
+    actionId: text("action_id").notNull(),     // e.g. "0", "1" from JSON
+    imageUrl: text("image_url").notNull(),     // stored in Cloudinary, etc.
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow(),
+}, (t) => ([
+    unique().on(t.userId, t.actionDate, t.actionId),
+]));
+
+export const likes = pgTable("likes", {
+    id: serial("id").primaryKey(),
+    userId: text('user_id').notNull(),
+    targetId: integer("target_id").notNull(),
+    targetType: text("target_type").notNull(), // 'post', 'image', etc.
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (t) => ([
+    unique().on(t.userId, t.targetId, t.targetType),
+]));
 
 
 export { ALLOWED_DURATIONS, ALLOWED_TIMES, dailyActionSlotSchema, dailyActionsFormSchema, dailyActionsUpdateFormSchema, REPEAT_DURATIONS, REMIND_AT, type DailyActionSlot, type AllowedTime, type AllowedDuration, type RepeatDurations, type remindAt };

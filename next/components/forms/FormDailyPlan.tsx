@@ -44,7 +44,6 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
     const disableSaveButton =
         formClientState.status !== "SUCCESS";
 
-    console.log(formClientState, "0009933", props);
 
     const validateSlots = () => {
         if (!formRef.current) return false;
@@ -132,7 +131,6 @@ const ActionSlotList = ({ formState, defaultValue }: { formState: FormState, def
 
     const handleDeleteSlot = (id: string) => {
 
-        console.log(id, actionSlots, typeof id, actionSlots.filter((a) => a.id !== id))
         const filtered = actionSlots.filter((a) => a.id !== id);
         setActionSlots(filtered);
     };
