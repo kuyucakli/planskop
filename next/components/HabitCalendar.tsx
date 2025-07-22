@@ -52,7 +52,7 @@ export const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) =>
                                     <span className="text-2xl">{getMonthName(d)}</span> {ordinals[getWeekOfMonth(d) + "."]} week
                                 </span>
                             }
-                            <li className="flex justify-center items-center max-w-sm  bg-white border border-gray-200 rounded shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-sm ">
+                            <li className="flex justify-center items-center max-w-sm   border  border-gray-700 rounded shadow-sm  bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-sm ">
 
                                 {d.toLocaleDateString("en-US", options)}
                             </li>

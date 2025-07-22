@@ -9,7 +9,7 @@ import { ChartFamousDailyRoutines } from "./charts/";
 
 const Card = ({ children, className }: PropsWithChildren & { className?: string }) => {
     return (
-        <div className={`${className} block my-4 p-6 bg-white rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700`}>
+        <div className={`${className} block my-4 p-6 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700`}>
             {children}
         </div>
     );

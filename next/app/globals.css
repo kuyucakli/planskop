@@ -18,7 +18,7 @@
   /* --- variables --- */
   :root {
     /* related to browser default styles */
-    color-scheme: light dark;
+    color-scheme: dark;
   }
   :root:has(input#toggle-theme:checked) {
     .color-filter-invertable {
