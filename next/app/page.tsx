@@ -1,5 +1,6 @@
 import Banner from "@/components/Banner";
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
+import { DATA_I_CAN_ACTIONS } from "@/data";
 import { getActionPlans } from "@/db/queries";
 import { auth } from "@clerk/nextjs/server";
 import Image from 'next/image';
@@ -14,8 +15,6 @@ export default async function Home() {
   if (userId && sessionClaims) {
     content = await getActionPlans(userId);
   }
-
-
 
   return (
     <>
@@ -32,19 +31,23 @@ export default async function Home() {
 
       </Banner>
 
-
-
       <Suspense fallback={"Loading"}>
         <SectionRandomFamous />
       </Suspense>
 
+      <section className="text-amber-200">
+        <h1 className="text-7xl">Man is nothing else but what he makes of himself.</h1>
+        <ul className="flex flex-wrap">
+          {DATA_I_CAN_ACTIONS.map(a => <li key={a} className="border rounded p-2 ">{a}</li>)}
+        </ul>
+      </section>
 
       <section>
         <h1 className="text-2xl">Latest Habits</h1>
         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Alias ad saepe laudantium consequatur? Deleniti at cum illum, ut nisi fuga praesentium sapiente, delectus eum aperiam accusamus quaerat recusandae asperiores autem accusantium ex consectetur magnam quidem adipisci dolorum provident harum voluptas veritatis rerum. Nobis sit modi consequatur quas incidunt, recusandae repudiandae quasi odio, labore reprehenderit voluptatem? Modi blanditiis natus necessitatibus nesciunt, temporibus mollitia pariatur aperiam. Eos quae beatae repellendus, quidem voluptate laudantium doloribus soluta quas, molestias iure facilis. Laudantium harum reprehenderit blanditiis perspiciatis dolor soluta, error eveniet rerum alias distinctio inventore! Reiciendis minima cupiditate doloribus ipsam. Quidem harum quas consequatur quo.</p>
       </section>
 
-      <section className="mt-6">
+      {/* <section className="mt-6">
         <h1 className="text-2xl">Your Daily Habits:</h1>
         <ul>
           {content?.map(c => {
@@ -67,7 +70,7 @@ export default async function Home() {
 
 
         </ul>
-      </section>
+      </section> */}
     </>
   );
 }

@@ -62,6 +62,7 @@ const baseFamousRoutineQuery = db
     .select({
         personId: famousPeopleTbl.id,
         personName: famousPeopleTbl.personName,
+        personContent: famousPeopleTbl.content,
         image: famousPeopleTbl.image,
         activityId: famousRoutineActivitiesTbl.activityId,
         activityName: famousRoutineActivitiesTbl.activityName,
@@ -109,6 +110,9 @@ export const getRandomFamousPersonWithRoutines = async () => {
         )
         .where(eq(famousPeopleTbl.id, randomId));
 };
+
+
+
 
 
 
