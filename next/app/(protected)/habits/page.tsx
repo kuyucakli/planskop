@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { FormDelete } from "@/components/forms/FormDelete";
 import { HabitCalendar } from "@/components/HabitCalendar";
+import { IconEdit } from "@/components/Icons";
 
 
 
@@ -41,12 +42,16 @@ export default async function Page({ searchParams }: {
                         return (
                             <li key={c.id}>
                                 <h2 className="text-3xl">
-                                    <Link href={`/planner/?actionPlanId=${c.id}`}>{c.title}</Link>
+                                    <Link href={`/planner/?actionPlanId=${c.id}`}>
+                                    {c.title}
+                                    <IconEdit/>
+                                    </Link>
                                 </h2>
                                 <p>Starting from, {new Date(c.dtstart).toLocaleDateString("en-US", { year: "numeric", month: "long", weekday: "long", day: "numeric", })}</p>
                                 <p>For {c.repeat}:</p>
 
                                 <HabitCalendar dailyPlan={c} />
+                                
                                 <FormDelete id={c.id} />
                             </li>
                         )

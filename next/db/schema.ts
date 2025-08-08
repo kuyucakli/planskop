@@ -256,6 +256,7 @@ export type SelectActionPlanAlbum = typeof actionPlanCategoryTbl.$inferSelect;
 
 export type ActionPlanCategoriesWithActionPlans = (InsertActionPlan & { actionPlans: SelectActionPlan[] })[];
 
+export type InsertActionPhoto = typeof actionPhotos.$inferInsert
 
 
 export const famousPeopleTbl = pgTable('famous_people', {
@@ -299,9 +300,6 @@ export type FamousPersonRoutine = typeof famousRoutineActivitiesTbl.$inferSelect
 export type FamousPersonWithRoutines = Pick<typeof famousPeopleTbl.$inferSelect, 'id' | 'personName' | 'image'> & { routines: FamousPersonRoutine[] };
 
 
-
-
-
 const dailyActionSlotSchema = z.object({
     id: z.string(),
     title: z.enum(DATA_I_CAN_ACTIONS, {
@@ -314,6 +312,7 @@ const dailyActionSlotSchema = z.object({
     duration: z.enum(ALLOWED_DURATIONS, {
         errorMap: (issue) => ({ message: 'Select from the list' })
     }),
+    completedPhotoUrl:z.string().optional(),
 });
 
 type DailyActionSlot = z.infer<typeof dailyActionSlotSchema>;

@@ -3,22 +3,37 @@
 import { asc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import {
+    InsertActionPhoto,
     InsertActionPlan, SelectActionPlan, UpdateActionPlan,
+    actionPhotos,
     dailyPlanTbl, famousPeopleTbl, famousRoutineActivitiesTbl
 } from './schema';
 
-import { revalidatePath } from 'next/cache';
 
 
+//Action Plans
 
+async function dbDeleteActionPlan(id: number) {
+    await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
+}
 
+async function dbCreateActionPlan(data: InsertActionPlan) {
+    await db.insert(dailyPlanTbl).values(data);
+}
 
-export async function getActionPlan(id: number) {
+async function dbUpdateActionPlan(data: UpdateActionPlan) {
+    try {
+        await db.update(dailyPlanTbl).set(data).where(eq(dailyPlanTbl.id, data.id));
+    } catch (err) {
+        throw new Error("Failed to update action plan: " + err);
+    }
+}
+
+async function getActionPlan(id: number) {
     return db.select().from(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
 }
 
-export async function getActionPlans(userId: string, page = 1, pageSize = 5): Promise<SelectActionPlan[] | null> {
-
+async function getActionPlans(userId: string, page = 1, pageSize = 5): Promise<SelectActionPlan[] | null> {
     try {
         return db
             .select({
@@ -38,25 +53,9 @@ export async function getActionPlans(userId: string, page = 1, pageSize = 5): Pr
 
 
 
-export async function dbDeleteActionPlan(id: number) {
-    await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
-}
 
 
-export async function dbCreateActionPlan(data: InsertActionPlan) {
-    await db.insert(dailyPlanTbl).values(data);
-}
-
-export async function dbUpdateActionPlan(data: UpdateActionPlan) {
-    try {
-        await db.update(dailyPlanTbl).set(data).where(eq(dailyPlanTbl.id, data.id));
-
-    } catch (err) {
-        console.log(err);
-    }
-
-}
-
+//Famous People
 
 const baseFamousRoutineQuery = db
     .select({
@@ -75,15 +74,15 @@ const baseFamousRoutineQuery = db
         eq(famousPeopleTbl.id, famousRoutineActivitiesTbl.famousPersonId)
     );
 
-export const getFamousPeopleWithRoutines = async () => {
+const getFamousPeopleWithRoutines = async () => {
     return baseFamousRoutineQuery;
 };
 
-export const getFamousPersonWithRoutines = async (personId: number) => {
+const getFamousPersonWithRoutines = async (personId: number) => {
     return baseFamousRoutineQuery.where(eq(famousPeopleTbl.id, personId));
 };
 
-export const getRandomFamousPersonWithRoutines = async () => {
+const getRandomFamousPersonWithRoutines = async () => {
     const ids = await db
         .select({ id: famousPeopleTbl.id })
         .from(famousPeopleTbl);
@@ -109,6 +108,35 @@ export const getRandomFamousPersonWithRoutines = async () => {
             eq(famousPeopleTbl.id, famousRoutineActivitiesTbl.famousPersonId)
         )
         .where(eq(famousPeopleTbl.id, randomId));
+};
+
+
+//Action Photos
+
+async function dbCreateActionPhoto(data:InsertActionPhoto) {
+  
+    await db.insert(actionPhotos).values(data);
+    
+}
+
+const getActionPhoto = async (actionId: number) => {
+    return db
+        .select()
+        .from(actionPhotos)
+        .where( eq(actionPhotos, actionId) );
+
+};
+
+export {
+    getActionPlan,
+    getActionPlans,
+    dbDeleteActionPlan,
+    dbCreateActionPlan,
+    dbCreateActionPhoto,
+    dbUpdateActionPlan,
+    getFamousPeopleWithRoutines,
+    getFamousPersonWithRoutines,
+    getRandomFamousPersonWithRoutines
 };
 
 

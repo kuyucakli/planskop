@@ -233,9 +233,26 @@ function addAllowedDuration(startDate: Date, duration: string | null | undefined
     return result;
 }
 
+function calculateRemainingDuration(currentDate: Date, targetDate: Date) {
+    const diff = Math.max(targetDate.getTime() - currentDate.getTime(), 0);
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if(days > 0) return `${days} day${days > 1 ? 's' : ''} remaining`;
+    if(hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ${minutes % 60} minutes remaining`;
+    if(minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} remaining`;
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+
+}
+
 
 export type { FormState }
 export {
-    fromErrorToFormState, toFormState, resolvePath, timeStrToMinutes, extractMinutesFromDuration, extractTimeRange, parseFormDataToNestedObject,
-    parseSlotKey, EMPTY_FORM_STATE, addAllowedDuration
+    addAllowedDuration, calculateRemainingDuration, EMPTY_FORM_STATE, extractMinutesFromDuration,
+    extractTimeRange, fromErrorToFormState,
+    parseFormDataToNestedObject, parseSlotKey, resolvePath, timeStrToMinutes, toFormState,
+
 };

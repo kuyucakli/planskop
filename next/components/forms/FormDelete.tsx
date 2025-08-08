@@ -1,4 +1,5 @@
 import { deleteActionPlan } from "@/lib/actions";
+import { IconDelete } from "../Icons";
 
 export const FormDelete = ({ id }: { id: number }) => {
 
@@ -10,7 +11,7 @@ export const FormDelete = ({ id }: { id: number }) => {
                 type="submit"
                 className="text-red-500 underline bg-none border-none p-0 cursor-pointer"
             >
-                Delete
+                <IconDelete/> Delete
             </button>
         </form>
     )
