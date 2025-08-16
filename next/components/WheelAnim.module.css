@@ -1,0 +1,18 @@
+.WheelAnim {
+  display: block;
+  border: 1px solid rgb(140, 255, 117);
+  width: 8px;
+  height: 8px;
+  animation: anim-wheel 1s  infinite;
+  border-radius: 2px;
+}
+
+@keyframes anim-wheel {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

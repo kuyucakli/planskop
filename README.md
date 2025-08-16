@@ -6,13 +6,13 @@
 
 ## What It Does
 
-- 🗓️ Plan your day using short, time-based action slots
-- 🔁 Define habits that repeat (e.g. every weekday, or every Monday)
-- 🌍 Timezone-aware — reminders adjust to your local time
-- ✅ Validates overlapping or duplicate actions
-- 🙋‍♀️ User login via [Clerk.js](https://clerk.dev)
-- 🖼️ Media uploads (e.g. avatars, icons) via [Cloudinary](https://cloudinary.com/)
-- 💾 Data stored per user in a [Neon](https://neon.tech/) PostgreSQL database
+- Plan your day using short, time-based action slots
+- Define habits that repeat (e.g. every weekday, or every Monday)
+- Timezone-aware — reminders adjust to your local time
+- Validates overlapping or duplicate actions
+- User login via [Clerk.js](https://clerk.dev)
+- Media uploads (e.g. avatars, icons) via [Cloudinary](https://cloudinary.com/)
+- Data stored per user in a [Neon](https://neon.tech/) PostgreSQL database
 
 ---
 
@@ -31,7 +31,7 @@
 
 ---
 
-## 🧪 Getting Started
+## Getting Started
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/planskop.git
@@ -45,13 +45,17 @@ pnpm dev
 
 ## To Do's
 
+- Form Submit Button
+- Fade on date change refresh slots
+- Home page get latest public user's routine content
+- Intro
 - Home Page, one famous routine.
 - Home Page one famous detail page + summary popup on hover
 - Home Recent user habits
 - Add more dummy users
 - Add media table
 - Add like table
-- Countdown for day and hours
+- [X] Countdown for day and hours
 - Add image
 - Rewards
 - Levels

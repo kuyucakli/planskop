@@ -12,7 +12,7 @@ const SubmitButton = ({ label, loadingLabel, disabled, className }: React.Button
     const { pending } = useFormStatus();
 
     return (
-        <button disabled={disabled || pending} type="submit" className={`bg-bermuda hover:bg-bermuda-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-gray-400 hover:border-transparent rounded ${className}`}>
+        <button disabled={disabled || pending} type="submit" className={` hover:bg-bermuda-500  hover:text-white  border bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded ${className}`}>
             {pending ? loadingLabel : label}
         </button>
     );

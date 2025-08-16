@@ -1,204 +1,315 @@
 "use client";
 
-import { addAllowedDuration, calculateRemainingDuration } from "@/lib/utils";
-import { CldUploadWidget } from "next-cloudinary";
-import { Fragment } from "react";
-import styles from "./HabitCalendar.module.css";
-import { SelectActionPlan } from "@/db/schema";
-import { useWasm } from "@/hooks/useWasm";
-import RemainingDuration from "./RemainingDuration";
-import { dbCreateActionPhoto, dbUpdateActionPlan } from "@/db/queries";
-
+import {
+  addRepeatDuration,
+  combineAsDtUtc,
+  formatDate,
+  formatDuration,
+  timeBasedDurationToMinutes,
+  utcToGmtOffset,
+} from "@/lib/utils";
+import { ButtonCldUpload, ButtonDirectional } from "./Buttons";
 import { CardImage } from "./Card";
+import { dbCreateActionPhoto, dbUpdateActionPlan } from "@/db/queries";
+import LabelState from "./LabelState";
+import styles from "./HabitCalendar.module.css";
+import {
+  AllowedTimeBasedDuration,
+  DailyActionSlot,
+  InsertActionPhoto,
+  RepeatDuration,
+  SelectActionPlan,
+} from "@/db/schema";
 
-export const HabitCalendar = ({
-  dailyPlan,
+import { PropsWithChildren, useState } from "react";
+import { useTimeDiffToNow } from "@/hooks/useTimeDiff";
+import { Wheel } from "./WheelAnim";
+import {
+  IconArrowBack,
+  IconArrowForward,
+  IconCheck,
+  IconSchedule,
+} from "./Icons";
+
+function NavDate({
+  interval,
+  selectedDateMs,
+  onDateChange,
 }: {
-  dailyPlan: SelectActionPlan;
+  interval: { startMs: number; endMs: number };
+  selectedDateMs: number;
+  onDateChange: (ms: number) => void;
+}) {
+  const { startMs, endMs } = interval;
+  const dayMs = 24 * 60 * 60_000;
+  const disablePrev = selectedDateMs - dayMs < startMs;
+  const disableNext = selectedDateMs + dayMs > endMs;
+  return (
+    <div className="shadow-md shadow-black/20 h-8 flex items-center gap-1">
+      <ButtonDirectional direction="prev" disabled={disablePrev}
+      onDirectionalClick={() => {
+  
+        onDateChange(selectedDateMs - dayMs);}
+      }
+      />
+
+      <ButtonDirectional direction="next" disabled={disableNext}
+      onDirectionalClick={() => {
+  
+        onDateChange(selectedDateMs + dayMs);}
+      }
+      />
+ 
+     
+      <span className="rounded-md inline-flex w-24 h-8 justify-center items-center bold">
+        {formatDate(selectedDateMs, { day: "numeric", month: "short" })}
+      </span>
+     
+    </div>
+  );
+}
+
+function SectionInfo({
+  interval,
+  repeat,
+}: {
+  interval: { start: string; end: string };
+  repeat: RepeatDuration | null | undefined;
+}) {
+  const { start, end } = interval;
+  return (
+    <div className="border-gray-400 rounded-2xl text-sm  my-6">
+      <p>Your daily plan starting from, {start}</p>
+      <p>
+        Planned to last for {repeat} ends at {end}
+      </p>
+    </div>
+  );
+}
+
+const SlotItem = ({
+  slotData: s,
+  startMs,
+  timezone,
+  handleCldSuccess,
+}: {
+  slotData: DailyActionSlot;
+  startMs: number;
+  timezone: string;
+  handleCldSuccess: (actionId: string, result: any) => void;
 }) => {
-  const { format_ical, get_dt_str_from_rruleset } = useWasm() || {};
+  const { startDtMs, endDtMs, endMsProofImg } = getDetailedSlotTimes(
+    new Date(startMs).toISOString().slice(0, 10), //startDateStr.slice(0, 10),
+    s.at,
+    s.duration,
+    timezone
+  );
 
-  if (!format_ical || !get_dt_str_from_rruleset) return;
+  const durationToStart = useTimeDiffToNow(startDtMs, endDtMs);
 
-  const { dtstart, repeat } = dailyPlan;
-  const today = new Date();
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: "long",
-    //month: "long",
-    day: "numeric",
+  return (
+    <li key={s.id} className={`flex gap-4  my-4 `}>
+      <div className="basis-12 relative">
+        {s.completedPhotoUrl && (
+          <CardImage
+            path={s.completedPhotoUrl}
+            altText={`${s.title} completed`}
+            className="absolute top-0 left-0 "
+          />
+        )}
+        <ButtonCldUpload
+          id={s.id}
+          handleCldSuccess={handleCldSuccess}
+          disabled={Date.now() < startDtMs || Date.now() > endMsProofImg}
+        />
+      </div>
+
+      <div className="flex gap-4 flex-1">
+        <div className={`flex flex-col justify-between`}>
+          <h2 className="text-lg capitalize">{s.title}</h2>
+
+          <p className="text-xs ">
+            at {s.at} for {s.duration}
+          </p>
+        </div>
+      </div>
+      <div className="basis-24 flex items-center">
+        <LabelState state={durationToStart.state} />
+      </div>
+      <div className="basis-24 flex items-center ">
+        <p
+          className={`text-xs ${
+            durationToStart.state == "ongoing"
+              ? "text-gray-100"
+              : "text-gray-300"
+          }`}
+        >
+          {durationToStart.state != "ended" && formatDuration(durationToStart)}
+          {durationToStart.state == "ongoing" && <Wheel />}
+        </p>
+      </div>
+    </li>
+  );
+};
+
+function SlotListHeader() {
+  return (
+    <li className="text-sm h-8  flex gap-4 text-gray-400 border-b-1 border-gray-600">
+      <div className="basis-12 flex items-center justify-center">
+        <IconCheck className="fill-gray-400" />
+      </div>
+      <div className="flex-1 flex items-center">Action</div>
+      <div className="basis-24 flex items-center">Status</div>
+      <div className="basis-24 flex items-center justify-center">
+        <IconSchedule className="fill-gray-400 -translate-y-0.5" />
+      </div>
+    </li>
+  );
+}
+
+function SlotList({ children }: PropsWithChildren) {
+  return (
+    <ul className="my-4">
+      <SlotListHeader />
+      {children}
+    </ul>
+  );
+}
+
+const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
+  const todayMs = Date.now();
+  const { startDate, repeat, timezone } = dailyPlan;
+  const { startMs, endMs, startDtStr, endDtStr } = getDetailedDailyPlanTimes(
+    startDate,
+    repeat,
+    timezone
+  );
+  const [selectedDateMs, setSelectedDateMs] = useState<number>(
+    todayMs >= startMs && todayMs <= endMs ? todayMs : startMs
+  );
+
+  const handleCldSuccess = (slotId: string, result: any) => {
+    const imageUrl = result.info.secure_url;
+    const updatedDailyPlan = updateSlots(slotId, imageUrl);
+
+    completeSlotMission(
+      {
+        userId: dailyPlan.userId,
+        actionDate: startDate,
+        imageUrl,
+        actionId:`${startMs}-${slotId}-${dailyPlan.id}`,
+      },
+      updatedDailyPlan
+    );
   };
 
-  //const formatted = today.toLocaleDateString("en-US", options);
-  const dtstartObj = new Date(dtstart);
-  const endDateStr = addAllowedDuration(dtstartObj, repeat)
-    .toISOString()
-    .slice(0, 10);
-  const rrulesetStr = format_ical(dtstart, endDateStr);
-  const dailyPlanDatesStr = get_dt_str_from_rruleset(rrulesetStr);
-  const dailyPlanDatesArr = [
-    ...dailyPlanDatesStr.matchAll(/\d{4}-\d{2}-\d{2}/g),
-  ].map((m) => new Date(m[0]));
+  const completeSlotMission = (
+    actionPhoto: InsertActionPhoto,
+    dailyPlan: SelectActionPlan
+  ) => {
+    dbCreateActionPhoto(actionPhoto)
+      .then(() => {
+        return dbUpdateActionPlan(dailyPlan);
+      })
+      .then(() => {
 
-  let weekIndex: number;
+        console.log("Action photo created and daily plan updated successfully.");
+      })
+      .catch((err) => {
+        console.error("Failed to create action photo:", err);
+      });
+  };
 
-  const handleCloudinarySuccess = (actionId: string, result: any) => {
-    const imageUrl = result.info.secure_url;
-    //const publicId = result.info.public_id;
+  const updateSlots = (inSlotId: string, imageUrl: string) => {
     const updatedSlots = dailyPlan.slots.map((slot) => {
-      if (slot.id === actionId) {
-        return { ...slot, completedPhotoUrl: imageUrl}
+      if (slot.id === inSlotId) {
+        return { ...slot, completedPhotoUrl: imageUrl };
       }
       return slot;
     });
 
-    const updatedDailyPlan = {
+    return {
       ...dailyPlan,
       slots: updatedSlots,
     };
-
-    
-    dbCreateActionPhoto({
-      userId: dailyPlan.userId,
-      actionDate: dtstart,
-      imageUrl,
-      actionId: dtstart + actionId,
-    })
-    .then(()=>{
-      dbUpdateActionPlan(updatedDailyPlan);
-    })
-    .catch((err) => {
-      console.error("Failed to create action photo:", err);
-    });
   };
 
   return (
-    <section className={`${styles.HabitCalendarWrapper} mt-6 mb-8 `}>
-      {/* <ul className={styles.HabitCalendar}>
-                {getWeekDays().map((d, index) => <li key={index} className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">{d.toLocaleDateString("en-US", options)}</li>)}
-            </ul> */}
-
-      <ul className={`${styles.HabitCalendar}`}>
-        {dailyPlanDatesArr.map((d, index) => {
-          const showWeekIndex = getWeekOfMonth(d) != weekIndex;
-          weekIndex = getWeekOfMonth(d);
-          return (
-            <Fragment key={index}>
-              {showWeekIndex && (
-                <span className="bg-emerald-600/50 sticky top-0 left-0  h-full basis-auto block pl-6 pr-8 pt-2 pb-2  rounded backdrop-blur-sm z-10">
-                  <span className="text-2xl">{getMonthName(d)}</span>{" "}
-                  {ordinals[getWeekOfMonth(d) + "."]} week
-                </span>
-              )}
-              <li className="flex justify-center items-center max-w-sm   border  border-gray-700 rounded shadow-sm  bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-sm ">
-                {d.toLocaleDateString("en-US", options)}
-              </li>
-            </Fragment>
-          );
-        })}
-      </ul>
-
-      <ul>
-        {dailyPlan.slots.map((s) => (
-          <li key={s.id} className="flex  rounded bg-gray-800 mt-0.5 ">
-            <div className="flex p-4 gap-4 flex-11/12">
-              <h2>{s.title}</h2>
-              <p>{s.at}</p>
-              <p> for {s.duration}</p>
-              <RemainingDuration
-                targetDateTime={new Date(dtstart + `T${s.at}:00.000+03:00`)}
-              />
-            </div>
-            {
-              s.completedPhotoUrl 
-              &&
-              <CardImage path={s.completedPhotoUrl} altText={`${s.title} completed`}/>
-            }
-            <CldUploadWidget
-              uploadPreset="ml_default"
-              onSuccess={(result: any) => {
-                handleCloudinarySuccess(s.id, result);
-              }}
-            >
-              {({ open }) => {
-                return (
-                  <button
-                    onClick={() => open()}
-                    className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4  hover:border-blue-500 rounded flex-1/12"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      fill="#e3e3e3"
-                    >
-                      <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
-                    </svg>
-                  </button>
-                );
-              }}
-            </CldUploadWidget>
-          </li>
-        ))}
-      </ul>
+    <section className={`${styles.HabitCalendarWrapper} mt-6 mb-16 `}>
+      <SectionInfo
+        interval={{ start: startDtStr, end: endDtStr }}
+        repeat={repeat}
+      />
+      <div className={``}>
+        <NavDate
+          selectedDateMs={selectedDateMs}
+          onDateChange={setSelectedDateMs}
+          interval={{ startMs, endMs }}
+        />
+        <SlotList>
+          {dailyPlan.slots.map((s) => (
+            <SlotItem
+              key={s.id}
+              slotData={s}
+              handleCldSuccess={handleCldSuccess}
+              startMs={selectedDateMs}
+              timezone={dailyPlan.timezone}
+            />
+          ))}
+        </SlotList>
+      </div>
     </section>
   );
 };
 
-function getWeekDays(): Date[] {
-  const today = new Date();
-  let cursorDate = getPrevDate(today, 3);
-  const res = [];
+/* --- Utils ---*/
 
-  for (let i = 0; i < 7; i++) {
-    cursorDate = getNextDate(cursorDate, 1);
-    res.push(cursorDate);
-  }
+function getDetailedSlotTimes(
+  startDateStr: string,
+  slotStartTime: string,
+  slotDuration: AllowedTimeBasedDuration,
+  timezone: string
+) {
+  const startDt = combineAsDtUtc(startDateStr, slotStartTime, timezone);
+  const startDtMs = startDt.getTime();
+  const durationMinutes = timeBasedDurationToMinutes(slotDuration) || 0;
+  const endDt = new Date(startDtMs + durationMinutes * 60_000);
+  const endDtMs = endDt.getTime();
+  const endDtProofImg = new Date(endDtMs + 24 * 60 * 60_000);
+  const endMsProofImg = endDtProofImg.getTime();
 
-  return res;
+  return {
+    startDt,
+    endDt,
+    startDtMs,
+    endDtMs,
+    endDtProofImg,
+    endMsProofImg,
+  };
 }
 
-function getNextDate(date: Date, daysAhead: number): Date {
-  const next = new Date(date);
-  next.setDate(date.getDate() + daysAhead);
-  return next;
+function getDetailedDailyPlanTimes(
+  start: string,
+  repeat: RepeatDuration | null | undefined,
+  timezone: string
+) {
+  const startDt = combineAsDtUtc(start, "00:00", "0");
+  const startMs = startDt.getTime();
+  const startDtStr = startDt.toISOString();
+  const endDt = addRepeatDuration(startDt, repeat);
+  const endMs = endDt.getTime();
+  const endDtStr = endDt.toISOString();
+
+  return {
+    startDt,
+    startMs,
+    startDtStr,
+    endDt,
+    endMs,
+    endDtStr,
+    localStartDtStr: utcToGmtOffset(startDt.toISOString(), timezone),
+    localEndDtStr: utcToGmtOffset(endDt.toISOString(), timezone),
+  };
 }
 
-function getPrevDate(date: Date, daysBack: number): Date {
-  const prev = new Date(date);
-  prev.setDate(date.getDate() - daysBack);
-  return prev;
-}
-
-function getDaysInMonth(year: number, month: number): Date[] {
-  const date = new Date(year, month, 1);
-  const days: Date[] = [];
-
-  while (date.getMonth() === month) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
-  }
-
-  return days;
-}
-
-function getWeekOfMonth(date: Date): number {
-  const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const startDayOfWeek = (startOfMonth.getDay() + 6) % 7;
-
-  const adjustedDate = date.getDate() + startDayOfWeek;
-
-  return Math.ceil(adjustedDate / 7);
-}
-
-function getMonthName(date: Date, locale = "en-US"): string {
-  return new Intl.DateTimeFormat(locale, { month: "long" }).format(date);
-}
-
-const ordinals: Record<string, string> = {
-  "1.": "first",
-  "2.": "second",
-  "3.": "third",
-  "4.": "fourth",
-  "5.": "fifth",
-};
+export { HabitCalendar };

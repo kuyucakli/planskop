@@ -21,12 +21,12 @@ const IconLogout = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
     </IconSvgBase>
 )
 
-const IconEdit = () => (
-    <IconSvgBase><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" /></IconSvgBase>
+const IconEdit = ({...props}: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" /></IconSvgBase>
 )
 
-const IconDelete = () => (
-    <IconSvgBase><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></IconSvgBase>
+const IconDelete =  ({...props}: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></IconSvgBase>
 )
 
 const IconSave = () => (
@@ -63,19 +63,52 @@ const IconClose = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
     </IconSvgBase>
 )
 
+const IconUpload = ({...props}: React.SVGProps<SVGSVGElement>) =>(
+    <IconSvgBase {...props}>
+          
+        <path d="M460-344.62h40.77v-196.46l84 84 27.54-27.54-131.54-131.53-132.31 131.53L376-457.08l84-84v196.46ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Zm-.13-40q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+    </IconSvgBase>
+)
 
+const IconCheck = ({...props}: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}>
+        <path d="M382-253.85 168.62-467.23 211.38-510 382-339.38 748.62-706l42.76 42.77L382-253.85Z"/>
+    </IconSvgBase>
+)
+
+const IconSchedule = ({...props}: React.SVGProps<SVGSVGElement>) => (
+    <IconSvgBase {...props}>
+     <path d="m618.92-298.92 42.16-42.16L510-492.16V-680h-60v212.15l168.92 168.93ZM480.07-100q-78.84 0-148.21-29.92t-120.68-81.21q-51.31-51.29-81.25-120.63Q100-401.1 100-479.93q0-78.84 29.92-148.21t81.21-120.68q51.29-51.31 120.63-81.25Q401.1-860 479.93-860q78.84 0 148.21 29.92t120.68 81.21q51.31 51.29 81.25 120.63Q860-558.9 860-480.07q0 78.84-29.92 148.21t-81.21 120.68q-51.29 51.31-120.63 81.25Q558.9-100 480.07-100ZM480-480Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z"/>
+    </IconSvgBase>
+)
+
+const IconArrowBack = ({...props}: React.SVGProps<SVGSVGElement>) => (     
+    <IconSvgBase {...props}>
+        <path d="M640-93.85 253.85-480 640-866.15l56.77 56.77L367.38-480l329.39 329.38L640-93.85Z"/>
+    </IconSvgBase>
+)
+const IconArrowForward = ({...props}: React.SVGProps<SVGSVGElement>) => (     
+    <IconSvgBase {...props}>
+        <path d="m320.62-93.85-56.77-56.77L593.23-480 263.85-809.38l56.77-56.77L706.77-480 320.62-93.85Z"/>
+    </IconSvgBase>
+)
 
 
 export {
+    IconArrowBack,
+    IconArrowForward,
     IconHome,
     IconUserCircle,
     IconLogout,
     IconEdit,
+    IconCheck,
     IconDelete,
     IconSave,
     IconCancel,
     IconAdd,
     IconInfo,
     IconClose,
+    IconUpload,
+    IconSchedule,
 };
 

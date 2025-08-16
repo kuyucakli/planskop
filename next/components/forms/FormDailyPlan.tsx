@@ -1,7 +1,7 @@
 "use client";
 
 import {
-    ALLOWED_DURATIONS,
+    TIME_BASED_DURATIONS,
     ALLOWED_TIMES,
     dailyActionsFormSchema,
     DailyActionSlot,
@@ -264,7 +264,7 @@ const ActionSlotFieldset = ({
                     name={`slots[${id}].duration`}
                     label="duration"
                     className=" border-0 border-b-2 rounded-none block"
-                    options={ALLOWED_DURATIONS}
+                    options={TIME_BASED_DURATIONS}
                     formState={formState}
                     required={true}
                     placeholder="1 Hour"

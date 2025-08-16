@@ -33,7 +33,8 @@ const CardFooter = ({ children }: PropsWithChildren) => (
 const CardImage = ({
     path,
     altText,
-}: PropsWithChildren & { path: string; altText: string }) => (
+    className,
+}: PropsWithChildren & { path: string; altText: string; className?:string }) => (
     <CldImage
         src={path}
         alt={altText}
@@ -43,6 +44,7 @@ const CardImage = ({
         removeBackground
         background="pink"
         gravity="face"
+        className={className}
     />
 );
 

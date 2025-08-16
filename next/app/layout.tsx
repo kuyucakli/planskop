@@ -42,18 +42,18 @@ export default async function RootLayout({
         <body className={`font-mono ${kiraHareng.variable}`}>
           <div id="root" className="md:overflow-hidden">
             <MainNavBar />
-            <header className="p-2">
+            <header className="p-2 ">
               {/* <Logo onlyPictogram /> */}
               <NavUser />
 
             </header>
-            <main className="p-3 md:p-6 limited-width overflow-y-auto bg-linear-to-b from-zinc-500 via-stone-600 to-zinc-900">
+            <main className="p-3 md:p-6 limited-width overflow-y-auto bg-linear-to-b from-zinc-600 via-stone-800 to-zinc-900">
 
               {children}
 
             </main>
 
-            <aside className="p-6 overflow-y-auto ">
+            <aside className="p-6 overflow-y-auto bg-linear-to-b from-zinc-600 via-stone-800 to-zinc-900">
               <h1 className="text-4xl/16  l-h sticky top-0 left-0 backdrop-blur-sm">Inspiration</h1>
               <Suspense fallback={<CardFamousPersonSummary famousPerson={{ image: "", personName: "", routines: [] }} isSkeletonView />}>
                 <FamousPeopleRoutines />

@@ -15,12 +15,20 @@ enum WeekDays {
     Sunday = "SU",
 };
 
+
 // enum RemindKind {
 //     OneHourBefore = "OneHourBefore",
 //     TwoHoursBefore = "TwoHoursBefore",
 //     OneDayBefore = "OneDayBefore",
 //     TwoDaysBefore = "TwoDaysBefore",
 // }
+
+enum DailySlotStatus  {
+    Upcoming = "Upcoming",
+    Ongoing = "Ongoing",
+    Ended = "Ended",
+
+}
 
 
 type Rrules = {
@@ -36,4 +44,4 @@ type Rrules = {
 
 type timeString = `${number}:${number}`;
 
-export { Frequency, WeekDays, type Rrules, type timeString };
+export { DailySlotStatus, Frequency, WeekDays, type Rrules, type timeString };

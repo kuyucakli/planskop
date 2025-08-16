@@ -1,4 +1,4 @@
-import { fillHoursInbetween } from "@/components/HourlyRoutinesChart";
+import { fillHoursInbetween } from "@/components/charts/ChartFamousDailyRoutines";
 
 
 describe("fill hours", () => {

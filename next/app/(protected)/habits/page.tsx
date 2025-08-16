@@ -8,61 +8,56 @@ import { HabitCalendar } from "@/components/HabitCalendar";
 import { IconEdit } from "@/components/Icons";
 
 
-
-
-
 export const metadata: Metadata = {
-    title: "My Daily Plans",
+  title: "My Daily Plans",
 };
 
-
-export default async function Page({ searchParams }: {
-    searchParams: {
-        [key: string]: string | string[] | undefined
-    }
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {
+    [key: string]: string | string[] | undefined;
+  };
 }) {
+  const { userId, sessionClaims } = await auth();
+  let result;
+  if (userId && sessionClaims) {
+    result = await getActionPlans(userId);
+  }
 
-    const { userId, sessionClaims } = await auth()
-    let content;
-    if (userId && sessionClaims) {
-        content = await getActionPlans(userId);
-    }
+  return (
+    <>
+      <h1 className="text-6xl font-kira-hareng mb-12">
+        {metadata.title as ReactNode}
+      </h1>
 
+      <section className="mt-6">
+        <ul>
+          {result?.map((dailyPlan) => {
+            const dailyPlanStart = ""
+            const dailyPlanDateRange = ""
+            const dailyPlanEnd = ""
+            return (
+              <li key={dailyPlan.id} className="mb-12">
+                <h2 className="text-3xl relative inline-flex capitalize text-emerald-200">
+                  <Link href={`/planner/?actionPlanId=${dailyPlan.id}`}>
+                    {dailyPlan.title}
+                    <IconEdit className="absolute top-0 right-0 fill-gray-50 - translate-x-full" />
+                  </Link>
+                </h2>
+               
 
+                <HabitCalendar dailyPlan={dailyPlan} />
 
-    return (
-        <>
-            <h1 className="text-6xl font-kira-hareng">{metadata.title as ReactNode}</h1>
-
-            <section className="mt-6">
-
-                <ul>
-                    {content?.map(c => {
-
-                        return (
-                            <li key={c.id}>
-                                <h2 className="text-3xl">
-                                    <Link href={`/planner/?actionPlanId=${c.id}`}>
-                                    {c.title}
-                                    <IconEdit/>
-                                    </Link>
-                                </h2>
-                                <p>Starting from, {new Date(c.dtstart).toLocaleDateString("en-US", { year: "numeric", month: "long", weekday: "long", day: "numeric", })}</p>
-                                <p>For {c.repeat}:</p>
-
-                                <HabitCalendar dailyPlan={c} />
-                                
-                                <FormDelete id={c.id} />
-                            </li>
-                        )
-
-                    })}
-
-
-                </ul>
-
-            </section>
-
-        </>
-    )
+                <FormDelete id={dailyPlan.id} />
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </>
+  );
 }
+
+
+

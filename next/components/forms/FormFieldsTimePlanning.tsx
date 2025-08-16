@@ -13,7 +13,7 @@ const weekDaysKeys = Object.keys(WeekDays) as Array<keyof typeof WeekDays>;
 
 export default function
     FormFieldsTimePlanning({
-        dtstart,
+        startDate,
         timezone,
         repeat,
         remind,
@@ -27,13 +27,13 @@ export default function
     const userSystemTimezone = get_local_timezone ? get_local_timezone() : undefined;
 
     if (!get_timezones) return "loading";
-
+       
 
     return (
         <>
-            <label htmlFor="dtstart">Start Daily Plan At:
-                <input type="date" id="dtstart" name="dtstart" defaultValue={dtstart || ""}></input>
-                <FieldError name="dtstart" formState={formState} />
+            <label htmlFor="startDate">Start Daily Plan At:
+                <input type="date" id="startDate" name="startDate" defaultValue={startDate || ""}></input>
+                <FieldError name="startDate" formState={formState} />
             </label>
 
             <FormComboBox
@@ -62,10 +62,9 @@ export default function
 
             <label>
                 Timezone:
-
                 <select id="timezone" name="timezone" defaultValue={timezone || userSystemTimezone} >
 
-                    <option value={timezone || userSystemTimezone}>{userSystemTimezone}</option>
+                    <option value={userSystemTimezone}>{userSystemTimezone}</option>
 
                     {get_timezones().split(", ").map((t) => (
 
@@ -77,10 +76,6 @@ export default function
                 </select>
             </label>
 
-
-
-            {/* <input type="text" id="next_remind_at_time" name="next_remind_at_time" /> */}
-            {/* <input type="text" id="rrule" name="rrule" readOnly value={rrule} /> */}
 
 
         </>
