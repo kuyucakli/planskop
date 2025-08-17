@@ -255,12 +255,13 @@ const ActionSlotFieldset = ({
   const [showDescription, setShowDescription] = useState(false);
 
   return (
-    <fieldset className="flex flex-col gap-x-4  rounded-lg p-6 m-2 border-2">
-      <div className="flex flex-row gap-x-4 ">
+    <fieldset className="bg-stone-900 flex flex-col gap-2 rounded-xl p-6 ">
+      <div className="flex flex-row flex-wrap gap-x-2 gap-y-8 @container">
         <FormComboBox
           name={`slots[${id}].title`}
           label="I can"
-          className=" border-0 border-b-2 rounded-none block"
+          labelClassName="flex-1 @xl:flex-1"
+          className=" border-0 border-b-2 rounded-none block w-full"
           options={DATA_I_CAN_ACTIONS}
           formState={formState}
           required={true}
@@ -270,7 +271,8 @@ const ActionSlotFieldset = ({
         <FormComboBox
           name={`slots[${id}].at`}
           label="at"
-          className=" border-0 border-b-2 rounded-none block"
+          labelClassName="flex-1  @xl:flex-1"
+          className=" border-0 border-b-2 rounded-none block w-full"
           options={ALLOWED_TIMES}
           formState={formState}
           required={true}
@@ -280,7 +282,8 @@ const ActionSlotFieldset = ({
         <FormComboBox
           name={`slots[${id}].duration`}
           label="duration"
-          className=" border-0 border-b-2 rounded-none block"
+          labelClassName="flex-[0_1_100%]  @xl:flex-1"
+          className=" border-0 border-b-2 rounded-none block w-full"
           options={TIME_BASED_DURATIONS}
           formState={formState}
           required={true}
