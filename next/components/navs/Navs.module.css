@@ -15,7 +15,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap:4px;
   height: 48px;
 
   svg {
@@ -41,6 +41,7 @@
 
     a span {
       flex: 1 1 0;
+      transform:translateX(-8px);
     }
     & > ul {
       flex-direction: column;
