@@ -1,0 +1,122 @@
+.AppIntroBody {
+  opacity: 0;
+  animation: app-intro-body 1ms 1s forwards;
+}
+
+.AppIntro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--zindex-max);
+  animation: app-intro 1ms forwards var(--total-anim-duration);
+  overflow: hidden;
+  --total-anim-duration:6s;
+  /* bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center z-60  */
+}
+
+.LogoWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity:0;
+  transform: translate(-50%);
+  animation: logo-wrapper var(--total-anim-duration) forwards;
+}
+
+.Layer {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.Layer:nth-of-type(1) {
+  background: var(--color-blue-200);
+  opacity:0;
+  animation: layer-1 var(--total-anim-duration) forwards;
+}
+
+.Layer:nth-of-type(2) {
+  background: linear-gradient(to right, #3b82f6, #a855f7);
+  opacity: 0;
+  animation: layer-2 var(--total-anim-duration) forwards;
+}
+
+@keyframes layer-1 {
+  0% {
+    opacity: 0;
+  }
+  12.5% {
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes layer-2 {
+  0% {
+    opacity: 0;
+  }
+  12.5% {
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes logo-wrapper {
+  0% {
+    opacity: 0;
+  }
+  12.5% {
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes app-intro {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 0;
+  }
+}
+
+@keyframes app-intro-body {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

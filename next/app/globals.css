@@ -12,6 +12,8 @@
 
   --font-kira-hareng: var(--font-kira-hareng);
   --font-roboto-flex: var(--font-roboto-flex);
+  --zindex-max:99;
+  
 }
 
 @layer system {

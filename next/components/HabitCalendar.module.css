@@ -1,14 +1,38 @@
-.HabitCalendar {
-  container: habit-calendar;
-  display: flex;
-  position: relative;
-  overflow-x: auto;
-  margin: 0 -10px;
+
+
+.SlotContainer {
+  position:relative;
+  
+}
+
+.FadeFlash {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  
+  pointer-events: none;
+  animation:fade-flash 0.1s ease-in alternate-reverse 2 forwards;
+
 }
 
 .HabitCalendar > li {
   flex: 1 0 80dvw;
   max-width: 300px;
 
+}
+
+@keyframes fade-flash{
+  0% {
+   background:rgba(0,0,0,0.5);
+   filter:blur(12);
+  }
+ 
+  100% {
+   background:rgba(0,0,0,0);
+   filter:blur(24);
+  }
 }
 

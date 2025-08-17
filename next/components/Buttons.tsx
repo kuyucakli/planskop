@@ -72,18 +72,20 @@ export function ToggleButton({
 
 export function ButtonCldUpload({
   id,
+  slotStartDtMs,
   handleCldSuccess,
   disabled=false,
 }: {
   id: string;
-  handleCldSuccess: (actionId: string, result: any) => void;
+  slotStartDtMs: number;
+  handleCldSuccess: (actionId: string, slotStartDtMs:number, result: any) => void;
   disabled: boolean
 }) {
   return (
     <CldUploadWidget
       uploadPreset="ml_default"
       onSuccess={(result: any) => {
-        handleCldSuccess(id, result);
+        handleCldSuccess(id, slotStartDtMs, result);
       }}
     >
       {({ open }) => {

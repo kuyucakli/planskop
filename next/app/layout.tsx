@@ -10,6 +10,8 @@ import { Roboto_Flex } from "next/font/google";
 import { Suspense } from "react";
 import { ThemeContextProvider } from "@/context/ThemeContext";
 import "./globals.css";
+import AppIntro from '@/components/AppIntro';
+import appIntroStyles from "@/components/AppIntro.module.css";
 
 const robotoFlex = Roboto_Flex({ subsets: ["latin"], display: "swap", variable: '--font-roboto-flex', });
 const kiraHareng = Kirang_Haerang({ weight: "400", display: "swap", variable: '--font-kira-hareng', });
@@ -39,7 +41,8 @@ export default async function RootLayout({
         <head>
           <link rel="icon" href="/favicon.ico" />
         </head>
-        <body className={`font-mono ${kiraHareng.variable}`}>
+        <body className={`font-mono ${kiraHareng.variable} ${appIntroStyles.AppIntroBody}`}>
+          <AppIntro/>
           <div id="root" className="md:overflow-hidden">
             <MainNavBar />
             <header className="p-2 ">

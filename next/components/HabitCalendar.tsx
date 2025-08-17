@@ -21,15 +21,11 @@ import {
   SelectActionPlan,
 } from "@/db/schema";
 
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, use, useState } from "react";
 import { useTimeDiffToNow } from "@/hooks/useTimeDiff";
 import { Wheel } from "./WheelAnim";
-import {
-  IconArrowBack,
-  IconArrowForward,
-  IconCheck,
-  IconSchedule,
-} from "./Icons";
+import { IconCheck, IconSchedule } from "./Icons";
+import { useActionImg } from "@/hooks/useActionImg";
 
 function NavDate({
   interval,
@@ -46,25 +42,25 @@ function NavDate({
   const disableNext = selectedDateMs + dayMs > endMs;
   return (
     <div className="shadow-md shadow-black/20 h-8 flex items-center gap-1">
-      <ButtonDirectional direction="prev" disabled={disablePrev}
-      onDirectionalClick={() => {
-  
-        onDateChange(selectedDateMs - dayMs);}
-      }
+      <ButtonDirectional
+        direction="prev"
+        disabled={disablePrev}
+        onDirectionalClick={() => {
+          onDateChange(selectedDateMs - dayMs);
+        }}
       />
 
-      <ButtonDirectional direction="next" disabled={disableNext}
-      onDirectionalClick={() => {
-  
-        onDateChange(selectedDateMs + dayMs);}
-      }
+      <ButtonDirectional
+        direction="next"
+        disabled={disableNext}
+        onDirectionalClick={() => {
+          onDateChange(selectedDateMs + dayMs);
+        }}
       />
- 
-     
+
       <span className="rounded-md inline-flex w-24 h-8 justify-center items-center bold">
         {formatDate(selectedDateMs, { day: "numeric", month: "short" })}
       </span>
-     
     </div>
   );
 }
@@ -88,37 +84,44 @@ function SectionInfo({
 }
 
 const SlotItem = ({
+  dailyPlanId,
   slotData: s,
   startMs,
   timezone,
   handleCldSuccess,
 }: {
+  dailyPlanId: number;
   slotData: DailyActionSlot;
   startMs: number;
   timezone: string;
-  handleCldSuccess: (actionId: string, result: any) => void;
+  handleCldSuccess: (actionId: string, slotStartDtMs:number, result: any) => void;
 }) => {
   const { startDtMs, endDtMs, endMsProofImg } = getDetailedSlotTimes(
-    new Date(startMs).toISOString().slice(0, 10), //startDateStr.slice(0, 10),
+    new Date(startMs).toISOString().slice(0, 10), 
     s.at,
     s.duration,
     timezone
   );
+
+
+  const slotImg = useActionImg(createId(startDtMs, s.id, dailyPlanId));
+  
 
   const durationToStart = useTimeDiffToNow(startDtMs, endDtMs);
 
   return (
     <li key={s.id} className={`flex gap-4  my-4 `}>
       <div className="basis-12 relative">
-        {s.completedPhotoUrl && (
+        {slotImg.path && (
           <CardImage
-            path={s.completedPhotoUrl}
+            path={slotImg.path}
             altText={`${s.title} completed`}
             className="absolute top-0 left-0 "
           />
         )}
         <ButtonCldUpload
           id={s.id}
+          slotStartDtMs={startDtMs}
           handleCldSuccess={handleCldSuccess}
           disabled={Date.now() < startDtMs || Date.now() > endMsProofImg}
         />
@@ -188,7 +191,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
     todayMs >= startMs && todayMs <= endMs ? todayMs : startMs
   );
 
-  const handleCldSuccess = (slotId: string, result: any) => {
+  const handleCldSuccess = (slotId: string, slotStartDtMs:number, result: any) => {
     const imageUrl = result.info.secure_url;
     const updatedDailyPlan = updateSlots(slotId, imageUrl);
 
@@ -197,7 +200,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         userId: dailyPlan.userId,
         actionDate: startDate,
         imageUrl,
-        actionId:`${startMs}-${slotId}-${dailyPlan.id}`,
+        actionId: createId(slotStartDtMs, slotId, dailyPlan.id),
       },
       updatedDailyPlan
     );
@@ -212,8 +215,9 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         return dbUpdateActionPlan(dailyPlan);
       })
       .then(() => {
-
-        console.log("Action photo created and daily plan updated successfully.");
+        console.log(
+          "Action photo created and daily plan updated successfully."
+        );
       })
       .catch((err) => {
         console.error("Failed to create action photo:", err);
@@ -240,7 +244,8 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         interval={{ start: startDtStr, end: endDtStr }}
         repeat={repeat}
       />
-      <div className={``}>
+      <div className={`${styles.SlotContainer}`}>
+        <div className={styles.FadeFlash} key={selectedDateMs}></div>
         <NavDate
           selectedDateMs={selectedDateMs}
           onDateChange={setSelectedDateMs}
@@ -251,6 +256,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
             <SlotItem
               key={s.id}
               slotData={s}
+              dailyPlanId={dailyPlan.id}
               handleCldSuccess={handleCldSuccess}
               startMs={selectedDateMs}
               timezone={dailyPlan.timezone}
@@ -310,6 +316,10 @@ function getDetailedDailyPlanTimes(
     localStartDtStr: utcToGmtOffset(startDt.toISOString(), timezone),
     localEndDtStr: utcToGmtOffset(endDt.toISOString(), timezone),
   };
+}
+
+function createId(slotStartDtMs: number, slotId: string, dailyPlanId: number) {
+  return `${dailyPlanId}-${slotId}-${slotStartDtMs}`;
 }
 
 export { HabitCalendar };

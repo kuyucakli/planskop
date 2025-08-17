@@ -18,6 +18,7 @@ export default async function Home() {
 
   return (
     <>
+      
       <Banner>
         <div className="absolute top-0 left-0 p-8">
           <h1 className=" lg:w-200  text-7xl text-cyan-200 font-kira-hareng mb-8">

@@ -19,7 +19,7 @@
   height: 48px;
 
   svg {
-    fill: var(--color-primary);
+    fill: white;
     width: 20px;
   }
 
