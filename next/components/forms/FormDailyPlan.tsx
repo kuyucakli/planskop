@@ -83,7 +83,7 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         <InputText
           id="title"
           name="title"
-          className="floating-label w-full h-18 text-lg"
+          className="floating-label w-full h-18 text-lg px-4"
           formState={
             formClientState.status == "ERROR" ? formClientState : formState
           }
