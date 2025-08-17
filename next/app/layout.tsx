@@ -3,7 +3,7 @@ import { CardFamousPersonSummary } from "@/components/Card";
 import { FamousPeopleRoutines } from "./famous-people-routines";
 import MainNavBar from "@/components/MainNavBar";
 import { Kirang_Haerang } from "next/font/google";
-import Logo from "@/components/Logo";
+
 import type { Metadata } from "next";
 import NavUser from "@/components/navs/NavUser";
 import { Roboto_Flex } from "next/font/google";
@@ -46,9 +46,9 @@ export default async function RootLayout({
           <div id="root" className="md:overflow-hidden">
             <MainNavBar />
             <header className="p-2 ">
-              {/* <Logo onlyPictogram /> */}
+              
               <NavUser />
-
+             
             </header>
             <main className="p-3 md:p-6 limited-width overflow-y-auto bg-linear-to-b from-zinc-600 via-stone-800 to-zinc-900">
 

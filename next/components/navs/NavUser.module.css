@@ -1,9 +1,12 @@
 .NavUser {
   min-width: auto;
 
-  & ul {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+
+  button[component] {
+    cursor: pointer;
   }
 }

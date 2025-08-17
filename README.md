@@ -45,13 +45,13 @@ pnpm dev
 
 ## To Do's
 
-- Form Submit Button
-- Fade on date change refresh slots
-- Home page get latest public user's routine content
-- Intro
-- Home Page, one famous routine.
-- Home Page one famous detail page + summary popup on hover
-- Home Recent user habits
+- [X] Form Submit Button
+- [X] Fade on date change refresh slots
+- [] Home page get latest public user's routine content
+- [] Add information on track plans page if user has no dailyplans or not signed in
+- [X] Intro
+- [X] Home Page, one famous routine.
+- [?]Home Page one famous detail page + summary popup on hover
 - Add more dummy users
 - Add media table
 - Add like table
