@@ -7,92 +7,101 @@ import styles from "./Card.module.css";
 import { UseThemeContext } from "@/context/ThemeContext";
 import { ChartFamousDailyRoutines } from "./charts/";
 
-const Card = ({ children, className }: PropsWithChildren & { className?: string }) => {
-    return (
-        <div className={`${className} block my-4 p-6 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700`}>
-            {children}
-        </div>
-    );
+const Card = ({
+  children,
+  className,
+}: PropsWithChildren & { className?: string }) => {
+  return (
+    <div
+      className={`${className} block my-4 p-6 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700`}
+    >
+      {children}
+    </div>
+  );
 };
 
 const CardHeader = (Card.Header = ({ children }: PropsWithChildren) => (
-    <div className="">{children}</div>
+  <div className="">{children}</div>
 ));
 
 const CardBody = ({
-    children,
-    className,
+  children,
+  className,
 }: PropsWithChildren & { className: string }) => (
-    <div className={`${className}`}>{children}</div>
+  <div className={`${className}`}>{children}</div>
 );
 
 const CardFooter = ({ children }: PropsWithChildren) => (
-    <footer>{children}</footer>
+  <footer>{children}</footer>
 );
 
 const CardImage = ({
-    path,
-    altText,
-    className,
-}: PropsWithChildren & { path: string; altText: string; className?:string }) => (
-    <CldImage
-        src={path}
-        alt={altText}
-        width="80"
-        height="80"
-        crop="fill"
-        removeBackground
-        background="pink"
-        gravity="face"
-        className={className}
-    />
+  path,
+  altText,
+  className,
+  removeBackground = true,
+}: PropsWithChildren & {
+  path: string;
+  altText: string;
+  className?: string;
+  removeBackground?: boolean;
+}) => (
+  <CldImage
+    src={path}
+    alt={altText}
+    width="80"
+    height="80"
+    crop="fill"
+    removeBackground={removeBackground}
+    background="pink"
+    gravity="face"
+    className={className}
+  />
 );
 
 const CardFamousPersonSummary = ({
-    famousPerson,
-    isSkeletonView = false,
+  famousPerson,
+  isSkeletonView = false,
 }: {
-    famousPerson: Pick<FamousPersonWithRoutines, 'image' | 'personName' | 'routines'>;
-    isSkeletonView?: Boolean
+  famousPerson: Pick<
+    FamousPersonWithRoutines,
+    "image" | "personName" | "routines"
+  >;
+  isSkeletonView?: Boolean;
 }) => {
-    const { colors } = UseThemeContext();
-    const { image, personName, routines } = famousPerson;
-    if (isSkeletonView) {
-        return (
-            <Card className={styles.CardSkeleton}>
-                <CardHeader>
-                    <h2 className="text-xl my-2"></h2>
-                </CardHeader>
-                <CardBody className="flex items-start gap-6">
-
-
-                </CardBody>
-                <CardFooter>
-
-                </CardFooter>
-            </Card>
-        )
-    }
-
+  const { colors } = UseThemeContext();
+  const { image, personName, routines } = famousPerson;
+  if (isSkeletonView) {
     return (
-        <Card>
-            <CardHeader>
-                <h2 className="text-xl my-2">{personName}</h2>
-            </CardHeader>
-            <CardBody className="flex items-start gap-6">
-                <CardImage path={image} altText={personName} />
-                <ColorLegend
-                    list={routines.map((r, i) => ({
-                        color: colors[i],
-                        label: r.activityName,
-                    }))}
-                />
-            </CardBody>
-            <CardFooter>
-                <ChartFamousDailyRoutines routines={routines} compact />
-            </CardFooter>
-        </Card>
+      <Card className={styles.CardSkeleton}>
+        <CardHeader>
+          <h2 className="text-xl my-2"></h2>
+        </CardHeader>
+        <CardBody className="flex items-start gap-6"></CardBody>
+        <CardFooter></CardFooter>
+      </Card>
     );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <h2 className="text-xl my-2">{personName}</h2>
+      </CardHeader>
+      <CardBody className="flex items-start gap-6">
+        <CardImage path={image} altText={personName} />
+        <ColorLegend
+          list={routines.map((r, i) => ({
+            color: colors[i],
+            label: r.activityName,
+          }))}
+        />
+      </CardBody>
+      <CardFooter>
+        <ChartFamousDailyRoutines routines={routines} compact />
+      </CardFooter>
+    </Card>
+  );
 };
 
 export default Card;

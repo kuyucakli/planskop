@@ -330,7 +330,7 @@ function utcToGmtOffset(utcStr: string, timezone: string): string {
 
 function formatDate(
   date: Date | string | number,
-  options:Intl.DateTimeFormatOptions = {
+  options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

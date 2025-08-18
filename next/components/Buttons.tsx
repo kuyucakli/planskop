@@ -74,12 +74,16 @@ export function ButtonCldUpload({
   id,
   slotStartDtMs,
   handleCldSuccess,
-  disabled=false,
+  disabled = false,
 }: {
   id: string;
   slotStartDtMs: number;
-  handleCldSuccess: (actionId: string, slotStartDtMs:number, result: any) => void;
-  disabled: boolean
+  handleCldSuccess: (
+    actionId: string,
+    slotStartDtMs: number,
+    result: any
+  ) => void;
+  disabled: boolean;
 }) {
   return (
     <CldUploadWidget
@@ -93,13 +97,14 @@ export function ButtonCldUpload({
           <button
             disabled={disabled}
             onClick={() => open()}
-            className={`border-1 ${!disabled ? 'border-green-300' : 'border-gray-400'} flex justify-center items-center w-12 h-12`}
+            className={`border-1 ${
+              !disabled ? "border-green-300" : "border-gray-400"
+            } flex justify-center items-center w-12 h-12`}
             aria-label="Upload image"
           >
-          
-
-            <IconUpload className={`${!disabled ? 'fill-green-400' : 'fill-gray-400'}`}/>
-            
+            <IconUpload
+              className={`${!disabled ? "fill-green-400" : "fill-gray-400"}`}
+            />
           </button>
         );
       }}
@@ -107,26 +112,36 @@ export function ButtonCldUpload({
   );
 }
 
-
-export function ButtonDirectional({direction, disabled, children, onDirectionalClick}:PropsWithChildren & {direction:"prev" | "next", disabled?: boolean, onDirectionalClick: () => void}) {
-  return(
+export function ButtonDirectional({
+  direction,
+  disabled,
+  children,
+  onDirectionalClick,
+}: PropsWithChildren & {
+  direction: "prev" | "next";
+  disabled?: boolean;
+  onDirectionalClick: () => void;
+}) {
+  return (
     <button
-        disabled={disabled}
-        aria-label="previous-day"
-        className={`border-2 border-gray-300 w-6 h-6 inline-flex items-center justify-center cursor-pointer ${direction=="prev" ? 'rounded-tl-sm rounded-bl-sm' : 'rounded-tr-sm rounded-br-sm'}`}
-        onClick={() => {
-          if (disabled) return;
-          onDirectionalClick();
-        }}
-      >
-        { 
-          direction === "prev" ? (
-            <IconArrowBack className={`fill-gray-300`} width="16" />
-          ) : (
-            <IconArrowForward className={`fill-gray-300 `} width="16" />
-          )
-        }
-        {children}
-      </button>
-  )
+      disabled={disabled}
+      aria-label="previous-day"
+      className={`border-2  border-gray-300 w-6 h-6 inline-flex items-center justify-center cursor-pointer ${
+        direction == "prev"
+          ? "rounded-tl-sm rounded-bl-sm"
+          : "rounded-tr-sm rounded-br-sm"
+      }`}
+      onClick={() => {
+        if (disabled) return;
+        onDirectionalClick();
+      }}
+    >
+      {direction === "prev" ? (
+        <IconArrowBack className={`fill-gray-300`} width="16" />
+      ) : (
+        <IconArrowForward className={`fill-gray-300 `} width="16" />
+      )}
+      {children}
+    </button>
+  );
 }

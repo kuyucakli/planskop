@@ -41,7 +41,7 @@ function NavDate({
   const disablePrev = selectedDateMs - dayMs < startMs;
   const disableNext = selectedDateMs + dayMs > endMs;
   return (
-    <div className="shadow-md shadow-black/20 h-8 flex items-center gap-1">
+    <div className="shadow-md shadow-black/20 bg-black h-8  items-center gap-1 inline-flex">
       <ButtonDirectional
         direction="prev"
         disabled={disablePrev}
@@ -49,7 +49,9 @@ function NavDate({
           onDateChange(selectedDateMs - dayMs);
         }}
       />
-
+      <span className="rounded-md inline-flex text-sm w-20 h-8 justify-center items-center bold ">
+        {formatDate(selectedDateMs, { day: "numeric", month: "short" })}
+      </span>
       <ButtonDirectional
         direction="next"
         disabled={disableNext}
@@ -57,10 +59,6 @@ function NavDate({
           onDateChange(selectedDateMs + dayMs);
         }}
       />
-
-      <span className="rounded-md inline-flex w-24 h-8 justify-center items-center bold">
-        {formatDate(selectedDateMs, { day: "numeric", month: "short" })}
-      </span>
     </div>
   );
 }
@@ -74,10 +72,26 @@ function SectionInfo({
 }) {
   const { start, end } = interval;
   return (
-    <div className="border-gray-400 rounded-2xl text-sm  my-6">
-      <p>Your daily plan starting from, {start}</p>
+    <div className="border-gray-400 rounded-2xl text-sm  my-4">
       <p>
-        Planned to last for {repeat} ends at {end}
+        Between &nbsp;
+        <span>
+          {formatDate(start, {
+            weekday: "short",
+            month: "short",
+            day: "2-digit",
+            year: "2-digit",
+          })}
+        </span>
+        &nbsp; and &nbsp;
+        <span>
+          {formatDate(end, {
+            weekday: "short",
+            month: "short",
+            day: "2-digit",
+            year: "2-digit",
+          })}
+        </span>
       </p>
     </div>
   );
@@ -94,18 +108,20 @@ const SlotItem = ({
   slotData: DailyActionSlot;
   startMs: number;
   timezone: string;
-  handleCldSuccess: (actionId: string, slotStartDtMs:number, result: any) => void;
+  handleCldSuccess: (
+    actionId: string,
+    slotStartDtMs: number,
+    result: any
+  ) => void;
 }) => {
   const { startDtMs, endDtMs, endMsProofImg } = getDetailedSlotTimes(
-    new Date(startMs).toISOString().slice(0, 10), 
+    new Date(startMs).toISOString().slice(0, 10),
     s.at,
     s.duration,
     timezone
   );
 
-
   const slotImg = useActionImg(createId(startDtMs, s.id, dailyPlanId));
-  
 
   const durationToStart = useTimeDiffToNow(startDtMs, endDtMs);
 
@@ -117,6 +133,7 @@ const SlotItem = ({
             path={slotImg.path}
             altText={`${s.title} completed`}
             className="absolute top-0 left-0 "
+            removeBackground={false}
           />
         )}
         <ButtonCldUpload
@@ -191,7 +208,11 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
     todayMs >= startMs && todayMs <= endMs ? todayMs : startMs
   );
 
-  const handleCldSuccess = (slotId: string, slotStartDtMs:number, result: any) => {
+  const handleCldSuccess = (
+    slotId: string,
+    slotStartDtMs: number,
+    result: any
+  ) => {
     const imageUrl = result.info.secure_url;
     const updatedDailyPlan = updateSlots(slotId, imageUrl);
 

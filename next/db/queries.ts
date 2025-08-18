@@ -38,7 +38,9 @@ async function getActionPlan(id: number) {
 async function getActionPlans(
   userId: string,
   page = 1,
-  pageSize = 5
+  pageSize = 5,
+  orderBy = "ascending",
+  filterPublic = false
 ): Promise<SelectActionPlan[] | null> {
   try {
     return db
@@ -117,7 +119,10 @@ async function dbCreateActionPhoto(data: InsertActionPhoto) {
 
 const getActionPhoto = async (actionId: string) => {
   try {
-    return db.select().from(actionPhotos).where(eq(actionPhotos.actionId, actionId));
+    return db
+      .select()
+      .from(actionPhotos)
+      .where(eq(actionPhotos.actionId, actionId));
   } catch (err) {
     console.error("Error fetching actionæ photo:", err);
     return null;
