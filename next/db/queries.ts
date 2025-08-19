@@ -13,6 +13,11 @@ import {
   famousRoutineActivitiesTbl,
 } from "./schema";
 
+type DbResult<T> = {
+  data: T | null;
+  error: string | null;
+};
+
 //Action Plans
 
 async function dbDeleteActionPlan(id: number) {
@@ -31,8 +36,37 @@ async function dbUpdateActionPlan(data: UpdateActionPlan) {
   }
 }
 
-async function getActionPlan(id: number) {
-  return db.select().from(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
+async function getActionPlan(id: number): Promise<DbResult<SelectActionPlan>> {
+  try {
+    const result = await db
+      .select()
+      .from(dailyPlanTbl)
+      .where(eq(dailyPlanTbl.id, id));
+
+    return {
+      data: result[0] ?? null,
+      error: null,
+    };
+  } catch (err) {
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // Full error message for dev, generic for prod
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+
+    console.error("DB error fetching action plan:", err);
+
+    return {
+      data: null,
+      error: isDev
+        ? message
+        : "Database error occurred. Please try again later.",
+    };
+  }
 }
 
 async function getActionPlans(

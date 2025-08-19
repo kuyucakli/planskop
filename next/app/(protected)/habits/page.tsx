@@ -33,7 +33,7 @@ export default async function Page({
       {(!userId || result?.length == 0) && (
         <Link
           href={"/planner"}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold  px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded h-14 inline-flex justify-center items-center"  
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold  px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded h-14 inline-flex justify-center items-center"
         >
           Create your first daily plan
         </Link>
@@ -48,8 +48,13 @@ export default async function Page({
             return (
               <li key={dailyPlan.id} className="mb-12">
                 <h2 className="text-3xl relative inline-flex capitalize text-emerald-200">
-                  <Link href={`/planner/?actionPlanId=${dailyPlan.id}`}>
+                  <Link
+                    href={`/habits/detail/?id=${dailyPlan.id}`}
+                    className="hover:underline"
+                  >
                     {dailyPlan.title}
+                  </Link>
+                  <Link href={`/planner/?actionPlanId=${dailyPlan.id}`}>
                     <IconEdit className="absolute top-0 right-0 fill-gray-50 - translate-x-full" />
                   </Link>
                 </h2>
