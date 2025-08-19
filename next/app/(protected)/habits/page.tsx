@@ -49,7 +49,10 @@ export default async function Page({
               <li key={dailyPlan.id} className="mb-12">
                 <h2 className="text-3xl relative inline-flex capitalize text-emerald-200">
                   <Link
-                    href={`/habits/detail/?id=${dailyPlan.id}`}
+                    href={{
+                      pathname: "/habits/detail",
+                      query: { id: dailyPlan.id },
+                    }}
                     className="hover:underline"
                   >
                     {dailyPlan.title}
