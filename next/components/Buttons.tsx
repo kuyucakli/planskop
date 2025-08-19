@@ -5,6 +5,7 @@ import { FormState } from "@/lib/utils";
 import { FieldError } from "./forms/FormFieldError";
 import { CldUploadWidget } from "next-cloudinary";
 import { IconArrowBack, IconArrowForward, IconUpload } from "./Icons";
+import { useRouter } from "next/navigation";
 
 export function BasicButton({
   children,
@@ -142,6 +143,19 @@ export function ButtonDirectional({
         <IconArrowForward className={`fill-gray-300 `} width="16" />
       )}
       {children}
+    </button>
+  );
+}
+
+export function ButtonBack() {
+  const router = useRouter();
+
+  return (
+    <button
+      onClick={() => router.back()}
+      className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+    >
+      ← Back
     </button>
   );
 }
