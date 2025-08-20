@@ -1,4 +1,6 @@
 import Banner from "@/components/Banner";
+import DailyPLanList from "@/components/DailyPlanList";
+import LatestPublicSlots from "@/components/LatestPublicSlots";
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import { getActionPlans } from "@/db/queries";
@@ -16,6 +18,9 @@ export default async function Home() {
 
   return (
     <>
+      <Suspense fallback={"Loading"}>
+        <DailyPLanList />
+      </Suspense>
       <Banner>
         <div className="absolute top-0 left-0 p-8">
           <h1 className="   text-center md:text-left text-6xl md:text-7xl text-cyan-200 font-kira-hareng mb-8">
@@ -42,62 +47,22 @@ export default async function Home() {
         <SectionRandomFamous />
       </Suspense>
 
-      <section className="text-amber-200">
-        <h1 className="text-7xl">
+      <section>
+        <h1 className="text-2xl">Latest Habits</h1>
+        <LatestPublicSlots />
+      </section>
+      <section className="text-amber-200 flex">
+        <h1 className="text-4xl">
           Man is nothing else but what he makes of himself.
         </h1>
         <ul className="flex flex-wrap">
           {DATA_I_CAN_ACTIONS.map((a) => (
-            <li key={a} className="border rounded p-2 ">
+            <li key={a} className="border rounded border-dotted p-2 text-xs">
               {a}
             </li>
           ))}
         </ul>
       </section>
-
-      <section>
-        <h1 className="text-2xl">Latest Habits</h1>
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Alias ad
-          saepe laudantium consequatur? Deleniti at cum illum, ut nisi fuga
-          praesentium sapiente, delectus eum aperiam accusamus quaerat
-          recusandae asperiores autem accusantium ex consectetur magnam quidem
-          adipisci dolorum provident harum voluptas veritatis rerum. Nobis sit
-          modi consequatur quas incidunt, recusandae repudiandae quasi odio,
-          labore reprehenderit voluptatem? Modi blanditiis natus necessitatibus
-          nesciunt, temporibus mollitia pariatur aperiam. Eos quae beatae
-          repellendus, quidem voluptate laudantium doloribus soluta quas,
-          molestias iure facilis. Laudantium harum reprehenderit blanditiis
-          perspiciatis dolor soluta, error eveniet rerum alias distinctio
-          inventore! Reiciendis minima cupiditate doloribus ipsam. Quidem harum
-          quas consequatur quo.
-        </p>
-      </section>
-
-      {/* <section className="mt-6">
-        <h1 className="text-2xl">Your Daily Habits:</h1>
-        <ul>
-          {content?.map(c => {
-
-
-            return (
-              <li key={c.id}>
-                <h2>
-                  <Link href={`/planner/?actionPlanId=${c.id}`}>{c.title}</Link>
-                </h2>
-                <p>for {c.repeat}</p>
-                <ul>
-                  {c.slots.map((s, index) => <li key={index}>{s.duration}, {s.at}, {s.title}</li>)}
-                </ul>
-
-              </li>
-            )
-
-          })}
-
-
-        </ul>
-      </section> */}
     </>
   );
 }

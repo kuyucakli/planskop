@@ -22,19 +22,19 @@ export const SectionRandomFamous = async () => {
           gravity="face"
           className="block m-auto w-2/3 aspect-square object-cover"
         />
-        <div className="p-8 pr-12 text-blue-800">
-          <Link
-            href={`/famous-routines/${personId}`}
-            className="text-xs underline"
-          >
-            Detail: {personName}
-          </Link>
+        <div className="p-8 pr-12 text-cyan-800">
           <p className="text-3xl mb-4">{personContent}</p>
           <p className="text-md max-w-xl">
             Inspiring Routines, Not Ideals — A glimpse into the daily rhythms of
             thinkers, artists, and doers. Not to imitate, but to reflect and
             reshape your own way of living.
           </p>
+          <Link
+            href={`/famous-routines/${personId}`}
+            className="text-xs underline"
+          >
+            Detail: {personName}
+          </Link>
         </div>
       </div>
     </section>

@@ -1,7 +1,6 @@
 import { getActionPlans } from "@/db/queries";
 import { formatDate } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { Metadata } from "next";
 import Link from "next/link";
 
 export default async function Page() {

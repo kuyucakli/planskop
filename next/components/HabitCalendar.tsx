@@ -41,7 +41,7 @@ function NavDate({
   const disablePrev = selectedDateMs - dayMs < startMs;
   const disableNext = selectedDateMs + dayMs > endMs;
   return (
-    <div className="shadow-md shadow-black/20 bg-black h-8  items-center gap-1 inline-flex">
+    <div className="border-1 border-dotted border-gray-400 px-1 shadow-md shadow-black/20  h-10  items-center gap-1 flex justify-between rounded-lg">
       <ButtonDirectional
         direction="prev"
         disabled={disablePrev}
@@ -49,8 +49,12 @@ function NavDate({
           onDateChange(selectedDateMs - dayMs);
         }}
       />
-      <span className="rounded-md inline-flex text-sm w-20 h-8 justify-center items-center bold ">
-        {formatDate(selectedDateMs, { day: "numeric", month: "short" })}
+      <span className="rounded-md inline-flex text-sm  h-8 justify-center items-center bold uppercase">
+        {formatDate(selectedDateMs, {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
       </span>
       <ButtonDirectional
         direction="next"

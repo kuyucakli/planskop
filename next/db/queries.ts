@@ -1,6 +1,6 @@
 "use server";
 
-import { asc, desc, eq, getTableColumns, sql } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import {
   InsertActionPhoto,
@@ -111,6 +111,40 @@ async function getActionPlans(
   }
 }
 
+async function getLatestPublicDailyPLan(): Promise<DbResult<SelectActionPlan>> {
+  try {
+    const latestPublicEntry = await db
+      .select()
+      .from(dailyPlanTbl)
+      .where(eq(dailyPlanTbl.isPublic, true))
+      .orderBy(desc(dailyPlanTbl.createdAt))
+      .limit(1);
+    return {
+      data: latestPublicEntry[0],
+      error: null,
+    };
+  } catch (err) {
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // Full error message for dev, generic for prod
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+
+    console.error("DB error fetching action plan:", err);
+
+    return {
+      data: null,
+      error: isDev
+        ? message
+        : "Database error occurred. Please try again later.",
+    };
+  }
+}
+
 //Famous People
 
 const baseFamousRoutineQuery = db
@@ -192,5 +226,6 @@ export {
   dbUpdateActionPlan,
   getFamousPeopleWithRoutines,
   getFamousPersonWithRoutines,
+  getLatestPublicDailyPLan,
   getRandomFamousPersonWithRoutines,
 };

@@ -15,7 +15,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap:4px;
+  gap: 4px;
   height: 48px;
 
   svg {
@@ -23,8 +23,12 @@
     width: 20px;
   }
 
+  &[class="active"] {
+    color: var(--color-bermuda) !important;
+  }
+
   &[class="active"] svg {
-    fill: var(--color-secondary) !important;
+    fill: var(--color-bermuda) !important;
   }
 }
 
@@ -41,7 +45,7 @@
 
     a span {
       flex: 1 1 0;
-      transform:translateX(-8px);
+      transform: translateX(-8px);
     }
     & > ul {
       flex-direction: column;

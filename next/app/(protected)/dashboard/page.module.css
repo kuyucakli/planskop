@@ -1,9 +1,0 @@
-ul.Dashboard {
-  display: grid;
-  gap: 4px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-
-  & li {
-    padding: var(--spc-4);
-  }
-}

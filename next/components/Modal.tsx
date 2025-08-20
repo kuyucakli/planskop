@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import styles from "./Modal.module.css";
-import { Suspense } from "react";
 import { IconClose } from "./Icons";
 
 export function Modal({ children }: { children: React.ReactNode }) {
