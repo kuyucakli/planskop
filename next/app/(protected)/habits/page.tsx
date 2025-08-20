@@ -1,36 +1,24 @@
 import { getActionPlans } from "@/db/queries";
+import { formatDate } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Link from "next/link";
-import { ReactNode } from "react";
-import { FormDelete } from "@/components/forms/FormDelete";
-import { HabitCalendar } from "@/components/HabitCalendar";
-import { IconEdit } from "@/components/Icons";
 
-export const metadata: Metadata = {
-  title: "My Daily Plans",
-};
-
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | string[] | undefined;
-  };
-}) {
+export default async function Page() {
   const { userId, sessionClaims } = await auth();
-  let result = null;
+
+  let dailyPlans = null;
+
   if (userId && sessionClaims) {
-    result = await getActionPlans(userId);
+    const result = await getActionPlans(userId);
+    dailyPlans = result.data;
   }
 
   return (
     <>
-      <h1 className="text-6xl font-kira-hareng mb-12">
-        {metadata.title as ReactNode}
-      </h1>
+      <h1 className="text-6xl font-kira-hareng mb-2">My Daily Plans</h1>
 
-      {(!userId || result?.length == 0) && (
+      {(!userId || dailyPlans?.length == 0) && (
         <Link
           href={"/planner"}
           className="bg-blue-500 hover:bg-blue-400 text-white font-bold  px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded h-14 inline-flex justify-center items-center"
@@ -39,32 +27,31 @@ export default async function Page({
         </Link>
       )}
 
-      <section className="mt-6">
+      <section className="mt-2">
         <ul>
-          {result?.map((dailyPlan) => {
-            const dailyPlanStart = "";
-            const dailyPlanDateRange = "";
-            const dailyPlanEnd = "";
+          {dailyPlans?.map((dailyPlan) => {
             return (
-              <li key={dailyPlan.id} className="mb-12">
-                <h2 className="text-3xl relative inline-flex capitalize text-emerald-200">
+              <li
+                key={dailyPlan.id}
+                className="mb-1 border-b-1 border-stone-500"
+              >
+                <h2 className="text-3xl relative capitalize text-emerald-200">
                   <Link
-                    href={{
-                      pathname: "/habits/detail",
-                      query: { id: dailyPlan.id },
-                    }}
-                    className="hover:underline"
+                    href={`/habits/${dailyPlan.id}`}
+                    className="flex items-center  w-full h-24"
                   >
                     {dailyPlan.title}
-                  </Link>
-                  <Link href={`/planner/?actionPlanId=${dailyPlan.id}`}>
-                    <IconEdit className="absolute top-0 right-0 fill-gray-50 - translate-x-full" />
+                    <span className="text-sm text-gray-400 ml-2">
+                      On:{" "}
+                      {formatDate(dailyPlan.startDate, {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
                   </Link>
                 </h2>
-
-                <HabitCalendar dailyPlan={dailyPlan} />
-
-                <FormDelete id={dailyPlan.id} />
               </li>
             );
           })}

@@ -8,12 +8,14 @@ const Logo = ({
 }: PropsWithChildren & { onlyPictogram?: boolean }) => {
   return (
     <Link href="/" className={styles.LogoMain}>
-      {onlyPictogram ? <Image
-            src="/planskop-logo/xs-on-dark-planskop-pictogram.png"
-            width="24"
-            height="24"
-            alt="Planksop logo"
-          /> : (
+      {onlyPictogram ? (
+        <Image
+          src="/planskop-logo/xs-on-dark-planskop-pictogram.png"
+          width="24"
+          height="24"
+          alt="Planksop logo"
+        />
+      ) : (
         <picture>
           <source
             srcSet="/planskop-logo/sm-on-dark-planskop-logo.png"
@@ -25,6 +27,7 @@ const Logo = ({
             width="263"
             height="64"
             alt="Planksop logo"
+            className="scale-75"
           />
         </picture>
       )}

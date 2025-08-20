@@ -12,7 +12,7 @@
   z-index: var(--zindex-max);
   animation: app-intro 1ms forwards var(--total-anim-duration);
   overflow: hidden;
-  --total-anim-duration:6s;
+  --total-anim-duration: 6s;
   /* bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center z-60  */
 }
 
@@ -20,8 +20,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  opacity:0;
-  transform: translate(-50%);
+  opacity: 0;
+  transform: translate(-50%, -60%);
   animation: logo-wrapper var(--total-anim-duration) forwards;
 }
 
@@ -36,7 +36,7 @@
 
 .Layer:nth-of-type(1) {
   background: var(--color-blue-200);
-  opacity:0;
+  opacity: 0;
   animation: layer-1 var(--total-anim-duration) forwards;
 }
 

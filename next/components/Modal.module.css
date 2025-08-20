@@ -12,10 +12,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: var(--zindex-modal);
+  animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 .Dialog > button {
   position: absolute;
   top: 24px;
   right: 24px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

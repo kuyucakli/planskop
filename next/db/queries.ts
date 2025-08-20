@@ -1,6 +1,6 @@
 "use server";
 
-import { asc, eq, getTableColumns, sql } from "drizzle-orm";
+import { asc, desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   InsertActionPhoto,
@@ -73,22 +73,41 @@ async function getActionPlans(
   userId: string,
   page = 1,
   pageSize = 5,
-  orderBy = "ascending",
+  orderBy = "descending",
   filterPublic = false
-): Promise<SelectActionPlan[] | null> {
+): Promise<DbResult<SelectActionPlan[]>> {
   try {
-    return db
-      .select({
-        ...getTableColumns(dailyPlanTbl),
-      })
+    const result = await db
+      .select()
       .from(dailyPlanTbl)
       .where(eq(dailyPlanTbl.userId, userId))
-      .orderBy(asc(dailyPlanTbl.title), asc(dailyPlanTbl.id))
+      .orderBy(asc(dailyPlanTbl.startDate))
       .limit(pageSize)
       .offset((page - 1) * pageSize);
+
+    return {
+      data: result,
+      error: null,
+    };
   } catch (err) {
-    console.log("err");
-    return null;
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // Full error message for dev, generic for prod
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+
+    console.error("DB error fetching action plan:", err);
+
+    return {
+      data: null,
+      error: isDev
+        ? message
+        : "Database error occurred. Please try again later.",
+    };
   }
 }
 
