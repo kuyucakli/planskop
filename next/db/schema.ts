@@ -6,7 +6,6 @@ import {
   pgTable,
   serial,
   text,
-  index,
   timestamp,
   date,
   varchar,
@@ -396,6 +395,7 @@ const dailyActionsUpdateFormSchema = updateActionPlanSchema.merge(
 );
 
 type InsertActionPhoto = typeof actionPhotos.$inferInsert;
+type SelectActionPhoto = typeof actionPhotos.$inferSelect;
 
 export const actionPhotos = pgTable(
   "action_photos",
@@ -403,7 +403,9 @@ export const actionPhotos = pgTable(
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull(),
     actionDate: date("action_date").notNull(), // e.g. 2025-07-17
-    actionId: text("action_id").notNull(), // e.g. "0", "1" from JSON
+    actionTitle: text("action_title").notNull(),
+    actionId: text("action_id").notNull(),
+    dailyPlanId: integer("dailyPlanId").notNull(),
     imageUrl: text("image_url").notNull(), // stored in Cloudinary, etc.
     uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow(),
   },
@@ -436,4 +438,5 @@ export {
   type RepeatDuration,
   type remindAt,
   type InsertActionPhoto,
+  type SelectActionPhoto,
 };

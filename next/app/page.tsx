@@ -1,6 +1,6 @@
 import Banner from "@/components/Banner";
+import SummaryLatestUserSlots from "@/components/community/SummaryLatestUserSlots";
 import DailyPLanList from "@/components/DailyPlanList";
-import LatestPublicSlots from "@/components/LatestPublicSlots";
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import { getActionPlans } from "@/db/queries";
@@ -43,16 +43,19 @@ export default async function Home() {
         />
       </Banner>
 
-      <Suspense fallback={"Loading"}>
+      <Suspense fallback={"Loading..."}>
         <SectionRandomFamous />
       </Suspense>
 
-      <section>
-        <h1 className="text-2xl">Latest Habits</h1>
-        <LatestPublicSlots />
+      <section className=" my-4">
+        <h1 className="text-sm">Commnunity</h1>
+        <h2 className="text-xl mb-4">What others are up to.</h2>
+        <Suspense fallback="loading...">
+          <SummaryLatestUserSlots />
+        </Suspense>
       </section>
-      <section className="text-amber-200 flex">
-        <h1 className="text-4xl">
+      {/* <section className="text-amber-200  my-4">
+        <h1 className="text-2xl">
           Man is nothing else but what he makes of himself.
         </h1>
         <ul className="flex flex-wrap">
@@ -62,7 +65,7 @@ export default async function Home() {
             </li>
           ))}
         </ul>
-      </section>
+      </section> */}
     </>
   );
 }

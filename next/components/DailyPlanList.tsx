@@ -24,17 +24,23 @@ const DailyPLanList = async () => {
               href={`/habits/${d.id}`}
               className="capitalize text-sm text-black flex bg-pink-200 p-4 rounded-lg "
             >
-              <HandWrittenNums num={i + 1} />
+              <HandWrittenNums
+                num={Number(
+                  formatDate(d.startDate, {
+                    day: "numeric",
+                  })
+                )}
+              />
               <p className="flex flex-col">
                 <span>Your daily plan, "{d.title}"</span>
-                <span>on: {formatDate(d.startDate, { weekday: "long" })}</span>
-                <span>
+
+                <span className="font-bold">
                   {formatDate(d.startDate, {
-                    day: "numeric",
                     month: "short",
-                    year: "2-digit",
+                    year: "numeric",
                   })}
                 </span>
+                <span>on: {formatDate(d.startDate, { weekday: "long" })}</span>
               </p>
             </Link>
           </li>

@@ -95,6 +95,9 @@ function SectionInfo({
             day: "2-digit",
             year: "2-digit",
           })}
+        </span>{" "}
+        <span>
+          {repeat ? `, repeating for ${repeat}` : ", this is a one-time plan."}
         </span>
       </p>
     </div>
@@ -226,6 +229,8 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         actionDate: startDate,
         imageUrl,
         actionId: createId(slotStartDtMs, slotId, dailyPlan.id),
+        dailyPlanId: dailyPlan.id,
+        actionTitle: dailyPlan.title,
       },
       updatedDailyPlan
     );

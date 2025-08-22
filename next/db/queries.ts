@@ -1,10 +1,11 @@
 "use server";
 
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   InsertActionPhoto,
   InsertActionPlan,
+  SelectActionPhoto,
   SelectActionPlan,
   UpdateActionPlan,
   actionPhotos,
@@ -18,7 +19,7 @@ type DbResult<T> = {
   error: string | null;
 };
 
-//Action Plans
+//--- Action Plans ---
 
 async function dbDeleteActionPlan(id: number) {
   await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
@@ -72,9 +73,7 @@ async function getActionPlan(id: number): Promise<DbResult<SelectActionPlan>> {
 async function getActionPlans(
   userId: string,
   page = 1,
-  pageSize = 5,
-  orderBy = "descending",
-  filterPublic = false
+  pageSize = 5
 ): Promise<DbResult<SelectActionPlan[]>> {
   try {
     const result = await db
@@ -111,18 +110,49 @@ async function getActionPlans(
   }
 }
 
-async function getLatestPublicDailyPLan(): Promise<DbResult<SelectActionPlan>> {
+async function getLatestPublicDailyPLan(): Promise<
+  DbResult<
+    SelectActionPlan & { photos: Omit<SelectActionPhoto, "uploadedAt">[] }
+  >
+> {
   try {
-    const latestPublicEntry = await db
-      .select()
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    // Step 1: Join daily plans with photos, filter by isPublic and startDate
+    const rows = await db
+      .select({
+        dailyPLanFields: dailyPlanTbl,
+        photoId: actionPhotos.id,
+        imageUrl: actionPhotos.imageUrl,
+        actionId: actionPhotos.actionId,
+      })
+
       .from(dailyPlanTbl)
-      .where(eq(dailyPlanTbl.isPublic, true))
-      .orderBy(desc(dailyPlanTbl.createdAt))
+      .innerJoin(actionPhotos, eq(actionPhotos.dailyPlanId, dailyPlanTbl.id)) // ensures at least one photo
+      .where(
+        sql`${dailyPlanTbl.isPublic} = ${true} and ${
+          dailyPlanTbl.startDate
+        } < ${todayStr}`
+      )
+      .orderBy(desc(dailyPlanTbl.startDate)) // nearest to today first
       .limit(1);
-    return {
-      data: latestPublicEntry[0],
-      error: null,
+
+    if (!rows.length) return { data: null, error: null };
+
+    const planWithPhotos = {
+      ...rows[0].dailyPLanFields,
+      photos: rows.map((r) => ({
+        id: r.photoId,
+        userId: r.dailyPLanFields.userId,
+        actionDate: r.dailyPLanFields.startDate,
+        actionId: r.actionId,
+        dailyPlanId: r.dailyPLanFields.id,
+        imageUrl: r.imageUrl,
+        actionTitle: r.dailyPLanFields.title,
+      })),
     };
+
+    return { data: planWithPhotos, error: null };
   } catch (err) {
     const isDev = process.env.NODE_ENV !== "production";
 
@@ -145,7 +175,7 @@ async function getLatestPublicDailyPLan(): Promise<DbResult<SelectActionPlan>> {
   }
 }
 
-//Famous People
+//--- Famous People ---
 
 const baseFamousRoutineQuery = db
   .select({
@@ -198,7 +228,7 @@ const getRandomFamousPersonWithRoutines = async () => {
     .where(eq(famousPeopleTbl.id, randomId));
 };
 
-//Action Photos
+//--- Action Photos ---
 
 async function dbCreateActionPhoto(data: InsertActionPhoto) {
   await db.insert(actionPhotos).values(data);
@@ -216,8 +246,44 @@ const getActionPhoto = async (actionId: string) => {
   }
 };
 
+const getActionPhotosByDpId = async (
+  dailyPlanId: number
+): Promise<DbResult<SelectActionPhoto[]>> => {
+  try {
+    const actionPhotosRes = await db
+      .select()
+      .from(actionPhotos)
+      .where(eq(actionPhotos.dailyPlanId, dailyPlanId));
+
+    return {
+      data: actionPhotosRes,
+      error: null,
+    };
+  } catch (err) {
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // Full error message for dev, generic for prod
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+
+    console.error("DB error fetching action plan:", err);
+
+    return {
+      data: null,
+      error: isDev
+        ? message
+        : "Database error occurred. Please try again later.",
+    };
+  }
+};
+
 export {
   getActionPhoto,
+  getActionPhotosByDpId,
   getActionPlan,
   getActionPlans,
   dbDeleteActionPlan,
