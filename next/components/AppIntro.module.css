@@ -12,7 +12,7 @@
   z-index: var(--zindex-max);
   animation: app-intro 1ms forwards var(--total-anim-duration);
   overflow: hidden;
-  --total-anim-duration: 6s;
+  --total-anim-duration: 4s;
   /* bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center z-60  */
 }
 
