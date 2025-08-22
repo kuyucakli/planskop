@@ -21,7 +21,7 @@ import {
   SelectActionPlan,
 } from "@/db/schema";
 
-import { PropsWithChildren, use, useState } from "react";
+import { PropsWithChildren, Suspense, use, useState } from "react";
 import { useTimeDiffToNow } from "@/hooks/useTimeDiff";
 import { Wheel } from "./WheelAnim";
 import { IconCheck, IconSchedule } from "./Icons";
@@ -118,6 +118,7 @@ const SlotItem = ({
   handleCldSuccess: (
     actionId: string,
     slotStartDtMs: number,
+    slotTitle: string,
     result: any
   ) => void;
 }) => {
@@ -135,6 +136,9 @@ const SlotItem = ({
   return (
     <li key={s.id} className={`flex gap-4  my-4 `}>
       <div className="basis-12 relative">
+        {slotImg.isPending && (
+          <div className="w-6 h-6 absolute  bg-gray-300 animate-ping top-1/2 left-1/2 -translate-1/2" />
+        )}
         {slotImg.path && (
           <CardImage
             path={slotImg.path}
@@ -146,6 +150,7 @@ const SlotItem = ({
         <ButtonCldUpload
           id={s.id}
           slotStartDtMs={startDtMs}
+          slotTitle={s.title}
           handleCldSuccess={handleCldSuccess}
           disabled={Date.now() < startDtMs || Date.now() > endMsProofImg}
         />
@@ -218,6 +223,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
   const handleCldSuccess = (
     slotId: string,
     slotStartDtMs: number,
+    slotTitle: string,
     result: any
   ) => {
     const imageUrl = result.info.secure_url;
@@ -230,7 +236,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         imageUrl,
         actionId: createId(slotStartDtMs, slotId, dailyPlan.id),
         dailyPlanId: dailyPlan.id,
-        actionTitle: dailyPlan.title,
+        actionTitle: slotTitle,
       },
       updatedDailyPlan
     );

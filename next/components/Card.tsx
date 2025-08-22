@@ -2,7 +2,7 @@
 import { CldImage } from "next-cloudinary";
 import ColorLegend from "./ColorLegend";
 import { FamousPersonWithRoutines } from "@/db/schema";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import styles from "./Card.module.css";
 import { UseThemeContext } from "@/context/ThemeContext";
 import { ChartFamousDailyRoutines } from "./charts/";
@@ -45,19 +45,26 @@ const CardImage = ({
   altText: string;
   className?: string;
   removeBackground?: boolean;
-}) => (
-  <CldImage
-    src={path}
-    alt={altText}
-    width="80"
-    height="80"
-    crop="fill"
-    removeBackground={removeBackground}
-    background="pink"
-    gravity="face"
-    className={className}
-  />
-);
+}) => {
+  const [loaded, setLoaded] = useState(false);
+
+  //return <div className="w-12 h-12 absolute  bg-gray-300 animate-ping" />;
+
+  return (
+    <CldImage
+      src={path}
+      alt={altText}
+      width="80"
+      height="80"
+      crop="fill"
+      removeBackground={removeBackground}
+      background="pink"
+      gravity="face"
+      className={`${className}`}
+      onLoad={() => setLoaded(true)}
+    />
+  );
+};
 
 const CardFamousPersonSummary = ({
   famousPerson,

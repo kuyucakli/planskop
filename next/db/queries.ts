@@ -125,6 +125,7 @@ async function getLatestPublicDailyPLan(): Promise<
         photoId: actionPhotos.id,
         imageUrl: actionPhotos.imageUrl,
         actionId: actionPhotos.actionId,
+        actionTitle: actionPhotos.actionTitle,
       })
 
       .from(dailyPlanTbl)
@@ -132,7 +133,7 @@ async function getLatestPublicDailyPLan(): Promise<
       .where(
         sql`${dailyPlanTbl.isPublic} = ${true} and ${
           dailyPlanTbl.startDate
-        } < ${todayStr}`
+        } <= ${todayStr}`
       )
       .orderBy(desc(dailyPlanTbl.startDate)) // nearest to today first
       .limit(1);
@@ -148,7 +149,7 @@ async function getLatestPublicDailyPLan(): Promise<
         actionId: r.actionId,
         dailyPlanId: r.dailyPLanFields.id,
         imageUrl: r.imageUrl,
-        actionTitle: r.dailyPLanFields.title,
+        actionTitle: r.actionTitle,
       })),
     };
 
