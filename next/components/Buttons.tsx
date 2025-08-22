@@ -4,7 +4,12 @@ import styles from "./Buttons.module.css";
 import { FormState } from "@/lib/utils";
 import { FieldError } from "./forms/FormFieldError";
 import { CldUploadWidget } from "next-cloudinary";
-import { IconArrowBack, IconArrowForward, IconUpload } from "./Icons";
+import {
+  IconArrowBack,
+  IconArrowForward,
+  IconArrowHistoryBack,
+  IconUpload,
+} from "./Icons";
 import { useRouter } from "next/navigation";
 
 export function BasicButton({
@@ -158,7 +163,7 @@ export function ButtonBack() {
       onClick={() => router.back()}
       className="inline-flex cursor-pointer"
     >
-      <IconArrowBack className="fill-white" width="16" />
+      <IconArrowHistoryBack className="fill-white" width="20" />
     </button>
   );
 }

@@ -17,7 +17,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
         <IconClose className="fill-white" />
       </button>
 
-      <div>{children}</div>
+      <div className="w-full max-w-3xl">{children}</div>
     </dialog>
   );
 }

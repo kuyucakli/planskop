@@ -27,7 +27,7 @@ export const DailyPlanDetail = async ({
     <>
       <ButtonBack />
 
-      <h1 className="text-4xl capitalize font-bold mb-4 relative">
+      <h1 className="text-4xl capitalize font-bold mt-6 mb-4 relative">
         {dailyPlan.title}
         <Link
           href={`/planner/?actionPlanId=${dailyPlan.id}`}
