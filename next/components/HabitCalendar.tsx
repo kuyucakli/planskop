@@ -133,6 +133,11 @@ const SlotItem = ({
 
   const durationToStart = useTimeDiffToNow(startDtMs, endDtMs);
 
+  const allowedToUploadImg =
+    Date.now() >= startDtMs && Date.now() <= endMsProofImg;
+  //Date.now() < startDtMs || Date.now() > endMsProofImg;
+  // Date.now() >= startDtMs && Date.now() <= endMsProofImg;
+
   return (
     <li key={s.id} className={`flex gap-4  my-4 `}>
       <div className="basis-12 relative">
@@ -152,7 +157,7 @@ const SlotItem = ({
           slotStartDtMs={startDtMs}
           slotTitle={s.title}
           handleCldSuccess={handleCldSuccess}
-          disabled={Date.now() < startDtMs || Date.now() > endMsProofImg}
+          disabled={!allowedToUploadImg}
         />
       </div>
 
@@ -168,7 +173,7 @@ const SlotItem = ({
       <div className="basis-24 flex items-center">
         <LabelState state={durationToStart.state} />
       </div>
-      <div className="basis-24 flex items-center ">
+      <div className="basis-24 flex items-center justify-center">
         <p
           className={`text-xs ${
             durationToStart.state == "ongoing"
@@ -176,6 +181,10 @@ const SlotItem = ({
               : "text-gray-300"
           }`}
         >
+          {allowedToUploadImg && (
+            <span className="text-green-400">Upload image to complete</span>
+          )}
+          {!allowedToUploadImg && durationToStart.state == "ended" && "-"}
           {durationToStart.state != "ended" && formatDuration(durationToStart)}
           {durationToStart.state == "ongoing" && <Wheel />}
         </p>

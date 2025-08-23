@@ -23,14 +23,14 @@ export default async function Home() {
       </Suspense>
       <Banner>
         <div className="absolute top-0 left-0 p-8">
-          <h1 className="   text-center md:text-left text-6xl md:text-7xl text-cyan-200 font-kira-hareng mb-8">
+          <h1 className=" text-center md:text-left text-6xl md:text-7xl text-cyan-200 font-kira-hareng mb-8">
             “Habits, start small. Stick to it. Carpe diem.”
           </h1>
           <Link
             href={"/planner"}
-            className="bg-blue-500 hover:bg-blue-400 text-white font-bold  px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded w-48 h-14 flex justify-center items-center  m-auto md:m-0"
+            className="bg-blue-500 hover:bg-blue-400 text-white font-bold  px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-md w-60 h-14 flex justify-center items-center  m-auto md:m-0"
           >
-            Create
+            Create a daily plan
           </Link>
         </div>
 

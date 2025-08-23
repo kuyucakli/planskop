@@ -10,7 +10,9 @@ export const SectionRandomFamous = async () => {
   const { image, personName, personContent, personId } = res[0];
 
   return (
-    <section className="@container">
+    <section className="@container mt-10">
+      <h1 className="text-sm">Famous Routines</h1>
+      <h2 className="text-xl mb-4">Fruitful repetition</h2>
       <div className="my-6 bg-cyan-300  flex flex-col @2xl:flex-row">
         <CldImage
           src={image}
