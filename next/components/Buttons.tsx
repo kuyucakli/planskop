@@ -8,6 +8,7 @@ import {
   IconArrowBack,
   IconArrowForward,
   IconArrowHistoryBack,
+  IconDelete,
   IconUpload,
 } from "./Icons";
 import { useRouter } from "next/navigation";
@@ -15,21 +16,35 @@ import { useRouter } from "next/navigation";
 export function BasicButton({
   children,
   action,
-}: PropsWithChildren & { action: (...args: any[]) => void }) {
+  className,
+}: PropsWithChildren & {
+  className?: string;
+  action?: (...args: any[]) => void;
+}) {
   return (
-    <button type="button" onClick={(e) => action()}>
+    <button
+      type="button"
+      className={`${className} rounded-md bg-gray-700 px-3 py-1 text-sm hover:bg-gray-600 h-12 cursor-pointer`}
+      onClick={(e) => action && action()}
+    >
       {children}
     </button>
   );
 }
 
-export function DeleteButton({
-  id,
+export function ButtonFormDelete({
   action,
-}: PropsWithChildren & { id: number; action: (...args: any[]) => void }) {
+  className,
+}: React.HTMLAttributes<HTMLButtonElement> & {
+  action?: (...args: any[]) => void;
+}) {
   return (
-    <button type="button" onClick={(e) => action(id)}>
-      Sil
+    <button
+      type="submit"
+      className={`${className} text-red-300 text-xs items-center bg-none border-none p-0 cursor-pointer flex gap-1 ml-auto`}
+      onClick={(e) => action && action()}
+    >
+      <IconDelete className="fill-red-300" width="16" /> Delete
     </button>
   );
 }

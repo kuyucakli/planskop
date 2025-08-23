@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import styles from "./Modal.module.css";
-import { IconClose } from "./Icons";
+import { IconClose } from "@/components/Icons";
 
 export function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();

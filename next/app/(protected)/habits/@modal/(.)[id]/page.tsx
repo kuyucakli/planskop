@@ -1,12 +1,5 @@
-import { ButtonBack } from "@/components/Buttons";
 import { DailyPlanDetail } from "@/components/DailyPlanDetail";
-import { FormDelete } from "@/components/forms/FormDelete";
-import { HabitCalendar } from "@/components/HabitCalendar";
-import { IconSettings } from "@/components/Icons";
-import { Modal } from "@/components/Modal";
-import { getActionPlan, getActionPlans } from "@/db/queries";
-import { useUser } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
+import { Modal } from "@/components/dialogs/Modal";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -26,7 +19,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <Modal>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<p className="text-center">Loading...</p>}>
         <DailyPlanDetail dailyPlanId={dailyPLanId} />
       </Suspense>
     </Modal>
