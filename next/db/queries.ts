@@ -14,6 +14,8 @@ import {
   famousRoutineActivitiesTbl,
 } from "./schema";
 
+import { v2 as cloudinary } from "cloudinary";
+
 type DbResult<T> = {
   data: T | null;
   error: string | null;
@@ -22,7 +24,21 @@ type DbResult<T> = {
 //--- Action Plans ---
 
 async function dbDeleteActionPlan(id: number) {
-  await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
+  const photos = await db
+    .select({ publicId: actionPhotos.publicId })
+    .from(actionPhotos)
+    .where(eq(actionPhotos.dailyPlanId, id));
+
+  const publicIds = photos.map((p) => p.publicId);
+
+  try {
+    await db.delete(dailyPlanTbl).where(eq(dailyPlanTbl.id, id));
+    if (publicIds.length > 0) {
+      await cloudinary.api.delete_resources(publicIds);
+    }
+  } catch (err) {
+    throw new Error("Failed to delete action plan: " + err);
+  }
 }
 
 async function dbCreateActionPlan(data: InsertActionPlan) {
@@ -126,6 +142,7 @@ async function getLatestPublicDailyPLan(): Promise<
         imageUrl: actionPhotos.imageUrl,
         actionId: actionPhotos.actionId,
         actionTitle: actionPhotos.actionTitle,
+        publicId: actionPhotos.publicId,
       })
 
       .from(dailyPlanTbl)
@@ -150,6 +167,7 @@ async function getLatestPublicDailyPLan(): Promise<
         dailyPlanId: r.dailyPLanFields.id,
         imageUrl: r.imageUrl,
         actionTitle: r.actionTitle,
+        publicId: r.publicId,
       })),
     };
 

@@ -1,3 +1,4 @@
+import { IconAdd } from "@/components/Icons";
 import { getActionPlans } from "@/db/queries";
 import { formatDate } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
@@ -28,6 +29,12 @@ export default async function Page() {
 
       <section className="mt-2">
         <ul>
+          <li className="flex gap-2 justify-end">
+            <Link href="/planner" className="flex gap-2 text-xs items-center">
+              <IconAdd className="fill-white" />
+              Add new daily plan
+            </Link>
+          </li>
           {dailyPlans?.map((dailyPlan) => {
             return (
               <li

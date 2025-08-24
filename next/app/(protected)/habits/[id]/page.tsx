@@ -13,7 +13,7 @@ export type DetailPageProps = Readonly<{
 
 export default async function DetailPage({ params }: DetailPageProps) {
   const { id: dailyPLanId } = await params;
-
+  console.log("dailyPLanId", dailyPLanId);
   if (!dailyPLanId || isNaN(Number(dailyPLanId))) {
     return (
       <div>

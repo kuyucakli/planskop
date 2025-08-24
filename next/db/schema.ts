@@ -211,9 +211,7 @@ export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
 // 2. Shared extension for form validation
 const sharedActionPlanFields = {
   title: z.string().min(3).max(30),
-  isPublic: z
-    .union([z.literal("on"), z.boolean()])
-    .transform((val) => val === "on"),
+  isPublic: z.preprocess((val) => val === "on" || val === true, z.boolean()),
   startDate: z
     .string()
     .min(1, "Date is required")
@@ -405,8 +403,11 @@ export const actionPhotos = pgTable(
     actionDate: date("action_date").notNull(), // e.g. 2025-07-17
     actionTitle: text("action_title").notNull(),
     actionId: text("action_id").notNull(),
-    dailyPlanId: integer("dailyPlanId").notNull(),
-    imageUrl: text("image_url").notNull(), // stored in Cloudinary, etc.
+    dailyPlanId: integer("dailyPlanId")
+      .references(() => dailyPlanTbl.id, { onDelete: "cascade" })
+      .notNull(),
+    imageUrl: text("image_url").notNull(),
+    publicId: text("public_id").notNull(),
     uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow(),
   },
   (t) => [unique().on(t.userId, t.actionDate, t.actionId)]

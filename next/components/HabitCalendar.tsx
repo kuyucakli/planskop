@@ -182,7 +182,9 @@ const SlotItem = ({
           }`}
         >
           {allowedToUploadImg && (
-            <span className="text-green-400">Upload image to complete</span>
+            <span className="text-green-400 flex">
+              Upload image to complete
+            </span>
           )}
           {!allowedToUploadImg && durationToStart.state == "ended" && "-"}
           {durationToStart.state != "ended" && formatDuration(durationToStart)}
@@ -246,6 +248,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         actionId: createId(slotStartDtMs, slotId, dailyPlan.id),
         dailyPlanId: dailyPlan.id,
         actionTitle: slotTitle,
+        publicId: result.info.public_id,
       },
       updatedDailyPlan
     );
