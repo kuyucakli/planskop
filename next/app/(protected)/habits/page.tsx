@@ -44,16 +44,22 @@ export default async function Page() {
                 <h2 className="text-3xl relative capitalize text-emerald-200">
                   <Link
                     href={`/habits/${dailyPlan.id}`}
-                    className="flex items-center  w-full h-24"
+                    className="flex items-baseline  w-full h-24"
                   >
                     {dailyPlan.title}
-                    <span className="text-sm text-gray-400 ml-2">
+                    <span className="text-sm text-gray-400 ml-2 font-bold">
                       On:{" "}
                       {formatDate(dailyPlan.startDate, {
-                        weekday: "long",
-                        year: "numeric",
                         month: "long",
                         day: "numeric",
+                      })}
+                      ,{" "}
+                      {formatDate(dailyPlan.startDate, {
+                        year: "numeric",
+                      })}
+                      ,{" "}
+                      {formatDate(dailyPlan.startDate, {
+                        weekday: "long",
                       })}
                     </span>
                   </Link>

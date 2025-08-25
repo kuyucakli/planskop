@@ -79,21 +79,17 @@ function SectionInfo({
     <div className="border-gray-400 rounded-2xl text-sm  my-4">
       <p>
         Between &nbsp;
-        <span>
+        <span className="font-bold">
           {formatDate(start, {
-            weekday: "short",
             month: "short",
             day: "2-digit",
-            year: "2-digit",
           })}
         </span>
-        &nbsp; and &nbsp;
-        <span>
+        &nbsp; - &nbsp;
+        <span className="font-bold">
           {formatDate(end, {
-            weekday: "short",
             month: "short",
             day: "2-digit",
-            year: "2-digit",
           })}
         </span>{" "}
         <span>
