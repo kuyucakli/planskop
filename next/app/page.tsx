@@ -49,7 +49,7 @@ export default async function Home() {
 
       <section className=" my-4">
         <h1 className="text-sm">Commnunity</h1>
-        <h2 className="text-xl mb-4">What others are up to.</h2>
+        <h2 className="text-xl mb-4">Small steps, shared progress</h2>
         <Suspense fallback="loading...">
           <SummaryLatestUserSlots />
         </Suspense>

@@ -14,45 +14,104 @@ import {
   dbUpdateActionPlan,
 } from "@/db/queries";
 import * as _wasm from "@/pkg/planskop_rust";
-import { ZodSchema, z } from "zod";
 import {
   FormState,
   fromErrorToFormState,
   parseFormDataToNestedObject,
 } from "./utils";
+import { cancelReminder, scheduleReminder } from "./reminders/scheduler";
+
+import { getDetailedDailyPlanTimes } from "./utils/dailyPlan";
+import { ReminderBody } from "./definitions";
 
 export async function createActionPlan(
   prevState: FormState,
   formData: FormData
 ) {
   try {
-    const flattenedFormData = formDataToObject(formData);
+    const flattenedFormData = formDataToObject(formData) as InsertActionPlan &
+      Pick<ReminderBody, "userFullName" | "userEmail">;
     insertActionPlanSchema.parse(flattenedFormData);
-    await dbCreateActionPlan(flattenedFormData as InsertActionPlan);
+    const res = await dbCreateActionPlan(flattenedFormData);
+
+    const {
+      startDate,
+      repeat,
+      timezone,
+      remind,
+      slots,
+      userEmail,
+      userFullName,
+    } = flattenedFormData;
+    const { startMs, endMs, reminderHourUtc } = getDetailedDailyPlanTimes(
+      startDate!,
+      repeat,
+      timezone,
+      remind
+    );
+
+    if (res.data?.id && reminderHourUtc) {
+      await scheduleReminder({
+        dailyPlanId: res.data.id,
+        startUtcMs: startMs,
+        endUtcMs: endMs,
+        dailySlots: slots,
+        userEmail: userEmail,
+        userFullName: userFullName,
+        reminderHourUtc,
+      });
+    }
   } catch (err) {
     return fromErrorToFormState(err);
   }
   revalidatePath("/dashboard");
   redirect("/habits?succes=" + "success message");
-  // return toFormState('SUCCESS', 'Message created');
 }
 
 export async function updateActionPlan(
   prevState: FormState,
   formData: FormData
 ) {
-  // const actionPlanObj = await prepareActionPlanData(formData, updateActionPlanSchema);
-
   try {
-    const flattenedFormData = parseFormDataToNestedObject(formData);
+    const flattenedFormData = parseFormDataToNestedObject(
+      formData
+    ) as UpdateActionPlan & Pick<ReminderBody, "userFullName" | "userEmail">;
     updateActionPlanSchema.parse(flattenedFormData);
-    await dbUpdateActionPlan(flattenedFormData as UpdateActionPlan);
+    const res = await dbUpdateActionPlan(flattenedFormData);
+
+    const {
+      id,
+      startDate,
+      repeat,
+      timezone,
+      remind,
+      slots,
+      userEmail,
+      userFullName,
+    } = flattenedFormData;
+    const { startMs, endMs, reminderHourUtc } = getDetailedDailyPlanTimes(
+      startDate!,
+      repeat,
+      timezone,
+      remind
+    );
+
+    if (reminderHourUtc) {
+      await scheduleReminder({
+        dailyPlanId: id,
+        startUtcMs: startMs,
+        endUtcMs: endMs,
+        dailySlots: slots,
+        userEmail: userEmail,
+        userFullName: userFullName,
+        reminderHourUtc,
+      });
+    }
   } catch (err) {
     return fromErrorToFormState(err);
   }
   revalidatePath("/dashboard");
   redirect("/habits?succes=" + "success message");
-  // return toFormState('SUCCESS', 'Message updated');
 }
 
 export async function deleteActionPlan(formData: FormData) {
@@ -62,6 +121,7 @@ export async function deleteActionPlan(formData: FormData) {
       throw new Error("Invalid Id");
     }
     await dbDeleteActionPlan(id);
+    await cancelReminder(id);
   } catch (err) {
     return;
   }
@@ -75,15 +135,4 @@ function formDataToObject(formData: FormData): Record<string, unknown> {
     obj[key] = value;
   }
   return obj;
-}
-
-// Overload signatures for specific use cases
-async function prepareActionPlanData<TSchema extends ZodSchema<any>>(
-  formData: FormData,
-  schema: TSchema
-): Promise<z.infer<TSchema>> {
-  const rawObj = formDataToObject(formData);
-  const actionPlanObj = schema.parse(rawObj);
-
-  return actionPlanObj;
 }

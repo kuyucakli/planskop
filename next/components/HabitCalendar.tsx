@@ -1,31 +1,27 @@
 "use client";
 
-import {
-  addRepeatDuration,
-  combineAsDtUtc,
-  formatDate,
-  formatDuration,
-  timeBasedDurationToMinutes,
-  utcToGmtOffset,
-} from "@/lib/utils";
+import { formatDate, formatDuration } from "@/lib/utils";
 import { ButtonCldUpload, ButtonDirectional } from "./Buttons";
 import { CardImage } from "./Card";
 import { dbCreateActionPhoto, dbUpdateActionPlan } from "@/db/queries";
 import LabelState from "./LabelState";
 import styles from "./HabitCalendar.module.css";
 import {
-  AllowedTimeBasedDuration,
   DailyActionSlot,
   InsertActionPhoto,
   RepeatDuration,
   SelectActionPlan,
 } from "@/db/schema";
 
-import { PropsWithChildren, Suspense, use, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { useTimeDiffToNow } from "@/hooks/useTimeDiff";
 import { Wheel } from "./WheelAnim";
 import { IconCheck, IconSchedule } from "./Icons";
 import { useActionImg } from "@/hooks/useActionImg";
+import {
+  getDetailedDailyPlanTimes,
+  getDetailedSlotTimes,
+} from "@/lib/utils/dailyPlan";
 
 function NavDate({
   interval,
@@ -131,8 +127,6 @@ const SlotItem = ({
 
   const allowedToUploadImg =
     Date.now() >= startDtMs && Date.now() <= endMsProofImg;
-  //Date.now() < startDtMs || Date.now() > endMsProofImg;
-  // Date.now() >= startDtMs && Date.now() <= endMsProofImg;
 
   return (
     <li key={s.id} className={`flex gap-4  my-4 `}>
@@ -311,56 +305,6 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
     </section>
   );
 };
-
-/* --- Utils ---*/
-
-function getDetailedSlotTimes(
-  startDateStr: string,
-  slotStartTime: string,
-  slotDuration: AllowedTimeBasedDuration,
-  timezone: string
-) {
-  const startDt = combineAsDtUtc(startDateStr, slotStartTime, timezone);
-  const startDtMs = startDt.getTime();
-  const durationMinutes = timeBasedDurationToMinutes(slotDuration) || 0;
-  const endDt = new Date(startDtMs + durationMinutes * 60_000);
-  const endDtMs = endDt.getTime();
-  const endDtProofImg = new Date(endDtMs + 24 * 60 * 60_000);
-  const endMsProofImg = endDtProofImg.getTime();
-
-  return {
-    startDt,
-    endDt,
-    startDtMs,
-    endDtMs,
-    endDtProofImg,
-    endMsProofImg,
-  };
-}
-
-function getDetailedDailyPlanTimes(
-  start: string,
-  repeat: RepeatDuration | null | undefined,
-  timezone: string
-) {
-  const startDt = combineAsDtUtc(start, "00:00", "0");
-  const startMs = startDt.getTime();
-  const startDtStr = startDt.toISOString();
-  const endDt = addRepeatDuration(startDt, repeat);
-  const endMs = endDt.getTime();
-  const endDtStr = endDt.toISOString();
-
-  return {
-    startDt,
-    startMs,
-    startDtStr,
-    endDt,
-    endMs,
-    endDtStr,
-    localStartDtStr: utcToGmtOffset(startDt.toISOString(), timezone),
-    localEndDtStr: utcToGmtOffset(endDt.toISOString(), timezone),
-  };
-}
 
 function createId(slotStartDtMs: number, slotId: string, dailyPlanId: number) {
   return `${dailyPlanId}-${slotId}-${slotStartDtMs}`;

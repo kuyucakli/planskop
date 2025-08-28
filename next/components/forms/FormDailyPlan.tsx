@@ -38,11 +38,8 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
   const { user } = useUser();
   const [formClientState, setFormClientState] =
     useState<FormState>(EMPTY_FORM_STATE);
-  const formTypeAction = "id" in props ? updateActionPlan : createActionPlan;
-  const [formState, formAction] = useActionState(
-    formTypeAction,
-    EMPTY_FORM_STATE
-  );
+  const formType = "id" in props ? updateActionPlan : createActionPlan;
+  const [formState, formAction] = useActionState(formType, EMPTY_FORM_STATE);
   const noScriptFallback = useToastMessage(formState);
   const formRef = useFormReset(formState);
   const disableSaveButton = formClientState.status !== "SUCCESS";
@@ -75,6 +72,17 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         className="flex flex-col gap-y-8 text-sm max-w-3xl mx-auto"
       >
         <input type="hidden" name="userId" defaultValue={user?.id} />
+
+        <input
+          type="hidden"
+          name="userEmail"
+          defaultValue={user?.emailAddresses[0]?.emailAddress}
+        />
+        <input
+          type="hidden"
+          name="userFullName"
+          defaultValue={user?.fullName || user?.firstName || ""}
+        />
 
         {"id" in props && props.id && (
           <input type="hidden" name="id" readOnly defaultValue={props.id} />

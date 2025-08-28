@@ -16,7 +16,15 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className="text-6xl font-kira-hareng mb-2">My Daily Plans</h1>
+      <h1 className=" mb-8 flex justify-between items-baseline">
+        <span className="text-6xl font-kira-hareng">My Daily Plans</span>
+        {dailyPlans && dailyPlans.length > 0 && (
+          <Link href="/planner" className="flex gap-2 text-xs items-center">
+            <IconAdd className="fill-white" />
+            Add new daily plan
+          </Link>
+        )}
+      </h1>
 
       {(!userId || dailyPlans?.length == 0) && (
         <Link
@@ -29,12 +37,6 @@ export default async function Page() {
 
       <section className="mt-2">
         <ul>
-          <li className="flex gap-2 justify-end">
-            <Link href="/planner" className="flex gap-2 text-xs items-center">
-              <IconAdd className="fill-white" />
-              Add new daily plan
-            </Link>
-          </li>
           {dailyPlans?.map((dailyPlan) => {
             return (
               <li

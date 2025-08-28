@@ -42,7 +42,27 @@ async function dbDeleteActionPlan(id: number) {
 }
 
 async function dbCreateActionPlan(data: InsertActionPlan) {
-  await db.insert(dailyPlanTbl).values(data);
+  try {
+    const [result] = await db
+      .insert(dailyPlanTbl)
+      .values(data)
+      .returning({ id: dailyPlanTbl.id });
+    return {
+      data: result,
+      error: null,
+    };
+  } catch (err) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+    return {
+      data: null,
+      error: message,
+    };
+  }
 }
 
 async function dbUpdateActionPlan(data: UpdateActionPlan) {
@@ -126,9 +146,11 @@ async function getActionPlans(
   }
 }
 
-async function getLatestPublicDailyPLan(): Promise<
+async function getLatestPublicDailyPLans(
+  limit = 4
+): Promise<
   DbResult<
-    SelectActionPlan & { photos: Omit<SelectActionPhoto, "uploadedAt">[] }
+    (SelectActionPlan & { photos: Omit<SelectActionPhoto, "uploadedAt">[] })[]
   >
 > {
   try {
@@ -153,25 +175,43 @@ async function getLatestPublicDailyPLan(): Promise<
         } <= ${todayStr}`
       )
       .orderBy(desc(dailyPlanTbl.startDate)) // nearest to today first
-      .limit(1);
+      .limit(limit);
 
     if (!rows.length) return { data: null, error: null };
 
-    const planWithPhotos = {
-      ...rows[0].dailyPLanFields,
-      photos: rows.map((r) => ({
-        id: r.photoId,
-        userId: r.dailyPLanFields.userId,
-        actionDate: r.dailyPLanFields.startDate,
-        actionId: r.actionId,
-        dailyPlanId: r.dailyPLanFields.id,
-        imageUrl: r.imageUrl,
-        actionTitle: r.actionTitle,
-        publicId: r.publicId,
-      })),
-    };
+    const plansWithPhotos = rows.map((row, i) => {
+      return {
+        ...row.dailyPLanFields,
+        photos: rows
+          .filter((r) => r.dailyPLanFields.id === row.dailyPLanFields.id)
+          .map((r) => ({
+            id: r.photoId,
+            userId: r.dailyPLanFields.userId,
+            actionDate: r.dailyPLanFields.startDate,
+            actionId: r.actionId,
+            dailyPlanId: r.dailyPLanFields.id,
+            imageUrl: r.imageUrl,
+            actionTitle: r.actionTitle,
+            publicId: r.publicId,
+          })),
+      };
+    });
 
-    return { data: planWithPhotos, error: null };
+    // {
+    //   ...rows[0].dailyPLanFields,
+    //   photos: rows.map((r) => ({
+    //     id: r.photoId,
+    //     userId: r.dailyPLanFields.userId,
+    //     actionDate: r.dailyPLanFields.startDate,
+    //     actionId: r.actionId,
+    //     dailyPlanId: r.dailyPLanFields.id,
+    //     imageUrl: r.imageUrl,
+    //     actionTitle: r.actionTitle,
+    //     publicId: r.publicId,
+    //   })),
+    // }
+
+    return { data: plansWithPhotos, error: null };
   } catch (err) {
     const isDev = process.env.NODE_ENV !== "production";
 
@@ -311,6 +351,6 @@ export {
   dbUpdateActionPlan,
   getFamousPeopleWithRoutines,
   getFamousPersonWithRoutines,
-  getLatestPublicDailyPLan,
+  getLatestPublicDailyPLans,
   getRandomFamousPersonWithRoutines,
 };

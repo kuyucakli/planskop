@@ -4,7 +4,6 @@ import type {
   AllowedTimeBasedDuration,
   RepeatDuration,
 } from "@/db/schema";
-import { DailySlotStatus } from "./definitions";
 
 type FormState = {
   status: "UNSET" | "SUCCESS" | "ERROR";

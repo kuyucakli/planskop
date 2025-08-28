@@ -17,12 +17,12 @@ const DailyPLanList = async () => {
 
   return (
     <section className="p-md mb-6">
-      <ul className="flex gap-1 mt-4">
+      <ul className="flex flex-col md:flex-row gap-1 mt-4">
         {dailyPlans?.map((d, i) => (
           <li key={d.id} className="flex-1">
             <Link
               href={`/habits/${d.id}`}
-              className="capitalize text-sm text-black flex bg-pink-200 p-4 rounded-lg "
+              className="capitalize text-sm text-black flex  flex-col md:flex-row md:items-center bg-pink-200 p-4 rounded-lg "
             >
               <HandWrittenNums
                 num={Number(
@@ -32,14 +32,14 @@ const DailyPLanList = async () => {
                 )}
               />
               <p className="flex flex-col">
-                <span>Your daily plan, "{d.title}"</span>
-
                 <span className="font-bold">
                   {formatDate(d.startDate, {
                     month: "short",
                     year: "numeric",
                   })}
                 </span>
+                <span>Your daily plan, "{d.title}"</span>
+
                 <span>on: {formatDate(d.startDate, { weekday: "long" })}</span>
               </p>
             </Link>

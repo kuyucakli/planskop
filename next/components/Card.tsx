@@ -40,11 +40,15 @@ const CardImage = ({
   altText,
   className,
   removeBackground = true,
+  width = "80",
+  height = "80",
 }: PropsWithChildren & {
   path: string;
   altText: string;
   className?: string;
   removeBackground?: boolean;
+  width?: number | `${number}`;
+  height?: number | `${number}`;
 }) => {
   const [loaded, setLoaded] = useState(false);
 
@@ -54,8 +58,8 @@ const CardImage = ({
     <CldImage
       src={path}
       alt={altText}
-      width="80"
-      height="80"
+      width={width}
+      height={height}
       crop="fill"
       removeBackground={removeBackground}
       background="pink"

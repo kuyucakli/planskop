@@ -8,77 +8,78 @@ import FormComboBox from "./FormComboBox";
 import { FormState } from "@/lib/utils";
 import { FieldError } from "./FormFieldError";
 
-
 const weekDaysKeys = Object.keys(WeekDays) as Array<keyof typeof WeekDays>;
 
-export default function
-    FormFieldsTimePlanning({
-        startDate,
-        timezone,
-        repeat,
-        remind,
-        formState,
+export default function FormFieldsTimePlanning({
+  startDate,
+  timezone,
+  repeat,
+  remind,
+  formState,
+}: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
+  const { get_timezones, get_local_timezone } = useWasm() || {};
 
+  const userSystemTimezone = get_local_timezone
+    ? get_local_timezone()
+    : undefined;
 
-    }: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
-    const { get_timezones, get_local_timezone } = useWasm() || {};
+  if (!get_timezones) return "loading";
 
+  return (
+    <>
+      <label htmlFor="startDate">
+        Start Daily Plan At:
+        <input
+          type="date"
+          id="startDate"
+          name="startDate"
+          min={new Date().toISOString().split("T")[0]}
+          defaultValue={startDate || ""}
+        ></input>
+        <FieldError name="startDate" formState={formState} />
+      </label>
 
-    const userSystemTimezone = get_local_timezone ? get_local_timezone() : undefined;
+      <FormComboBox
+        name={`repeat`}
+        label="Repeat For"
+        defaultValue={repeat || ""}
+        className="basis-full border-0 border-b-2 rounded-none"
+        options={REPEAT_DURATIONS}
+        formState={formState}
+        required={true}
+        placeholder="1 week"
+      />
 
-    if (!get_timezones) return "loading";
-       
+      <label>
+        Remind Me:
+        <select id="remind" name="remind" defaultValue={remind || ""}>
+          {REMIND_AT.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+        <FieldError name="remind" formState={formState} />
+      </label>
 
-    return (
-        <>
-            <label htmlFor="startDate">Start Daily Plan At:
-                <input type="date" id="startDate" name="startDate" defaultValue={startDate || ""}></input>
-                <FieldError name="startDate" formState={formState} />
-            </label>
+      <label>
+        Timezone:
+        <select
+          id="timezone"
+          name="timezone"
+          defaultValue={timezone || userSystemTimezone}
+        >
+          <option value={userSystemTimezone}>{userSystemTimezone}</option>
 
-            <FormComboBox
-                name={`repeat`}
-                label="Repeat For"
-                defaultValue={repeat || ""}
-                className="basis-full border-0 border-b-2 rounded-none"
-                options={REPEAT_DURATIONS}
-                formState={formState}
-                required={true}
-                placeholder="1 week"
-            />
-
-
-            <FormComboBox
-                name={`remind`}
-                label="Remind At"
-                defaultValue={remind || ""}
-                className="basis-full border-0 border-b-2 rounded-none"
-                options={REMIND_AT}
-                formState={formState}
-                required={true}
-                placeholder="Morning"
-            />
-
-
-            <label>
-                Timezone:
-                <select id="timezone" name="timezone" defaultValue={timezone || userSystemTimezone} >
-
-                    <option value={userSystemTimezone}>{userSystemTimezone}</option>
-
-                    {get_timezones().split(", ").map((t) => (
-
-                        <option key={t} value={t}>
-                            {t}
-                        </option>
-                    ))}
-
-                </select>
-            </label>
-
-
-
-        </>
-    );
+          {get_timezones()
+            .split(", ")
+            .map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+        </select>
+      </label>
+    </>
+  );
 }
-

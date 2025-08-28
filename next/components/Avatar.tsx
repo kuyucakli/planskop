@@ -23,8 +23,8 @@ export default function Avatar({ url, name, useCaption = false }: AvatarProps) {
           src={url}
           alt={name || ""}
           title={name || ""}
-          width="32"
-          height="32"
+          width="24"
+          height="24"
         />
       )}
       {useCaption && <figcaption> {name || "unknown"} </figcaption>}

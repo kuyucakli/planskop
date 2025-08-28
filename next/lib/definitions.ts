@@ -1,47 +1,54 @@
+import { DailyActionSlot } from "@/db/schema";
+
 enum Frequency {
-    Daily = "DAILY",
-    Weekly = "WEEKLY",
-    Monthly = "MONTHLY",
-    Yearly = "YEARLY",
-};
-
-enum WeekDays {
-    Monday = "MO",
-    Tuesday = "TU",
-    Wednesday = "WE",
-    Thursday = "TH",
-    Friday = "FR",
-    Saturday = "SA",
-    Sunday = "SU",
-};
-
-
-// enum RemindKind {
-//     OneHourBefore = "OneHourBefore",
-//     TwoHoursBefore = "TwoHoursBefore",
-//     OneDayBefore = "OneDayBefore",
-//     TwoDaysBefore = "TwoDaysBefore",
-// }
-
-enum DailySlotStatus  {
-    Upcoming = "Upcoming",
-    Ongoing = "Ongoing",
-    Ended = "Ended",
-
+  Daily = "DAILY",
+  Weekly = "WEEKLY",
+  Monthly = "MONTHLY",
+  Yearly = "YEARLY",
 }
 
+enum WeekDays {
+  Monday = "MO",
+  Tuesday = "TU",
+  Wednesday = "WE",
+  Thursday = "TH",
+  Friday = "FR",
+  Saturday = "SA",
+  Sunday = "SU",
+}
+
+enum DailySlotStatus {
+  Upcoming = "Upcoming",
+  Ongoing = "Ongoing",
+  Ended = "Ended",
+}
 
 type Rrules = {
-    dtstart: string;
-    until: string;
-    frequency: Frequency | "";
-    count: string;
-    interval: string;
-    byweekday: WeekDays[];
+  dtstart: string;
+  until: string;
+  frequency: Frequency | "";
+  count: string;
+  interval: string;
+  byweekday: WeekDays[];
 };
-
-
 
 type timeString = `${number}:${number}`;
 
-export { DailySlotStatus, Frequency, WeekDays, type Rrules, type timeString };
+type ReminderBody = {
+  dailyPlanId: number;
+  startUtcMs: number;
+  endUtcMs: number;
+  dailySlots: DailyActionSlot[];
+  reminderHourUtc: number;
+  userFullName: string;
+  userEmail: string;
+};
+
+export {
+  DailySlotStatus,
+  Frequency,
+  WeekDays,
+  type ReminderBody,
+  type Rrules,
+  type timeString,
+};

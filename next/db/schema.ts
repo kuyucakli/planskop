@@ -161,37 +161,43 @@ const REPEAT_DURATIONS = [
 
 type RepeatDuration = (typeof REPEAT_DURATIONS)[number];
 
-const REMIND_AT = ["Morning", "Afternoon", "Evening", "Night"] as const;
+const REMIND_AT = [
+  "No Remind",
+  "Morning",
+  "Afternoon",
+  "Evening",
+  "Night",
+] as const;
 type remindAt = (typeof REMIND_AT)[number];
+
+export const REMIND_HOURS: Record<(typeof REMIND_AT)[number], number> = {
+  "No Remind": 0,
+  Morning: 8,
+  Afternoon: 12,
+  Evening: 16,
+  Night: 20,
+};
 
 export const remindEnum = pgEnum("remind", REMIND_AT);
 export const repeatEnum = pgEnum("repeat", REPEAT_DURATIONS);
 
-export const dailyPlanTbl = pgTable(
-  "action_plan",
-  {
-    id: serial("id").primaryKey(),
-    title: text("title").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    startDate: date("startDate", { mode: "string" }).notNull().defaultNow(),
-    isPublic: boolean("is_public"),
-    // nextRemindAtTime: timestamp('next_remind_at_time', { withTimezone: true, mode: "string" }),
-    slots: json("slots").notNull().$type<DailyActionSlot[]>(),
-    // rrule: varchar('rrule').notNull(),
-    remind: remindEnum("remind"),
-    repeat: repeatEnum("repeat"),
-    timezone: varchar("timezone").notNull(),
-    // until: timestamp('until', { mode: "string" }).notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
-    userId: text("user_id").notNull(),
-    // categoryId: integer('action_plan_category_id')
-    //     .references(() => actionPlanCategoryTbl.id, { onDelete: 'cascade' }),
-  } /*(table) => ([index("next_remind_at_time_idx").on(table.nextRemindAtTime),]) */
-);
+export const dailyPlanTbl = pgTable("action_plan", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  startDate: date("startDate", { mode: "string" }).notNull().defaultNow(),
+  isPublic: boolean("is_public"),
+  slots: json("slots").notNull().$type<DailyActionSlot[]>(),
+  remind: remindEnum("remind").notNull().default("No Remind"),
+  repeat: repeatEnum("repeat"),
+  timezone: varchar("timezone").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date()
+  ),
+  userId: text("user_id").notNull(),
+});
 
 export const actionPlanCategoryTbl = pgTable("action_plan_category", {
   id: serial("id").primaryKey(),
@@ -224,6 +230,15 @@ const sharedActionPlanFields = {
       {
         message: "Invalid date",
       }
+    )
+    .refine(
+      (val) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // ignore time
+        const date = new Date(val);
+        return date >= today;
+      },
+      { message: "Date cannot be earlier than today" }
     ),
 };
 
@@ -238,12 +253,14 @@ export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
 });
 
 // 3. Drizzle types — from the table (for DB access)
-type InferInsert = typeof dailyPlanTbl.$inferInsert;
+type InferInsertDp = typeof dailyPlanTbl.$inferInsert;
 
-export type InsertActionPlan = InferInsert;
+export type InsertActionPlan = InferInsertDp;
 
 //export type InsertActionPlan = typeof actionPlanTbl.$inferInsert;
-export type UpdateActionPlan = Partial<InsertActionPlan> & { id: number };
+export type UpdateActionPlan = typeof dailyPlanTbl.$inferSelect & {
+  id: number;
+};
 export type SelectActionPlan = typeof dailyPlanTbl.$inferSelect;
 
 // 4. Zod inference types — used in form validation / API inputs
