@@ -7,7 +7,6 @@ async function ReminderEmail({
   userFullName,
   dailySlots,
 }: Pick<ReminderBody, "dailySlots" | "userFullName">) {
-  const { userId } = await auth();
   return (
     <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.5" }}>
       <h2>Hello {userFullName},</h2>

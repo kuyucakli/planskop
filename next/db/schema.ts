@@ -161,21 +161,24 @@ const REPEAT_DURATIONS = [
 
 type RepeatDuration = (typeof REPEAT_DURATIONS)[number];
 
-const REMIND_AT = [
-  "No Remind",
-  "Morning",
-  "Afternoon",
-  "Evening",
-  "Night",
-] as const;
-type remindAt = (typeof REMIND_AT)[number];
+const REMIND_AT = {
+  NO_REMIND: "No Remind",
+  MORNING: "Morning",
+  AFTERNOON: "Afternoon",
+  EVENING: "Evening",
+  NIGHT: "Night",
+} as const;
 
-export const REMIND_HOURS: Record<(typeof REMIND_AT)[number], number> = {
-  "No Remind": 0,
-  Morning: 8,
-  Afternoon: 12,
-  Evening: 16,
-  Night: 20,
+// type of all possible values
+ type remindAt = (typeof REMIND_AT)[keyof typeof REMIND_AT];
+
+// mapping to hours
+export const REMIND_HOURS: Record<remindAt, number> = {
+  [REMIND_AT.NO_REMIND]: 0,
+  [REMIND_AT.MORNING]: 8,
+  [REMIND_AT.AFTERNOON]: 12,
+  [REMIND_AT.EVENING]: 16,
+  [REMIND_AT.NIGHT]: 20,
 };
 
 export const remindEnum = pgEnum("remind", REMIND_AT);
@@ -215,7 +218,7 @@ export const actionPlanCategoryRelations = relations(
 export const baseInsertActionPlanSchema = createInsertSchema(dailyPlanTbl);
 export const baseUpdateActionPlanSchema = createUpdateSchema(dailyPlanTbl);
 // 2. Shared extension for form validation
-const sharedActionPlanFields = {
+const sharedActionPlanFields = (isUpdate: boolean) => ({
   title: z.string().min(3).max(30),
   isPublic: z.preprocess((val) => val === "on" || val === true, z.boolean()),
   startDate: z
@@ -231,25 +234,29 @@ const sharedActionPlanFields = {
         message: "Invalid date",
       }
     )
-    .refine(
-      (val) => {
+    .superRefine((val, ctx) => {
+      if (!isUpdate) {
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // ignore time
+        today.setHours(0, 0, 0, 0);
         const date = new Date(val);
-        return date >= today;
-      },
-      { message: "Date cannot be earlier than today" }
-    ),
-};
+        if (date < today) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Date cannot be earlier than today",
+          });
+        }
+      }
+    }),
+});
 
 // 3. Final form schemas
 export const insertActionPlanSchema = baseInsertActionPlanSchema.extend(
-  sharedActionPlanFields
+  sharedActionPlanFields(false)
 );
 
 export const updateActionPlanSchema = baseUpdateActionPlanSchema.extend({
   id: z.preprocess((val) => Number(val), z.number().int().positive()), // required for update
-  ...sharedActionPlanFields,
+  ...sharedActionPlanFields(true),
 });
 
 // 3. Drizzle types — from the table (for DB access)

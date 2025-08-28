@@ -33,7 +33,11 @@ export default function FormFieldsTimePlanning({
           type="date"
           id="startDate"
           name="startDate"
-          min={new Date().toISOString().split("T")[0]}
+          min={
+            startDate
+              ? new Date(startDate).toISOString().split("T")[0]
+              : new Date().toISOString().split("T")[0]
+          }
           defaultValue={startDate || ""}
         ></input>
         <FieldError name="startDate" formState={formState} />
@@ -52,8 +56,12 @@ export default function FormFieldsTimePlanning({
 
       <label>
         Remind Me:
-        <select id="remind" name="remind" defaultValue={remind || ""}>
-          {REMIND_AT.map((r) => (
+        <select
+          id="remind"
+          name="remind"
+          defaultValue={remind || REMIND_AT.NO_REMIND}
+        >
+          {Object.values(REMIND_AT).map((r) => (
             <option key={r} value={r}>
               {r}
             </option>

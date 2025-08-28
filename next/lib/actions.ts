@@ -97,6 +97,7 @@ export async function updateActionPlan(
     );
 
     if (reminderHourUtc) {
+      await cancelReminder(id);
       await scheduleReminder({
         dailyPlanId: id,
         startUtcMs: startMs,
@@ -110,7 +111,7 @@ export async function updateActionPlan(
   } catch (err) {
     return fromErrorToFormState(err);
   }
-  revalidatePath("/dashboard");
+  revalidatePath("/planner");
   redirect("/habits?succes=" + "success message");
 }
 
