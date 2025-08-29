@@ -1,6 +1,4 @@
-// emails/ReminderEmail.tsx
 import { ReminderBody } from "@/lib/definitions";
-import { auth } from "@clerk/nextjs/server";
 import * as React from "react";
 
 async function ReminderEmail({
@@ -13,7 +11,9 @@ async function ReminderEmail({
       <p>Here’s your daily plan for today:</p>
       <ul>
         {dailySlots.map((s, i) => (
-          <li key={i}>{s.title}</li>
+          <li key={i}>
+            {s.title} at {s.at} for {s.duration}
+          </li>
         ))}
       </ul>
       <p style={{ marginTop: "20px" }}>

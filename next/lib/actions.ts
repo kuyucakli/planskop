@@ -2,6 +2,7 @@
 
 import {
   InsertActionPlan,
+  REMIND_AT,
   UpdateActionPlan,
   insertActionPlanSchema,
   updateActionPlanSchema,
@@ -96,8 +97,9 @@ export async function updateActionPlan(
       remind
     );
 
-    if (reminderHourUtc) {
+    if (remind === REMIND_AT.NO_REMIND) {
       await cancelReminder(id);
+    } else if (reminderHourUtc) {
       await scheduleReminder({
         dailyPlanId: id,
         startUtcMs: startMs,
