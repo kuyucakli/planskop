@@ -179,37 +179,37 @@ async function getLatestPublicDailyPLans(
 
     if (!rows.length) return { data: null, error: null };
 
-    const plansWithPhotos = rows.map((row, i) => {
-      return {
-        ...row.dailyPLanFields,
-        photos: rows
-          .filter((r) => r.dailyPLanFields.id === row.dailyPLanFields.id)
-          .map((r) => ({
-            id: r.photoId,
-            userId: r.dailyPLanFields.userId,
-            actionDate: r.dailyPLanFields.startDate,
-            actionId: r.actionId,
-            dailyPlanId: r.dailyPLanFields.id,
-            imageUrl: r.imageUrl,
-            actionTitle: r.actionTitle,
-            publicId: r.publicId,
-          })),
-      };
-    });
+    const planMap = new Map<
+      number,
+      SelectActionPlan & { photos: Omit<SelectActionPhoto, "uploadedAt">[] }
+    >();
 
-    // {
-    //   ...rows[0].dailyPLanFields,
-    //   photos: rows.map((r) => ({
-    //     id: r.photoId,
-    //     userId: r.dailyPLanFields.userId,
-    //     actionDate: r.dailyPLanFields.startDate,
-    //     actionId: r.actionId,
-    //     dailyPlanId: r.dailyPLanFields.id,
-    //     imageUrl: r.imageUrl,
-    //     actionTitle: r.actionTitle,
-    //     publicId: r.publicId,
-    //   })),
-    // }
+    for (const row of rows) {
+      const planId = row.dailyPLanFields.id;
+
+      // If the plan hasn't been added yet, create it
+      if (!planMap.has(planId)) {
+        planMap.set(planId, {
+          ...row.dailyPLanFields,
+          photos: [],
+        });
+      }
+
+      // Push the photo into the plan's photos array
+      planMap.get(planId)!.photos.push({
+        id: row.photoId,
+        userId: row.dailyPLanFields.userId,
+        actionDate: row.dailyPLanFields.startDate,
+        actionId: row.actionId,
+        dailyPlanId: planId,
+        imageUrl: row.imageUrl,
+        actionTitle: row.actionTitle,
+        publicId: row.publicId,
+      });
+    }
+
+    // Convert the Map values to an array
+    const plansWithPhotos = Array.from(planMap.values());
 
     return { data: plansWithPhotos, error: null };
   } catch (err) {
