@@ -13,7 +13,7 @@ const SummaryLatestUserSlots = async () => {
       {data.map((plan) => (
         <li key={plan.id} className="flex-none w-40">
           <ul>
-            {plan.photos.map((photo) => (
+            {plan.photos.map((photo, i) => (
               <li key={photo.id} className="inline-block m-1">
                 <CardImage
                   className="rounded-sm"
@@ -29,8 +29,7 @@ const SummaryLatestUserSlots = async () => {
                   ).toDateString()}
                 </span>{" "} */}
                 <p className="text-xs h-8 mt-2 capitalize">
-                  {photo.actionTitle} for {plan.photos.length} day
-                  {plan.photos.length > 1 ? "s" : ""}
+                  {photo.actionTitle} {i + 1}
                 </p>
               </li>
             ))}
