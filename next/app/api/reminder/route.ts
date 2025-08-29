@@ -25,7 +25,14 @@ export async function POST(req: NextRequest) {
     }
 
     const body: ReminderBody = JSON.parse(bodyText);
-    const { dailySlots, endUtcMs, startUtcMs, userEmail, userFullName } = body;
+    const {
+      dailySlots,
+      endUtcMs,
+      startUtcMs,
+      userEmail,
+      userFullName,
+      dailyPlanId,
+    } = body;
     const now = Date.now();
     // Skip if outside reminder range
     if (now < startUtcMs || now > endUtcMs)
@@ -35,7 +42,7 @@ export async function POST(req: NextRequest) {
       from: "Planskop <onboarding@resend.dev>",
       to: userEmail,
       subject: "Your Daily Plan Reminder",
-      react: ReminderEmail({ dailySlots, userFullName }),
+      react: ReminderEmail({ dailySlots, userFullName, dailyPlanId }),
     });
 
     return NextResponse.json({ status: "ok" });
