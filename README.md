@@ -13,6 +13,8 @@
 - User login via [Clerk.js](https://clerk.dev)
 - Media uploads (e.g. avatars, icons) via [Cloudinary](https://cloudinary.com/)
 - Data stored per user in a [Neon](https://neon.tech/) PostgreSQL database
+- Reminder email cron jobs via [Upstash/Qstash](https://upstash.com/docs/qstash/overall/getstarted)
+- Sending emails via [Resend](https://resend.com/)
 
 ---
 
@@ -45,17 +47,17 @@ pnpm dev
 
 ## To Do's
 
-- [X] Form Submit Button
-- [X] Fade on date change refresh slots
+- [x] Form Submit Button
+- [x] Fade on date change refresh slots
 - [] Home page get latest public user's routine content
 - [] Add information on track plans page if user has no dailyplans or not signed in
-- [X] Intro
-- [X] Home Page, one famous routine.
+- [x] Intro
+- [x] Home Page, one famous routine.
 - [?]Home Page one famous detail page + summary popup on hover
 - Add more dummy users
 - Add media table
 - Add like table
-- [X] Countdown for day and hours
+- [x] Countdown for day and hours
 - Add image
 - Rewards
 - Levels
