@@ -7,14 +7,11 @@
 ## What It Does
 
 - Plan your day using short, time-based action slots
-- Define habits that repeat (e.g. every weekday, or every Monday)
-- Timezone-aware — reminders adjust to your local time
+- Define habits that repeat (3day, 1month, etc...)
+- Timezone-aware reminder emails, adjust to your local time
 - Validates overlapping or duplicate actions
 - User login via [Clerk.js](https://clerk.dev)
 - Media uploads (e.g. avatars, icons) via [Cloudinary](https://cloudinary.com/)
-- Data stored per user in a [Neon](https://neon.tech/) PostgreSQL database
-- Reminder email cron jobs via [Upstash/Qstash](https://upstash.com/docs/qstash/overall/getstarted)
-- Sending emails via [Resend](https://resend.com/)
 
 ---
 
@@ -22,42 +19,24 @@
 
 | Feature            | Stack                               |
 | ------------------ | ----------------------------------- |
-| Frontend           | Next.js 14 (App Router), React 19   |
+| Frontend           | Next.js 15 (App Router), React 19   |
+| Styling            | Tailwind CSS                        |
 | Forms & Validation | Server Actions + Zod                |
 | Database           | Drizzle ORM + PostgreSQL (via Neon) |
 | Authentication     | Clerk.js                            |
 | Repeating Logic    | Rust + WebAssembly (RRULE)          |
-| Styling            | Tailwind CSS                        |
 | Media Storage      | Cloudinary                          |
-| Testing            | Jest + ts-jest                      |
+| Testing            | Jest + Cypress                      |
+| Cron Jobs          | Upstash/Qstash                      |
+| Mail               | Resend                              |
 
 ---
 
-## Getting Started
-
-```bash
-git clone https://github.com/YOUR_USERNAME/planskop.git
-cd planskop
-
-pnpm install
-cp .env.example .env   # Add Clerk, Cloudinary, and Neon credentials
-
-pnpm dev
-```
-
 ## To Do's
 
-- [x] Form Submit Button
-- [x] Fade on date change refresh slots
-- [] Home page get latest public user's routine content
-- [] Add information on track plans page if user has no dailyplans or not signed in
-- [x] Intro
-- [x] Home Page, one famous routine.
-- [?]Home Page one famous detail page + summary popup on hover
-- Add more dummy users
-- Add media table
-- Add like table
-- [x] Countdown for day and hours
-- Add image
-- Rewards
-- Levels
+- [] Better information on uploading media in order to complete the daily actions
+- [] Indicate filled hours section on daily planner as preview only
+- [] Make the design of filled hours section consistent with the design system
+- [] Refine famous routine detail page
+- [] Add public user detail page
+- [] Add more tests with cypress and jest
