@@ -121,7 +121,7 @@ const SlotItem = ({
     timezone
   );
 
-  const slotImg = useActionImg(createId(startDtMs, s.id, dailyPlanId));
+  const slotImg = useActionImg(createSlotImgId(startDtMs, s.id, dailyPlanId));
 
   const durationToStart = useTimeDiffToNow(startDtMs, endDtMs);
 
@@ -143,10 +143,10 @@ const SlotItem = ({
           />
         )}
         <ButtonCldUpload
-          id={s.id}
-          slotStartDtMs={startDtMs}
-          slotTitle={s.title}
-          handleCldSuccess={handleCldSuccess}
+          onCldSuccess={(result) => {
+            handleCldSuccess(s.id, startDtMs, s.title, result);
+            slotImg.setPath(result.info.secure_url);
+          }}
           disabled={!allowedToUploadImg}
         />
       </div>
@@ -235,7 +235,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         userId: dailyPlan.userId,
         actionDate: startDate,
         imageUrl,
-        actionId: createId(slotStartDtMs, slotId, dailyPlan.id),
+        actionId: createSlotImgId(slotStartDtMs, slotId, dailyPlan.id),
         dailyPlanId: dailyPlan.id,
         actionTitle: slotTitle,
         publicId: result.info.public_id,
@@ -306,7 +306,11 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
   );
 };
 
-function createId(slotStartDtMs: number, slotId: string, dailyPlanId: number) {
+function createSlotImgId(
+  slotStartDtMs: number,
+  slotId: string,
+  dailyPlanId: number
+) {
   return `${dailyPlanId}-${slotId}-${slotStartDtMs}`;
 }
 
