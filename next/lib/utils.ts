@@ -389,10 +389,15 @@ function combineAsDtUtc(
   return new Date(Date.UTC(year, month - 1, day, hour, minute));
 }
 
+function capitalizeFirstLetter(content: string) {
+  return content.charAt(0).toUpperCase() + content.slice(1);
+}
+
 export type { FormState, dtparts };
 export {
   addRepeatDuration,
   addTimeBasedDurationToTime,
+  capitalizeFirstLetter,
   combineAsDtUtc,
   EMPTY_FORM_STATE,
   extractTimeRange,
