@@ -60,6 +60,7 @@ export async function createActionPlan(
         userEmail: userEmail,
         userFullName: userFullName,
         reminderHourUtc,
+        remind,
       });
     }
   } catch (err) {
@@ -108,6 +109,7 @@ export async function updateActionPlan(
         userEmail: userEmail,
         userFullName: userFullName,
         reminderHourUtc,
+        remind,
       });
     }
   } catch (err) {

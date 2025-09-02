@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       userEmail,
       userFullName,
       dailyPlanId,
+      remind,
     } = body;
     const now = Date.now();
     // Skip if outside reminder range
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       from: "Planskop <onboarding@resend.dev>",
       to: userEmail,
       subject: "Your Daily Plan Reminder",
-      react: ReminderEmail({ dailySlots, userFullName, dailyPlanId }),
+      react: ReminderEmail({ dailySlots, userFullName, dailyPlanId, remind }),
     });
 
     return NextResponse.json({ status: "ok" });

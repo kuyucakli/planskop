@@ -1,4 +1,4 @@
-import { DailyActionSlot } from "@/db/schema";
+import { DailyActionSlot, remindAt } from "@/db/schema";
 
 enum Frequency {
   Daily = "DAILY",
@@ -42,6 +42,7 @@ type ReminderBody = {
   reminderHourUtc: number;
   userFullName: string;
   userEmail: string;
+  remind?: remindAt;
 };
 
 export {
