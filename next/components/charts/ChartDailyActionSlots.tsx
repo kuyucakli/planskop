@@ -49,7 +49,8 @@ const ChartDailyActionSlots = ({
         compact ? styles.Compact : ""
       }`}
     >
-      <ul className="flex  flex-wrap shadow-sm shadow-black/50">
+      <span className="text-amber-100/60 ">Preview of your selected hours</span>
+      <ul className="flex  flex-wrap shadow-sm shadow-black/50 mt-2">
         {dayMinutesByInterval.map((m, index) => {
           const isActive = !!reservedMinutes?.has(m);
           return (
@@ -91,7 +92,7 @@ const MinuteBox = ({
     </li>
   ) : (
     <li
-      className={`border-1 border-t-0 border-l-0 border-dotted border-stone-600 flex  text-amber-100/60  ${className}`}
+      className={`border-1 border-t-0 border-l-0 border-dotted border-stone-600 flex  text-amber-100/60  ${className} ${styles.QuarterMinute}`}
       style={style}
     >
       {" "}

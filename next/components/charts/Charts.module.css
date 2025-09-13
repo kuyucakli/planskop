@@ -33,3 +33,21 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
+.QuarterMinute {
+  position: relative;
+}
+
+.QuarterMinute:nth-child(4n)::after {
+  content: "";
+  display: block;
+  height: 92%;
+  width: 3px;
+  background-color: rgb(3, 119, 132);
+  filter: blur(2);
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%) translateX(-100%);
+  border-radius: 2px;
+}

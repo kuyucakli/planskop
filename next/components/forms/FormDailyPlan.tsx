@@ -28,8 +28,8 @@ import { InputText } from "./Inputs";
 import { SubmitButton } from "./SubmitButton";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
+import { useActionState, useEffect, useRef, useState } from "react";
 import usePrevious from "@/hooks/usePreviousValue";
-import { useActionState, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { ToggleButton } from "../Buttons";
 import { IconClose, IconInfo } from "../Icons";
@@ -100,7 +100,7 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
         />
 
         <ActionSlotList
-          defaultValue={"slots" in props ? props.slots : undefined}
+          defaultValue={"slots" in props ? sortSlots(props.slots) : undefined}
           formState={
             formClientState.status == "ERROR" ? formClientState : formState
           }
@@ -143,6 +143,7 @@ const ActionSlotList = ({
   formState: FormState;
   defaultValue?: DailyActionSlot[] | undefined;
 }) => {
+  const maxSlotCount = 5;
   const slotsDefault = defaultValue
     ? defaultValue
     : [{ id: "0", title: "", at: "", duration: "" }];
@@ -175,13 +176,7 @@ const ActionSlotList = ({
     setActionSlots(updated);
   };
 
-  const prevActionSlotCount = usePrevious(actionSlots.length);
-
-  const disableAddMoreButton =
-    prevActionSlotCount != actionSlots.length ||
-    actionSlots.length >= 5 ||
-    // formState.status == "UNSET" ||
-    !!formState.fieldErrors["slots"];
+  const disableAddMoreButton = actionSlots.length >= maxSlotCount;
 
   return (
     <div
@@ -235,7 +230,8 @@ const ActionSlotList = ({
         className="bg-transparent hover:bg-bermuda-500  text-sm hover:text-white py-2 px-4 border-0  hover:border-transparent rounded"
         onClick={handleAddSlot}
       >
-        + Add another action slot
+        {`+ Add another action slot.`}
+        <span className="text-xs text-gray-100"> {`Max ${maxSlotCount}`}</span>
       </button>
     </div>
   );
@@ -344,3 +340,6 @@ const ActionSlotFieldset = ({
     </fieldset>
   );
 };
+
+const sortSlots = (slots: DailyActionSlot[]) =>
+  [...slots].sort((a, b) => a.at.localeCompare(b.at));
