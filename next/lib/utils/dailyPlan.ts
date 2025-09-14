@@ -1,5 +1,6 @@
 import {
   AllowedTimeBasedDuration,
+  DailyActionSlot,
   REMIND_HOURS,
   remindAt,
   RepeatDuration,
@@ -68,4 +69,7 @@ function getDetailedDailyPlanTimes(
   };
 }
 
-export { getDetailedDailyPlanTimes, getDetailedSlotTimes };
+const sortSlots = (slots: DailyActionSlot[]) =>
+  [...slots].sort((a, b) => a.at.localeCompare(b.at));
+
+export { getDetailedDailyPlanTimes, getDetailedSlotTimes, sortSlots };

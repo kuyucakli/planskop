@@ -33,6 +33,7 @@ import usePrevious from "@/hooks/usePreviousValue";
 import { useUser } from "@clerk/nextjs";
 import { ToggleButton } from "../Buttons";
 import { IconClose, IconInfo } from "../Icons";
+import { sortSlots } from "@/lib/utils/dailyPlan";
 
 export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
   const { user } = useUser();
@@ -340,6 +341,3 @@ const ActionSlotFieldset = ({
     </fieldset>
   );
 };
-
-const sortSlots = (slots: DailyActionSlot[]) =>
-  [...slots].sort((a, b) => a.at.localeCompare(b.at));

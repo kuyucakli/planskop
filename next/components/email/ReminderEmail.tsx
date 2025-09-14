@@ -1,6 +1,7 @@
 import { REMIND_AT } from "@/db/schema";
 import { ReminderBody } from "@/lib/definitions";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { sortSlots } from "@/lib/utils/dailyPlan";
 import * as React from "react";
 
 async function ReminderEmail({
@@ -45,7 +46,7 @@ async function ReminderEmail({
       </h2>
       <p>Here’s your daily actions for today:</p>
       <ul>
-        {dailySlots.map((s, i) => (
+        {sortSlots(dailySlots).map((s, i) => (
           <li key={i}>
             {capitalizeFirstLetter(s.title)} at {s.at} for {s.duration}
           </li>
