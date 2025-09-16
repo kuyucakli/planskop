@@ -170,7 +170,7 @@ const REMIND_AT = {
 } as const;
 
 // type of all possible values
- type remindAt = (typeof REMIND_AT)[keyof typeof REMIND_AT];
+type remindAt = (typeof REMIND_AT)[keyof typeof REMIND_AT];
 
 // mapping to hours
 export const REMIND_HOURS: Record<remindAt, number> = {
@@ -332,7 +332,7 @@ const dailyActionSlotSchema = z.object({
   title: z.enum(DATA_I_CAN_ACTIONS, {
     errorMap: (issue) => ({ message: "Select from the list" }),
   }),
-  description: z.string().max(50).optional(),
+  description: z.string().max(250).optional(),
   at: z.enum(ALLOWED_TIMES, {
     errorMap: (issue) => ({ message: "Select from the list" }),
   }),
