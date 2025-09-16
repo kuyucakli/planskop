@@ -319,6 +319,7 @@ const ActionSlotFieldset = ({
           defaultValue={description}
           placeholder="Description"
           hidden={!showDescription}
+          className="w-full border-1 border-gray-600 p-2 rounded-sm h-24 text-xs"
         />
         <FieldError formState={formState} name="description" />
       </label>

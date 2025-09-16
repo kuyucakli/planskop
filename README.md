@@ -40,3 +40,5 @@
 - [] Refine famous routine detail page
 - [] Add public user detail page
 - [] Add more tests with cypress and jest
+- [] Order of action slots
+- [] Add another slot problem on landing edit daily plan page
