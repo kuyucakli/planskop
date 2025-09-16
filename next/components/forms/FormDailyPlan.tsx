@@ -24,16 +24,15 @@ import FormComboBox from "./FormComboBox";
 import FormFieldsTimePlanning from "./FormFieldsTimePlanning";
 import "./Form.css";
 import { FieldError } from "./FormFieldError";
+import { IconClose, IconInfo } from "../Icons";
 import { InputText } from "./Inputs";
 import { SubmitButton } from "./SubmitButton";
+import { sortSlots } from "@/lib/utils/dailyPlan";
+import { ToggleButton } from "../Buttons";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
-import { useActionState, useEffect, useRef, useState } from "react";
-import usePrevious from "@/hooks/usePreviousValue";
+import { useActionState, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ToggleButton } from "../Buttons";
-import { IconClose, IconInfo } from "../Icons";
-import { sortSlots } from "@/lib/utils/dailyPlan";
 
 export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
   const { user } = useUser();
@@ -145,7 +144,11 @@ const ActionSlotList = ({
   defaultValue?: DailyActionSlot[] | undefined;
 }) => {
   const maxSlotCount = 5;
-  const slotsDefault = defaultValue
+  const slotsDefault: (Omit<DailyActionSlot, "title" | "at" | "duration"> & {
+    title: string;
+    at: string;
+    duration: string;
+  })[] = defaultValue
     ? defaultValue
     : [{ id: "0", title: "", at: "", duration: "" }];
   const [actionSlots, setActionSlots] = useState(slotsDefault);
@@ -184,9 +187,14 @@ const ActionSlotList = ({
       className="border-y-1 border-y-gray-500 py-8 flex flex-col gap-y-4"
       onChange={(e) => {
         const target = e.target;
-        if (!(target instanceof HTMLInputElement)) return;
-        const elId = target.id;
-        updateSlot(elId, target.value);
+        if (
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement
+        ) {
+          const elId = target.id;
+          console.log(target.value);
+          updateSlot(elId, target.value);
+        }
       }}
     >
       <h2 className="text-md">Add daily actions:</h2>
@@ -217,7 +225,7 @@ const ActionSlotList = ({
           title={a?.title || ""}
           at={a?.at || ""}
           duration={a?.duration || ""}
-          description=""
+          description={a?.description || ""}
           formState={formState}
           id={a.id}
           deleteSlot={handleDeleteSlot}
@@ -315,7 +323,7 @@ const ActionSlotFieldset = ({
         </button>
         <textarea
           name={`slots[${id}].description`}
-          id="content"
+          id={`slots[${id}].description`}
           defaultValue={description}
           placeholder="Description"
           hidden={!showDescription}
