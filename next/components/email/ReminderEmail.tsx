@@ -41,6 +41,13 @@ async function ReminderEmail({
         borderRadius: "12px",
       }}
     >
+      <img
+        src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758093474/sm-on-dark-planskop-pictogram_i6isyn.png"
+        alt="Planskop Logo"
+        width="63"
+        height="63"
+        style={{ display: "block", marginBottom: "20px" }}
+      />
       <h2 style={{ fontWeight: "normal" }}>
         {greeting}, {userFullName}!
       </h2>
