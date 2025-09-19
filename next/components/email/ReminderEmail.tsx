@@ -63,22 +63,46 @@ async function ReminderEmail({
             />
           </td>
         </tr>
+        <tr>
+          <td>
+            <img
+              src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758317507/reminder-good-morning-drawing-01_pjpq9u.jpg"
+              alt="Planskop Logo"
+              width="200"
+              height="211"
+              style={{
+                display: "block",
+                marginTop: "0px",
+                marginBottom: "8px",
+              }}
+            />
+          </td>
+        </tr>
       </table>
-
+      //
       <h2 style={{ fontWeight: "normal", fontSize: "24px" }}>
         {greeting}, {userFullName}!
       </h2>
       <p>Here’s your daily actions for today:</p>
-
       {sortSlots(dailySlots).map((s, i) => (
         <p key={i}>
           🔵
           {capitalizeFirstLetter(s.title)} at {s.at} for {s.duration}
+          {s.description ? (
+            <span style={{ fontSize: "14px", display: "block" }}>
+              * {s.description}
+            </span>
+          ) : (
+            ""
+          )}
         </p>
       ))}
-
       <p style={{ marginTop: "20px" }}>
         Stay consistent — small steps every day build strong habits.
+      </p>
+      <p style={{ marginTop: "20px", fontSize: "13px" }}>
+        Remember: You can add an image to each daily action to mark it as done.
+        You have up to 1 day after the action ends to upload it.
       </p>
       <p style={{ textAlign: "center" }}>
         <a
@@ -95,10 +119,6 @@ async function ReminderEmail({
         >
           View Your Daily Plan
         </a>
-      </p>
-      <p style={{ marginTop: "20px", fontSize: "12px" }}>
-        Remember: You can add an image to each daily action to mark it as done.
-        You have up to 1 day after the action ends to upload it.
       </p>
     </div>
   );
