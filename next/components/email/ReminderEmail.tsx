@@ -41,24 +41,42 @@ async function ReminderEmail({
         borderRadius: "12px",
       }}
     >
-      <img
-        src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758093474/sm-on-dark-planskop-pictogram_i6isyn.png"
-        alt="Planskop Logo"
-        width="63"
-        height="63"
-        style={{ display: "block", marginBottom: "20px" }}
-      />
-      <h2 style={{ fontWeight: "normal" }}>
+      <table
+        role="presentation"
+        align="center"
+        cellPadding={0}
+        cellSpacing={0}
+        border={0}
+      >
+        <tr>
+          <td>
+            <img
+              src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758093474/sm-on-dark-planskop-pictogram_i6isyn.png"
+              alt="Planskop Logo"
+              width="48"
+              height="48"
+              style={{
+                display: "block",
+                marginTop: "8px",
+                marginBottom: "8px",
+              }}
+            />
+          </td>
+        </tr>
+      </table>
+
+      <h2 style={{ fontWeight: "normal", fontSize: "24px" }}>
         {greeting}, {userFullName}!
       </h2>
       <p>Here’s your daily actions for today:</p>
-      <ul>
-        {sortSlots(dailySlots).map((s, i) => (
-          <li key={i}>
-            {capitalizeFirstLetter(s.title)} at {s.at} for {s.duration}
-          </li>
-        ))}
-      </ul>
+
+      {sortSlots(dailySlots).map((s, i) => (
+        <p key={i}>
+          🔵
+          {capitalizeFirstLetter(s.title)} at {s.at} for {s.duration}
+        </p>
+      ))}
+
       <p style={{ marginTop: "20px" }}>
         Stay consistent — small steps every day build strong habits.
       </p>
