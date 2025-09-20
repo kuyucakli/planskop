@@ -63,13 +63,23 @@ async function ReminderEmail({
             />
           </td>
         </tr>
-        <tr>
+      </table>
+
+      <table
+        role="presentation"
+        align="center"
+        cellPadding={0}
+        cellSpacing={0}
+        border={0}
+        style={{ width: "100%" }}
+      >
+        <tr style={{ backgroundColor: "#68ff8c", width: "100%" }}>
           <td>
             <img
-              src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758317507/reminder-good-morning-drawing-01_pjpq9u.jpg"
+              src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758356238/reminder-good-morning-drawing-vector-02_vlseus.png"
               alt="Planskop Logo"
-              width="200"
-              height="211"
+              width="290"
+              height="235"
               style={{
                 display: "block",
                 marginTop: "0px",
@@ -79,24 +89,44 @@ async function ReminderEmail({
           </td>
         </tr>
       </table>
-      //
-      <h2 style={{ fontWeight: "normal", fontSize: "24px" }}>
-        {greeting}, {userFullName}!
-      </h2>
+
+      <h2 style={{ fontWeight: "bold", fontSize: "26px" }}>{greeting}</h2>
+      <h3>Dear, {userFullName}</h3>
       <p>Here’s your daily actions for today:</p>
-      {sortSlots(dailySlots).map((s, i) => (
-        <p key={i}>
-          🔵
-          {capitalizeFirstLetter(s.title)} at {s.at} for {s.duration}
-          {s.description ? (
-            <span style={{ fontSize: "14px", display: "block" }}>
-              * {s.description}
-            </span>
-          ) : (
-            ""
-          )}
-        </p>
-      ))}
+      <table>
+        {sortSlots(dailySlots).map((s, i) => (
+          <tr key={i} style={{ marginBottom: "4px" }}>
+            <td
+              style={{
+                fontSize: "12px",
+                width: "40px",
+              }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "6px",
+                  backgroundColor: "#7aeeb8",
+                }}
+              ></span>
+            </td>
+            <td>
+              <p style={{ fontSize: "14px", backgroundColor: "#f0fd80" }}>
+                {capitalizeFirstLetter(s.title)} at{" "}
+                <span style={{ fontWeight: "bold" }}>{s.at}</span> for{" "}
+                <span style={{ fontWeight: "bold" }}>{s.duration}</span>
+              </p>
+              {s.description ? (
+                <p style={{ fontSize: "13px" }}>* {s.description}</p>
+              ) : (
+                ""
+              )}
+            </td>
+          </tr>
+        ))}
+      </table>
       <p style={{ marginTop: "20px" }}>
         Stay consistent — small steps every day build strong habits.
       </p>
@@ -108,13 +138,14 @@ async function ReminderEmail({
         <a
           href={"https://planskop.vercel.app/habits/" + dailyPlanId}
           style={{
-            backgroundColor: "#51a2ff",
+            backgroundColor: "#5682ff",
             color: "white",
             fontWeight: "bold",
             padding: "20px 48px",
             borderRadius: "8px",
             textDecoration: "none",
             display: "inline-block",
+            width: "100%",
           }}
         >
           View Your Daily Plan
