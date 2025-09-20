@@ -108,7 +108,7 @@ async function ReminderEmail({
                   width: "12px",
                   height: "12px",
                   borderRadius: "6px",
-                  backgroundColor: "#7aeeb8",
+                  backgroundColor: "#ebcd0d",
                 }}
               ></span>
             </td>
@@ -138,8 +138,8 @@ async function ReminderEmail({
         <a
           href={"https://planskop.vercel.app/habits/" + dailyPlanId}
           style={{
-            backgroundColor: "#5682ff",
-            color: "white",
+            border: "2px solid #04d49a",
+            color: "#04d49a",
             fontWeight: "bold",
             padding: "20px 48px",
             borderRadius: "8px",
