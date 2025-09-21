@@ -37,8 +37,9 @@ async function ReminderEmail({
         textAlign: "center",
         maxWidth: "700px",
         margin: "0 auto",
-        border: "solid 1px #e6e6e6",
+        border: "solid 1px #e8e8e8",
         borderRadius: "12px",
+        padding: "0 4px",
       }}
     >
       <table
@@ -113,7 +114,13 @@ async function ReminderEmail({
               ></span>
             </td>
             <td>
-              <p style={{ fontSize: "14px", backgroundColor: "#f0fd80" }}>
+              <p
+                style={{
+                  fontSize: "15px",
+                  backgroundColor: "#04d49a",
+                  padding: "2px 0",
+                }}
+              >
                 {capitalizeFirstLetter(s.title)} at{" "}
                 <span style={{ fontWeight: "bold" }}>{s.at}</span> for{" "}
                 <span style={{ fontWeight: "bold" }}>{s.duration}</span>
@@ -130,7 +137,7 @@ async function ReminderEmail({
       <p style={{ marginTop: "20px" }}>
         Stay consistent — small steps every day build strong habits.
       </p>
-      <p style={{ marginTop: "20px", fontSize: "13px" }}>
+      <p style={{ marginTop: "20px", fontSize: "14px" }}>
         Remember: You can add an image to each daily action to mark it as done.
         You have up to 1 day after the action ends to upload it.
       </p>
@@ -144,8 +151,7 @@ async function ReminderEmail({
             padding: "20px 48px",
             borderRadius: "8px",
             textDecoration: "none",
-            display: "inline-block",
-            width: "100%",
+            display: "block",
           }}
         >
           View Your Daily Plan
