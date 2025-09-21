@@ -74,7 +74,7 @@ async function ReminderEmail({
         border={0}
         style={{ width: "100%" }}
       >
-        <tr style={{ backgroundColor: "#68ff8c", width: "100%" }}>
+        <tr style={{ backgroundColor: "#68ff8c" }}>
           <td>
             <img
               src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758356238/reminder-good-morning-drawing-vector-02_vlseus.png"
