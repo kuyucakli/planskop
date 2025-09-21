@@ -78,13 +78,12 @@ async function ReminderEmail({
           <td align="center" style={{ textAlign: "center" }}>
             <img
               src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758356238/reminder-good-morning-drawing-vector-02_vlseus.png"
-              alt="Planskop Logo"
+              alt="A new day..."
               width="290"
               height="235"
               style={{
                 display: "block",
-                marginTop: "0px",
-                marginBottom: "8px",
+                margin: "0 auto 8px",
               }}
             />
           </td>
