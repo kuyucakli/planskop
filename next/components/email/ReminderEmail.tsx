@@ -50,7 +50,7 @@ async function ReminderEmail({
         border={0}
       >
         <tr>
-          <td>
+          <td align="center" style={{ textAlign: "center" }}>
             <img
               src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758093474/sm-on-dark-planskop-pictogram_i6isyn.png"
               alt="Planskop Logo"
@@ -75,7 +75,7 @@ async function ReminderEmail({
         style={{ width: "100%" }}
       >
         <tr style={{ backgroundColor: "#68ff8c" }}>
-          <td>
+          <td align="center" style={{ textAlign: "center" }}>
             <img
               src="https://res.cloudinary.com/derfbfm9n/image/upload/v1758356238/reminder-good-morning-drawing-vector-02_vlseus.png"
               alt="Planskop Logo"
@@ -118,7 +118,8 @@ async function ReminderEmail({
                 style={{
                   fontSize: "15px",
                   backgroundColor: "#04d49a",
-                  padding: "2px 0",
+                  padding: "4px 0",
+                  borderRadius: "2px",
                 }}
               >
                 {capitalizeFirstLetter(s.title)} at{" "}
