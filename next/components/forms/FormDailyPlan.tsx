@@ -143,7 +143,7 @@ const ActionSlotList = ({
   formState: FormState;
   defaultValue?: DailyActionSlot[] | undefined;
 }) => {
-  const maxSlotCount = 5;
+  const maxSlotCount = 8;
   const slotsDefault: (Omit<DailyActionSlot, "title" | "at" | "duration"> & {
     title: string;
     at: string;
