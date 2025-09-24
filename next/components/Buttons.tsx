@@ -1,5 +1,5 @@
 "use client";
-import { PropsWithChildren, use } from "react";
+import { HTMLProps, PropsWithChildren, use } from "react";
 import styles from "./Buttons.module.css";
 import { FormState } from "@/lib/utils";
 import { FieldError } from "./forms/FormFieldError";
@@ -108,11 +108,10 @@ export function ButtonCldUpload({
       {({ open }) => {
         return (
           <button
+            type="button"
             disabled={disabled}
             onClick={() => open()}
-            className={`border-1 ${
-              !disabled ? "border-green-300" : "border-gray-400"
-            } flex justify-center items-center w-12 h-12`}
+            className={`flex justify-center items-center w-12 h-12`}
             aria-label="Upload image"
           >
             <IconUpload
@@ -137,6 +136,7 @@ export function ButtonDirectional({
 }) {
   return (
     <button
+      type="button"
       disabled={disabled}
       aria-label="previous-day"
       className={`border-2  border-gray-300 w-6 h-6 inline-flex items-center justify-center cursor-pointer ${
@@ -159,13 +159,13 @@ export function ButtonDirectional({
   );
 }
 
-export function ButtonBack() {
+export function ButtonBack({ className }: HTMLProps<HTMLButtonElement>) {
   const router = useRouter();
 
   return (
     <button
       onClick={() => router.back()}
-      className="inline-flex cursor-pointer"
+      className={`${className} inline-flex cursor-pointer`}
     >
       <IconArrowHistoryBack className="fill-white" width="20" />
     </button>

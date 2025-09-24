@@ -51,7 +51,7 @@ export async function createActionPlan(
       remind
     );
 
-    if (res.data?.id && reminderHourUtc) {
+    if (res.data?.id && reminderHourUtc && remind !== REMIND_AT.NO_REMIND) {
       await scheduleReminder({
         dailyPlanId: res.data.id,
         startUtcMs: startMs,
@@ -67,7 +67,9 @@ export async function createActionPlan(
     return fromErrorToFormState(err);
   }
   revalidatePath("/dashboard");
-  redirect("/habits?succes=" + "success message");
+  revalidatePath("/planner");
+  revalidatePath("/daily-plans", "layout");
+  redirect("/daily-plans?succes=" + "success message");
 }
 
 export async function updateActionPlan(
@@ -116,7 +118,7 @@ export async function updateActionPlan(
     return fromErrorToFormState(err);
   }
   revalidatePath("/planner");
-  redirect("/habits?succes=" + "success message");
+  redirect("/daily-plans?succes=" + "success message");
 }
 
 export async function deleteActionPlan(formData: FormData) {
@@ -130,8 +132,8 @@ export async function deleteActionPlan(formData: FormData) {
   } catch (err) {
     return;
   }
-  revalidatePath("/habits", "layout");
-  redirect("/habits?deleted=true");
+  revalidatePath("/daily-plans", "layout");
+  redirect("/daily-plans?deleted=true");
 }
 
 function formDataToObject(formData: FormData): Record<string, unknown> {

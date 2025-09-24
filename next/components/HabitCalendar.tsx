@@ -21,6 +21,7 @@ import { useActionImg } from "@/hooks/useActionImg";
 import {
   getDetailedDailyPlanTimes,
   getDetailedSlotTimes,
+  sortSlots,
 } from "@/lib/utils/dailyPlan";
 
 function NavDate({
@@ -211,7 +212,7 @@ function SlotList({ children }: PropsWithChildren) {
 
 const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
   const todayMs = Date.now();
-  const { startDate, repeat, timezone } = dailyPlan;
+  const { startDate, repeat, timezone, slots } = dailyPlan;
   const { startMs, endMs, startDtStr, endDtStr } = getDetailedDailyPlanTimes(
     startDate,
     repeat,
@@ -253,9 +254,9 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
         return dbUpdateActionPlan(dailyPlan);
       })
       .then(() => {
-        console.log(
-          "Action photo created and daily plan updated successfully."
-        );
+        // console.log(
+        //   "Action photo created and daily plan updated successfully."
+        // );
       })
       .catch((err) => {
         console.error("Failed to create action photo:", err);
@@ -263,7 +264,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
   };
 
   const updateSlots = (inSlotId: string, imageUrl: string) => {
-    const updatedSlots = dailyPlan.slots.map((slot) => {
+    const updatedSlots = slots.map((slot) => {
       if (slot.id === inSlotId) {
         return { ...slot, completedPhotoUrl: imageUrl };
       }
@@ -277,7 +278,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
   };
 
   return (
-    <section className={`${styles.HabitCalendarWrapper} mt-6 mb-16 `}>
+    <section className={`${styles.HabitCalendarWrapper} mt-2 mb-8 `}>
       <SectionInfo
         interval={{ start: startDtStr, end: endDtStr }}
         repeat={repeat}
@@ -290,7 +291,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectActionPlan }) => {
           interval={{ startMs, endMs }}
         />
         <SlotList>
-          {dailyPlan.slots.map((s) => (
+          {sortSlots(slots).map((s) => (
             <SlotItem
               key={s.id}
               slotData={s}

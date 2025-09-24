@@ -13,8 +13,8 @@ export function NavMain() {
         <li>
           <Link
             rel="stylesheet"
-            href="/habits"
-            className={pathName == "/habits" ? "active" : ""}
+            href="/daily-plans"
+            className={pathName == "/daily-plans" ? "active" : ""}
             prefetch
           >
             <svg

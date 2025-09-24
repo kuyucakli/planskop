@@ -1,6 +1,7 @@
 import { IconAdd } from "@/components/Icons";
 import { getActionPlans } from "@/db/queries";
 import { formatDate } from "@/lib/utils";
+import { getDetailedDailyPlanTimes } from "@/lib/utils/dailyPlan";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
@@ -38,6 +39,11 @@ export default async function Page() {
       <section className="mt-2">
         <ul>
           {dailyPlans?.map((dailyPlan) => {
+            const detailedTimes = getDetailedDailyPlanTimes(
+              dailyPlan.startDate,
+              dailyPlan.repeat,
+              dailyPlan.timezone
+            );
             return (
               <li
                 key={dailyPlan.id}
@@ -45,12 +51,12 @@ export default async function Page() {
               >
                 <h2 className="text-3xl relative capitalize text-emerald-200">
                   <Link
-                    href={`/habits/${dailyPlan.id}`}
+                    href={`/daily-plans/detail/${dailyPlan.id}`}
                     className="flex items-baseline  w-full h-24"
+                    prefetch={true}
                   >
                     {dailyPlan.title}
                     <span className="text-sm text-gray-400 ml-2 font-bold">
-                      On:{" "}
                       {formatDate(dailyPlan.startDate, {
                         month: "long",
                         day: "numeric",
@@ -62,6 +68,12 @@ export default async function Page() {
                       ,{" "}
                       {formatDate(dailyPlan.startDate, {
                         weekday: "long",
+                      })}{" "}
+                      -{" "}
+                      {formatDate(detailedTimes.endDt, {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
                       })}
                     </span>
                   </Link>

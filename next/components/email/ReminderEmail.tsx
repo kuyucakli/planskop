@@ -202,7 +202,7 @@ async function ReminderEmail({
       </p>
       <p style={{ textAlign: "center", marginRight: "8px", marginLeft: "8px" }}>
         <a
-          href={"https://planskop.vercel.app/habits/" + dailyPlanId}
+          href={"https://planskop.vercel.app/daily-plans/" + dailyPlanId}
           style={{
             border: "2px solid #04d49a",
             color: "#04d49a",

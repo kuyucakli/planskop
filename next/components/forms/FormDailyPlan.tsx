@@ -26,15 +26,18 @@ import "./Form.css";
 import { FieldError } from "./FormFieldError";
 import { IconClose, IconInfo } from "../Icons";
 import { InputText } from "./Inputs";
+import { MAX_DAILY_ACTION_SLOTS } from "@/db/schema";
 import { SubmitButton } from "./SubmitButton";
 import { sortSlots } from "@/lib/utils/dailyPlan";
 import { ToggleButton } from "../Buttons";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
-import { useActionState, useState } from "react";
+import { JSX, PropsWithChildren, useActionState, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 
-export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
+export function FormDailyPlan(
+  props: (InsertActionPlan | UpdateActionPlan | {}) & PropsWithChildren
+) {
   const { user } = useUser();
   const [formClientState, setFormClientState] =
     useState<FormState>(EMPTY_FORM_STATE);
@@ -99,6 +102,8 @@ export function FormDailyPlan(props: InsertActionPlan | UpdateActionPlan | {}) {
           placeholder="My Summer Plan"
         />
 
+        {props?.children}
+
         <ActionSlotList
           defaultValue={"slots" in props ? sortSlots(props.slots) : undefined}
           formState={
@@ -143,7 +148,6 @@ const ActionSlotList = ({
   formState: FormState;
   defaultValue?: DailyActionSlot[] | undefined;
 }) => {
-  const maxSlotCount = 8;
   const slotsDefault: (Omit<DailyActionSlot, "title" | "at" | "duration"> & {
     title: string;
     at: string;
@@ -180,7 +184,7 @@ const ActionSlotList = ({
     setActionSlots(updated);
   };
 
-  const disableAddMoreButton = actionSlots.length >= maxSlotCount;
+  const disableAddMoreButton = actionSlots.length >= MAX_DAILY_ACTION_SLOTS;
 
   return (
     <div
@@ -197,7 +201,7 @@ const ActionSlotList = ({
         }
       }}
     >
-      <h2 className="text-md">Add daily actions:</h2>
+      {/* <h2 className="text-md">Add daily actions:</h2> */}
 
       <input
         type="text"
@@ -240,7 +244,10 @@ const ActionSlotList = ({
         onClick={handleAddSlot}
       >
         {`+ Add another action slot.`}
-        <span className="text-xs text-gray-100"> {`Max ${maxSlotCount}`}</span>
+        <span className="text-xs text-gray-400">
+          {" "}
+          {`Max ${MAX_DAILY_ACTION_SLOTS}`}
+        </span>
       </button>
     </div>
   );

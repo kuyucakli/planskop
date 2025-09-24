@@ -21,7 +21,7 @@ const DailyPLanList = async () => {
         {dailyPlans?.map((d, i) => (
           <li key={d.id} className="flex-1">
             <Link
-              href={`/habits/${d.id}`}
+              href={`/daily-plans/detail/${d.id}`}
               className="capitalize text-sm text-black flex  flex-col md:flex-row md:items-center bg-pink-200 p-4 rounded-lg "
             >
               <HandWrittenNums

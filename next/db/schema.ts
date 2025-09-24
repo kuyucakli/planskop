@@ -343,12 +343,15 @@ const dailyActionSlotSchema = z.object({
 });
 
 type DailyActionSlot = z.infer<typeof dailyActionSlotSchema>;
-
+const MAX_DAILY_ACTION_SLOTS = 8;
 const dailyActionsFormSchemaBase = z.object({
   slots: z
     .array(dailyActionSlotSchema)
     .min(1, "You must add at least one daily action slot.")
-    .max(5, "You can add up to 5 daily action slots.")
+    .max(
+      MAX_DAILY_ACTION_SLOTS,
+      "You can add up to " + MAX_DAILY_ACTION_SLOTS + " daily action slots."
+    )
     .superRefine((slots, ctx) => {
       const startTimes = new Set();
       const reserved: number[] = [];
@@ -387,23 +390,23 @@ const dailyActionsFormSchemaBase = z.object({
 
         const title = slot.title;
 
-        if (titleToIndex.has(title)) {
-          const firstIndex = titleToIndex.get(title)!;
+        // if (titleToIndex.has(title)) {
+        //   const firstIndex = titleToIndex.get(title)!;
 
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Title "${title}" is duplicated`,
-            path: [index, "title"],
-          });
+        //   ctx.addIssue({
+        //     code: z.ZodIssueCode.custom,
+        //     message: `Title "${title}" is duplicated`,
+        //     path: [index, "title"],
+        //   });
 
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Title "${title}" is also used here`,
-            path: [firstIndex, "title"],
-          });
-        } else {
-          titleToIndex.set(title, index);
-        }
+        //   ctx.addIssue({
+        //     code: z.ZodIssueCode.custom,
+        //     message: `Title "${title}" is also used here`,
+        //     path: [firstIndex, "title"],
+        //   });
+        // } else {
+        //   titleToIndex.set(title, index);
+        // }
       });
     }),
 });
@@ -457,6 +460,7 @@ export {
   dailyActionsUpdateFormSchema,
   REPEAT_DURATIONS,
   REMIND_AT,
+  MAX_DAILY_ACTION_SLOTS,
   type DailyActionSlot,
   type AllowedTime,
   type AllowedTimeBasedDuration,
