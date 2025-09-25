@@ -1,5 +1,5 @@
 import { REMIND_AT } from "@/db/schema";
-import { ReminderBody } from "@/lib/definitions";
+import { ReminderBody, ROUTES } from "@/lib/definitions";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { sortSlots } from "@/lib/utils/dailyPlan";
 import * as React from "react";
@@ -201,8 +201,9 @@ async function ReminderEmail({
         You have up to 1 day after the action ends to upload it.
       </p>
       <p style={{ textAlign: "center", marginRight: "8px", marginLeft: "8px" }}>
+        {ROUTES.SITE_URL + ROUTES.DAILY_PLAN_DETAIL}
         <a
-          href={"https://planskop.vercel.app/daily-plans/" + dailyPlanId}
+          href={`${ROUTES.SITE_URL + ROUTES.DAILY_PLAN_DETAIL + dailyPlanId}`}
           style={{
             border: "2px solid #04d49a",
             color: "#04d49a",
