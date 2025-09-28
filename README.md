@@ -42,3 +42,6 @@
 - [] Add more tests with cypress and jest
 - [] Order of action slots
 - [] Add another slot problem on landing edit daily plan page
+- [] Allow a check box option as well as adding an image for marking as completed
+- [] Show ending time in action slot field when the user selects duration
+- [] Integrate settings of a daily plan with the calendar
