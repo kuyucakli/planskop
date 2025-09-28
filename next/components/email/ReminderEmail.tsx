@@ -1,4 +1,4 @@
-import { REMIND_AT } from "@/db/schema";
+import { REMIND_AT } from "@/lib/definitions";
 import { ReminderBody, ROUTES } from "@/lib/definitions";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { sortSlots } from "@/lib/utils/dailyPlan";

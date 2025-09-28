@@ -49,18 +49,3 @@ export type FamousPersonWithRoutines = Pick<
   typeof famousPeopleTbl.$inferSelect,
   "id" | "personName" | "image"
 > & { routines: FamousPersonRoutine[] };
-
-const dailyActionSlotSchema = z.object({
-  id: z.string(),
-  title: z.enum(DATA_I_CAN_ACTIONS, {
-    errorMap: (issue) => ({ message: "Select from the list" }),
-  }),
-  description: z.string().max(250).optional(),
-  at: z.enum(ALLOWED_TIMES, {
-    errorMap: (issue) => ({ message: "Select from the list" }),
-  }),
-  duration: z.enum(TIME_BASED_DURATIONS, {
-    errorMap: (issue) => ({ message: "Select from the list" }),
-  }),
-  // completedPhotoUrl: z.string().optional(),
-});

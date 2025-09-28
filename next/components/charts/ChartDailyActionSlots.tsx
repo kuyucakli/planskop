@@ -1,7 +1,7 @@
 "use client";
 
 import { UseThemeContext } from "@/context/ThemeContext";
-import { DailyActionSlot } from "@/db/schema";
+import { DailyActionSlot } from "@/db/schemas/daily-plans-schema";
 import styles from "./Charts.module.css";
 import { extractTimeRange } from "@/lib/utils";
 

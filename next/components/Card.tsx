@@ -1,7 +1,7 @@
 "use client";
 import { CldImage } from "next-cloudinary";
 import ColorLegend from "./ColorLegend";
-import { FamousPersonWithRoutines } from "@/db/schema";
+import { FamousPersonWithRoutines } from "@/db/schemas/famous-people-schema";
 import { PropsWithChildren, useState } from "react";
 import styles from "./Card.module.css";
 import { UseThemeContext } from "@/context/ThemeContext";

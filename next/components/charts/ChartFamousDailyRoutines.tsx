@@ -1,7 +1,7 @@
 'use client'
 
 import { UseThemeContext } from "@/context/ThemeContext";
-import { FamousPersonRoutine } from "@/db/schema";
+import { FamousPersonRoutine } from "@/db/schemas/famous-people-schema";
 import styles from "./Charts.module.css";
 
 export const fillHoursInbetween = (startsAt: string, endsAt: string) => {

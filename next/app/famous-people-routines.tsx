@@ -1,5 +1,5 @@
 import { CardFamousPersonSummary } from "@/components/Card";
-import { FamousPersonWithRoutines } from "@/db/famous-people-schema";
+import { FamousPersonWithRoutines } from "@/db/schemas/famous-people-schema";
 import { getFamousPeopleWithRoutines } from "@/db/queries/famousPeople";
 
 const FamousPeopleRoutines = async () => {
