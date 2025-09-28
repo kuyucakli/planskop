@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { FormDailyPlan } from "@/components/forms/FormDailyPlan";
 import { ReactNode } from "react";
-import { getActionPlan } from "@/db/queries";
-import { SelectActionPlan } from "@/db/schema";
+import { getDailyPlan } from "@/db/queries/dailyPlans";
+import { SelectDailyPlan } from "@/db/schemas/daily-plans-schema";
 import { FormDelete } from "@/components/forms/FormDelete";
 
 export const metadata: Metadata = {
@@ -14,11 +14,11 @@ async function Page({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  let actionPlan: SelectActionPlan | null = null;
+  let actionPlan: SelectDailyPlan | null = null;
   const actionPlanId = (await searchParams).actionPlanId;
 
   if (actionPlanId) {
-    const actionPlanRes = await getActionPlan(Number(actionPlanId));
+    const actionPlanRes = await getDailyPlan(Number(actionPlanId));
     actionPlan = actionPlanRes.data;
   }
 

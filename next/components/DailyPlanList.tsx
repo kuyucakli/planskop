@@ -1,4 +1,4 @@
-import { getActionPlans } from "@/db/queries";
+import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
 import HandWrittenNums from "./HandWrittenNums";
 import Link from "next/link";
@@ -11,7 +11,7 @@ const DailyPLanList = async () => {
     return null;
   }
 
-  const result = await getActionPlans(userId as string);
+  const result = await getDailyPlans(userId as string);
 
   const dailyPlans = result.data;
 

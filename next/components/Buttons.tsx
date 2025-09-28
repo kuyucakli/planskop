@@ -1,19 +1,29 @@
 "use client";
-import { HTMLProps, PropsWithChildren, use } from "react";
+import {
+  HTMLProps,
+  PropsWithChildren,
+  ReactElement,
+  use,
+  useState,
+} from "react";
 import styles from "./Buttons.module.css";
 import { FormState } from "@/lib/utils";
 import { FieldError } from "./forms/FormFieldError";
 import { CldUploadWidget } from "next-cloudinary";
 import {
+  IconAddPhotoAlternate,
   IconArrowBack,
   IconArrowForward,
   IconArrowHistoryBack,
+  IconAttachFile,
+  IconCheckCircle,
+  IconCircle,
   IconDelete,
   IconUpload,
 } from "./Icons";
 import { useRouter } from "next/navigation";
 
-export function BasicButton({
+function BasicButton({
   children,
   action,
   className,
@@ -32,7 +42,7 @@ export function BasicButton({
   );
 }
 
-export function ButtonFormDelete({
+function ButtonFormDelete({
   action,
   className,
 }: React.HTMLAttributes<HTMLButtonElement> & {
@@ -49,7 +59,7 @@ export function ButtonFormDelete({
   );
 }
 
-export function ToggleThemeButton() {
+function ToggleThemeButton() {
   return (
     <label aria-label="change-theme">
       <input
@@ -67,7 +77,7 @@ type toggleButtonProps = {
   formState: FormState;
 };
 
-export function ToggleButton({
+function ToggleButton({
   ariaLabel,
   label,
   id,
@@ -91,7 +101,7 @@ export function ToggleButton({
   );
 }
 
-export function ButtonCldUpload({
+function ButtonCldUpload({
   onCldSuccess,
   disabled = false,
 }: {
@@ -114,8 +124,8 @@ export function ButtonCldUpload({
             className={`flex justify-center items-center w-12 h-12`}
             aria-label="Upload image"
           >
-            <IconUpload
-              className={`${!disabled ? "fill-green-400" : "fill-gray-400"}`}
+            <IconAddPhotoAlternate
+              className={`${!disabled ? "fill-gray-100" : "fill-gray-400"}`}
             />
           </button>
         );
@@ -124,7 +134,7 @@ export function ButtonCldUpload({
   );
 }
 
-export function ButtonDirectional({
+function ButtonDirectional({
   direction,
   disabled,
   children,
@@ -159,15 +169,49 @@ export function ButtonDirectional({
   );
 }
 
-export function ButtonBack({ className }: HTMLProps<HTMLButtonElement>) {
+function ButtonBack({ className }: HTMLProps<HTMLButtonElement>) {
   const router = useRouter();
 
   return (
     <button
       onClick={() => router.back()}
       className={`${className} inline-flex cursor-pointer`}
+      type="button"
     >
       <IconArrowHistoryBack className="fill-white" width="20" />
     </button>
   );
 }
+
+function ButtonCheckable({
+  checked,
+  disabled,
+  onCheck,
+}: React.HTMLProps<HTMLInputElement> & {
+  onCheck: (checked: boolean) => void;
+}) {
+  const className = "fill-gray-200";
+
+  return (
+    <button
+      type="button"
+      onClick={() => onCheck(!checked)}
+      className="cursor-pointer inline-flex items-center justify-center w-12 h-12"
+      disabled={disabled}
+    >
+      {checked && <IconCheckCircle className={className} />}
+      {!checked && <IconCircle className={className} />}
+    </button>
+  );
+}
+
+export {
+  BasicButton,
+  ButtonFormDelete,
+  ButtonCldUpload,
+  ButtonCheckable,
+  ButtonBack,
+  ButtonDirectional,
+  ToggleThemeButton,
+  ToggleButton,
+};

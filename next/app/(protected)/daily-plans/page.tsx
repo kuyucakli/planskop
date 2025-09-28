@@ -1,5 +1,5 @@
 import { IconAdd } from "@/components/Icons";
-import { getActionPlans } from "@/db/queries";
+import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { formatDate } from "@/lib/utils";
 import { getDetailedDailyPlanTimes } from "@/lib/utils/dailyPlan";
 import { auth } from "@clerk/nextjs/server";
@@ -11,7 +11,7 @@ export default async function Page() {
   let dailyPlans = null;
 
   if (userId && sessionClaims) {
-    const result = await getActionPlans(userId);
+    const result = await getDailyPlans(userId);
     dailyPlans = result.data;
   }
 

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ButtonBack } from "./Buttons";
 import { IconSettings } from "./Icons";
-import { HabitCalendar } from "./HabitCalendar";
+import { HabitCalendar } from "./habitCalendar/HabitCalendar";
 import { FormDelete } from "./forms/FormDelete";
-import { getActionPlan } from "@/db/queries";
+import { getDailyPlan } from "@/db/queries/dailyPlans";
 import { FormDailyPlan } from "@/components/forms/FormDailyPlan";
 
 export const DailyPlanDetail = async ({
@@ -11,7 +10,7 @@ export const DailyPlanDetail = async ({
 }: {
   dailyPlanId: string;
 }) => {
-  const res = await getActionPlan(Number(dailyPlanId));
+  const res = await getDailyPlan(Number(dailyPlanId));
 
   if (!res || !res.data) {
     return (

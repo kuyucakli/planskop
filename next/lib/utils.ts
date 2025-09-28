@@ -1,9 +1,11 @@
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
+
 import type {
   AllowedTime,
   AllowedTimeBasedDuration,
+  DailyActionSlot,
   RepeatDuration,
-} from "@/db/schema";
+} from "@/lib/definitions";
 
 type FormState = {
   status: "UNSET" | "SUCCESS" | "ERROR";
@@ -34,10 +36,12 @@ const toFormState = (
 const fromErrorToFormState = (error: unknown) => {
   // if validation error with Zod, return first error message
   if (error instanceof ZodError) {
+    const treeifiedError = z.treeifyError(error);
+
     return {
       status: "ERROR" as const,
       message: "",
-      fieldErrors: error.format(),
+      fieldErrors: treeifiedError,
       timestamp: Date.now(),
     };
     // if another error instance, return error message
@@ -89,6 +93,46 @@ const unicodeFractions: Record<string, number> = {
   "⅓": 1 / 3,
   "⅔": 2 / 3,
 };
+
+type NestedError = {
+  errors?: string[];
+  properties?: Record<string, NestedError>;
+};
+
+/**
+ * Resolve an error from a nested Zod-like error object.
+ *
+ * Example:
+ * resolveTreeError(errors, "slots[uuid].duration")
+ */
+function resolveTreeError(
+  errors: NestedError,
+  path: string
+): string | undefined {
+  if (!errors || !path) return undefined;
+
+  // Convert slots[uuid] -> slots.uuid
+  const keys = path
+    .replace(/\[(\w+(-\w+)+)\]/g, ".$1") // keep hyphens in UUID
+    .split(".")
+    .filter(Boolean);
+
+  let current: NestedError | undefined = errors;
+
+  for (const key of keys) {
+    if (!current) return undefined;
+
+    if (current.properties && key in current.properties) {
+      current = current.properties[key];
+    } else {
+      // Key not found in properties, return undefined
+      return undefined;
+    }
+  }
+
+  // Return first error message if exists
+  return current?.errors?.[0];
+}
 
 function parseFractionalNumber(str: string): number {
   const match = str.match(/^(\d+)?([½¼¾⅓⅔])?$/);
@@ -164,36 +208,34 @@ function extractTimeRange(
   return range;
 }
 
-function parseSlotKey(key: string): { index: string; field: string } | null {
-  const match = key.match(/^slots\[(\d+)\]\.(\w+)$/);
+function parseSlotKey(key: string): { id: string; field: string } | null {
+  // Matches slots[some-id].field
+  const match = key.match(/^slots\[([^\]]+)\]\.(\w+)$/);
   if (!match) return null;
 
-  const [, indexStr, field] = match;
-  return {
-    index: indexStr,
-    field,
-  };
+  const [, id, field] = match;
+
+  return { id, field };
 }
 
 function parseFormDataToNestedObject(formData: FormData) {
   const result: Record<string, any> = {};
+  const slotsMap = new Map<string, any>();
 
   for (const [key, value] of formData.entries()) {
     const slotKey = parseSlotKey(key);
     if (slotKey) {
-      const { index, field } = slotKey;
-      result.slots ??= [];
-      result.slots[index] ??= {};
-      result.slots[index][field] = value;
-      result.slots[index]["id"] = index;
-    } else {
-      if (key !== "slots") result[key] = value;
+      const { id, field } = slotKey;
+      const slot = slotsMap.get(id) ?? { id };
+      slot[field] = value;
+      slotsMap.set(id, slot);
+    } else if (key !== "slots") {
+      result[key] = value;
     }
   }
 
-  if (!("isPublic" in result)) {
-    result.isPublic = false;
-  }
+  result.slots = Array.from(slotsMap.values());
+  result.isPublic ??= false;
 
   return result;
 }
@@ -412,6 +454,7 @@ export {
   parseFormDataToNestedObject,
   parseSlotKey,
   resolvePath,
+  resolveTreeError,
   timeBasedDurationToMinutes,
   timeStrToMinutes,
   toFormState,

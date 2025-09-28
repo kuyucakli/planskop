@@ -1,19 +1,18 @@
 "use server";
 
 import {
-  InsertActionPlan,
-  REMIND_AT,
-  UpdateActionPlan,
-  insertActionPlanSchema,
-  updateActionPlanSchema,
-} from "../db/schema";
+  InsertDailyPlan,
+  UpdateDailyPlan,
+  insertDailyPlanSchema,
+  updateDailyPlanSchema,
+} from "../db/schemas/daily-plans-schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-  dbCreateActionPlan,
-  dbDeleteActionPlan,
-  dbUpdateActionPlan,
-} from "@/db/queries";
+  dbCreateDailyPlan,
+  dbDeleteDailyPlan,
+  dbUpdateDailyPlan,
+} from "@/db/mutations/dailyPlans";
 import * as _wasm from "@/pkg/planskop_rust";
 import {
   FormState,
@@ -21,19 +20,19 @@ import {
   parseFormDataToNestedObject,
 } from "./utils";
 import { cancelReminder, scheduleReminder } from "./reminders/scheduler";
-
 import { getDetailedDailyPlanTimes } from "./utils/dailyPlan";
 import { ReminderBody } from "./definitions";
+import { REMIND_AT } from "./definitions";
 
-export async function createActionPlan(
+async function createDailyPlan(
   prevState: FormState,
   formData: FormData
-) {
+): Promise<FormState> {
   try {
-    const flattenedFormData = formDataToObject(formData) as InsertActionPlan &
+    const flattenedFormData = formDataToObject(formData) as InsertDailyPlan &
       Pick<ReminderBody, "userFullName" | "userEmail">;
-    insertActionPlanSchema.parse(flattenedFormData);
-    const res = await dbCreateActionPlan(flattenedFormData);
+    insertDailyPlanSchema.parse(flattenedFormData);
+    const res = await dbCreateDailyPlan(flattenedFormData);
 
     const {
       startDate,
@@ -72,16 +71,16 @@ export async function createActionPlan(
   redirect("/daily-plans?succes=" + "success message");
 }
 
-export async function updateActionPlan(
+async function updateDailyPlan(
   prevState: FormState,
   formData: FormData
-) {
+): Promise<FormState> {
   try {
     const flattenedFormData = parseFormDataToNestedObject(
       formData
-    ) as UpdateActionPlan & Pick<ReminderBody, "userFullName" | "userEmail">;
-    updateActionPlanSchema.parse(flattenedFormData);
-    const res = await dbUpdateActionPlan(flattenedFormData);
+    ) as UpdateDailyPlan & Pick<ReminderBody, "userFullName" | "userEmail">;
+    updateDailyPlanSchema.parse(flattenedFormData);
+    const res = await dbUpdateDailyPlan(flattenedFormData);
 
     const {
       id,
@@ -121,13 +120,13 @@ export async function updateActionPlan(
   redirect("/daily-plans?succes=" + "success message");
 }
 
-export async function deleteActionPlan(formData: FormData) {
+async function deleteDailyPlan(formData: FormData) {
   const id = Number(formData.get("id"));
   try {
     if (Number.isNaN(id) || id < 0) {
       throw new Error("Invalid Id");
     }
-    await dbDeleteActionPlan(id);
+    await dbDeleteDailyPlan(id);
     await cancelReminder(id);
   } catch (err) {
     return;
@@ -143,3 +142,5 @@ function formDataToObject(formData: FormData): Record<string, unknown> {
   }
   return obj;
 }
+
+export { createDailyPlan, updateDailyPlan, deleteDailyPlan, formDataToObject };

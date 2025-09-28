@@ -3,7 +3,8 @@
 import { useWasm } from "@/hooks/useWasm";
 import { PropsWithChildren } from "react";
 import { WeekDays } from "@/lib/definitions";
-import { REMIND_AT, REPEAT_DURATIONS, SelectActionPlan } from "@/db/schema";
+import { REMIND_AT, REPEAT_DURATIONS } from "@/lib/definitions";
+import { SelectDailyPlan } from "@/db/schemas/daily-plans-schema";
 import FormComboBox from "./FormComboBox";
 import { FormState } from "@/lib/utils";
 import { FieldError } from "./FormFieldError";
@@ -16,7 +17,7 @@ export default function FormFieldsTimePlanning({
   repeat,
   remind,
   formState,
-}: PropsWithChildren<Partial<SelectActionPlan>> & { formState: FormState }) {
+}: PropsWithChildren<Partial<SelectDailyPlan>> & { formState: FormState }) {
   const { get_timezones, get_local_timezone } = useWasm() || {};
 
   const userSystemTimezone = get_local_timezone

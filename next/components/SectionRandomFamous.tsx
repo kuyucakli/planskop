@@ -1,4 +1,4 @@
-import { getRandomFamousPersonWithRoutines } from "@/db/queries";
+import { getRandomFamousPersonWithRoutines } from "@/db/queries/famousPeople";
 import CldImage from "./CldImage";
 import Link from "next/link";
 

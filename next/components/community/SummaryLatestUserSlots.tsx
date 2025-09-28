@@ -1,4 +1,4 @@
-import { getLatestPublicDailyPLans } from "@/db/queries";
+import { getLatestPublicDailyPLans } from "@/db/queries/dailyPlans";
 import ClerkUserCard from "../ClerkUserCard";
 import { formatDuration } from "@/lib/utils";
 import { CardImage } from "../Card";
@@ -13,23 +13,25 @@ const SummaryLatestUserSlots = async () => {
       {data.map((plan) => (
         <li key={plan.id} className="flex-none w-40">
           <ul>
-            {plan.photos.map((photo, i) => (
-              <li key={photo.id} className="inline-block m-1">
-                <CardImage
-                  className="rounded-sm"
-                  path={photo.imageUrl}
-                  altText={`${photo.actionTitle}`}
-                  removeBackground={false}
-                  width="160"
-                  height="160"
-                />
+            {plan.completions.map((completion, i) => (
+              <li key={completion.id} className="inline-block m-1">
+                {completion.imageUrl && (
+                  <CardImage
+                    className="rounded-sm"
+                    path={completion.imageUrl}
+                    altText={`${completion.actionTitle}`}
+                    removeBackground={false}
+                    width="160"
+                    height="160"
+                  />
+                )}
                 {/* <span className="text-xs">
                   {new Date(
-                    Number(photo.actionId.split("-")[2])
+                    Number(completion.actionId.split("-")[2])
                   ).toDateString()}
                 </span>{" "} */}
                 <p className="text-xs h-8 mt-2 capitalize">
-                  {photo.actionTitle} {i + 1}
+                  {completion.actionTitle} {i + 1}
                 </p>
               </li>
             ))}

@@ -52,7 +52,7 @@ const InputText = ({
   };
   const handleBlur = (e: FocusEvent) => {
     const relatedTarget = e.relatedTarget;
-    console.log(relatedTarget);
+
     if (clearButtonRef.current && clearButtonRef.current !== relatedTarget) {
       clearButtonRef.current.style.display = "none";
     }

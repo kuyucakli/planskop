@@ -1,16 +1,15 @@
 "use client";
 
 import {
-  TIME_BASED_DURATIONS,
-  ALLOWED_TIMES,
   dailyActionsFormSchema,
   DailyActionSlot,
   dailyActionsUpdateFormSchema,
-  InsertActionPlan,
-  UpdateActionPlan,
-} from "@/db/schema";
+  InsertDailyPlan,
+  UpdateDailyPlan,
+} from "@/db/schemas/daily-plans-schema";
+import { TIME_BASED_DURATIONS, ALLOWED_TIMES } from "@/lib/definitions";
 import { ChartDailyActionSlots } from "@/components/charts";
-import { createActionPlan, updateActionPlan } from "../../lib/actions";
+import { createDailyPlan, updateDailyPlan } from "../../lib/actions";
 import { DATA_I_CAN_ACTIONS } from "@/data";
 import {
   EMPTY_FORM_STATE,
@@ -26,22 +25,23 @@ import "./Form.css";
 import { FieldError } from "./FormFieldError";
 import { IconClose, IconInfo } from "../Icons";
 import { InputText } from "./Inputs";
-import { MAX_DAILY_ACTION_SLOTS } from "@/db/schema";
+import { MAX_DAILY_ACTION_SLOTS } from "@/lib/definitions";
 import { SubmitButton } from "./SubmitButton";
 import { sortSlots } from "@/lib/utils/dailyPlan";
 import { ToggleButton } from "../Buttons";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { useFormReset } from "@/hooks/useFormReset";
-import { JSX, PropsWithChildren, useActionState, useState } from "react";
+import { PropsWithChildren, useActionState, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { ZodError } from "zod";
 
 export function FormDailyPlan(
-  props: (InsertActionPlan | UpdateActionPlan | {}) & PropsWithChildren
+  props: (InsertDailyPlan | UpdateDailyPlan | {}) & PropsWithChildren
 ) {
   const { user } = useUser();
   const [formClientState, setFormClientState] =
     useState<FormState>(EMPTY_FORM_STATE);
-  const formType = "id" in props ? updateActionPlan : createActionPlan;
+  const formType = "id" in props ? updateDailyPlan : createDailyPlan;
   const [formState, formAction] = useActionState(formType, EMPTY_FORM_STATE);
   const noScriptFallback = useToastMessage(formState);
   const formRef = useFormReset(formState);
@@ -49,10 +49,11 @@ export function FormDailyPlan(
 
   const validateSlots = () => {
     if (!formRef.current) return false;
+    const formData = new FormData(formRef.current);
+    const slots = JSON.parse((formData.get("slots") as string) || "");
 
+    const flattenedFormData = parseFormDataToNestedObject(formData);
     try {
-      const formData = new FormData(formRef.current);
-      const flattenedFormData = parseFormDataToNestedObject(formData);
       if ("id" in props) {
         dailyActionsUpdateFormSchema.parse(flattenedFormData);
       } else {
@@ -60,7 +61,21 @@ export function FormDailyPlan(
       }
       setFormClientState(toFormState("SUCCESS", ""));
     } catch (err) {
-      setFormClientState(fromErrorToFormState(err));
+      if (err instanceof ZodError) {
+        const remappedError = remapPaths(err, (path) => {
+          if (path[0] === "slots" && typeof path[1] === "number") {
+            const index = path[1] as number;
+
+            const slotId = slots[index]?.id ?? `slot-${index}`;
+            return ["slots", slotId, ...path.slice(2)];
+          }
+          return path;
+        });
+
+        setFormClientState(fromErrorToFormState(remappedError));
+      } else {
+        setFormClientState(fromErrorToFormState(err));
+      }
     }
   };
 
@@ -141,6 +156,15 @@ export function FormDailyPlan(
   );
 }
 
+type DailyActionSlotDraft = Omit<
+  DailyActionSlot,
+  "title" | "at" | "duration"
+> & {
+  title: string;
+  at: string;
+  duration: string;
+};
+
 const ActionSlotList = ({
   formState,
   defaultValue,
@@ -148,19 +172,21 @@ const ActionSlotList = ({
   formState: FormState;
   defaultValue?: DailyActionSlot[] | undefined;
 }) => {
-  const slotsDefault: (Omit<DailyActionSlot, "title" | "at" | "duration"> & {
-    title: string;
-    at: string;
-    duration: string;
-  })[] = defaultValue
-    ? defaultValue
-    : [{ id: "0", title: "", at: "", duration: "" }];
-  const [actionSlots, setActionSlots] = useState(slotsDefault);
+  const [actionSlots, setActionSlots] = useState<DailyActionSlotDraft[]>([]);
+  useEffect(() => {
+    if (defaultValue) {
+      setActionSlots(defaultValue);
+    } else {
+      setActionSlots([
+        { id: crypto.randomUUID(), title: "", at: "", duration: "" },
+      ]);
+    }
+  }, []);
 
   const handleAddSlot = () => {
     setActionSlots([
       ...actionSlots,
-      { id: actionSlots.length + "", title: "", duration: "", at: "" },
+      { id: crypto.randomUUID(), title: "", at: "", duration: "" },
     ]);
   };
 
@@ -175,7 +201,7 @@ const ActionSlotList = ({
     if (!parsedSlotKey) return;
 
     const updated = actionSlots.map((s) => {
-      if (s.id == parsedSlotKey.index) {
+      if (s.id == parsedSlotKey.id) {
         return { ...s, [parsedSlotKey.field]: value };
       }
       return s;
@@ -186,6 +212,7 @@ const ActionSlotList = ({
 
   const disableAddMoreButton = actionSlots.length >= MAX_DAILY_ACTION_SLOTS;
 
+  if (actionSlots.length == 0) return "";
   return (
     <div
       className="border-y-1 border-y-gray-500 py-8 flex flex-col gap-y-4"
@@ -196,7 +223,6 @@ const ActionSlotList = ({
           target instanceof HTMLTextAreaElement
         ) {
           const elId = target.id;
-          console.log(target.value);
           updateSlot(elId, target.value);
         }
       }}
@@ -223,19 +249,21 @@ const ActionSlotList = ({
         </div>
       </div>
 
-      {actionSlots.map((a) => (
-        <ActionSlotFieldset
-          key={a.id}
-          title={a?.title || ""}
-          at={a?.at || ""}
-          duration={a?.duration || ""}
-          description={a?.description || ""}
-          formState={formState}
-          id={a.id}
-          deleteSlot={handleDeleteSlot}
-          showBtnDelete={actionSlots.length > 1}
-        />
-      ))}
+      {actionSlots.map((a) => {
+        return (
+          <ActionSlotFieldset
+            key={a.id}
+            title={a?.title || ""}
+            at={a?.at || ""}
+            duration={a?.duration || ""}
+            description={a?.description || ""}
+            formState={formState}
+            id={a.id}
+            deleteSlot={handleDeleteSlot}
+            showBtnDelete={actionSlots.length > 1}
+          />
+        );
+      })}
 
       <button
         disabled={disableAddMoreButton}
@@ -357,3 +385,15 @@ const ActionSlotFieldset = ({
     </fieldset>
   );
 };
+
+function remapPaths(
+  error: ZodError,
+  mapper: (path: PropertyKey[]) => PropertyKey[]
+) {
+  return new ZodError(
+    error.issues.map((issue) => ({
+      ...issue,
+      path: mapper(issue.path),
+    }))
+  );
+}

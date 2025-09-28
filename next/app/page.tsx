@@ -2,8 +2,7 @@ import Banner from "@/components/Banner";
 import SummaryLatestUserSlots from "@/components/community/SummaryLatestUserSlots";
 import DailyPLanList from "@/components/DailyPlanList";
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
-import { DATA_I_CAN_ACTIONS } from "@/data";
-import { getActionPlans } from "@/db/queries";
+import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +12,7 @@ export default async function Home() {
   const { userId, sessionClaims } = await auth();
   let content;
   if (userId && sessionClaims) {
-    content = await getActionPlans(userId);
+    content = await getDailyPlans(userId);
   }
 
   return (

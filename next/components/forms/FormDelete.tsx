@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteActionPlan } from "@/lib/actions";
+import { deleteDailyPlan } from "@/lib/actions";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog";
 import { BasicButton, ButtonFormDelete } from "../Buttons";
 import { useRef, useState } from "react";
@@ -13,7 +13,7 @@ export const FormDelete = ({ id }: { id: number }) => {
   return (
     <form
       ref={formRef}
-      action={deleteActionPlan}
+      action={deleteDailyPlan}
       id="frmDelete"
       onSubmit={(e) => {
         if (!showConfirmation) {

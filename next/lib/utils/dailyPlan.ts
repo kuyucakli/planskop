@@ -4,7 +4,7 @@ import {
   REMIND_HOURS,
   remindAt,
   RepeatDuration,
-} from "@/db/schema";
+} from "@/lib/definitions";
 import {
   addRepeatDuration,
   combineAsDtUtc,
@@ -72,4 +72,18 @@ function getDetailedDailyPlanTimes(
 const sortSlots = (slots: DailyActionSlot[]) =>
   [...slots].sort((a, b) => a.at.localeCompare(b.at));
 
-export { getDetailedDailyPlanTimes, getDetailedSlotTimes, sortSlots };
+function createCompletionId(
+  slotStartDtMs: number,
+  slotId: string,
+  dailyPlanId: number
+) {
+  return `${dailyPlanId}-${slotId}-${slotStartDtMs}`;
+}
+
+
+export {
+  getDetailedDailyPlanTimes,
+  getDetailedSlotTimes,
+  sortSlots,
+  createCompletionId,
+};
