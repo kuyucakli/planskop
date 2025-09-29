@@ -6,6 +6,7 @@ export const ROUTES = {
   BLOG: "/blog",
   DAILY_PLAN_DETAIL: "/daily-plans/detail/",
   SITE_URL: "https://planskop.vercel.app",
+  API_REMINDER_CANCEL: "/reminder/cancel/",
 } as const;
 
 enum Frequency {

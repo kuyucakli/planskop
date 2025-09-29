@@ -64,9 +64,10 @@ function SectionInfo({
     <div className="border-gray-400 rounded-2xl text-xs  my-4">
       <p>
         <IconInfo
+          fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
-          className="size-4 stroke-gray-400"
+          className="size-5 stroke-gray-400 mb-2 ml-2"
         />
         Between &nbsp;
         <span className="font-bold">

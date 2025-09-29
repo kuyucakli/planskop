@@ -201,7 +201,6 @@ async function ReminderEmail({
         You have up to 1 day after the action ends to upload it.
       </p>
       <p style={{ textAlign: "center", marginRight: "8px", marginLeft: "8px" }}>
-        {ROUTES.SITE_URL + ROUTES.DAILY_PLAN_DETAIL}
         <a
           href={`${ROUTES.SITE_URL + ROUTES.DAILY_PLAN_DETAIL + dailyPlanId}`}
           style={{
@@ -217,6 +216,12 @@ async function ReminderEmail({
           View Your Daily Plan
         </a>
       </p>
+      <a
+        target="_blank"
+        href={`${ROUTES.SITE_URL + ROUTES.API_REMINDER_CANCEL}${dailyPlanId}`}
+      >
+        Cancel this reminder
+      </a>
     </div>
   );
 }
