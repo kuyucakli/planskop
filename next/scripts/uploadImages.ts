@@ -1,5 +1,4 @@
-import { loadEnvConfig } from '@next/env';
-
+import { loadEnvConfig } from "@next/env";
 
 loadEnvConfig(process.cwd());
 
@@ -8,7 +7,7 @@ const cloudinary = require("cloudinary").v2;
 // Configure Cloudinary with your credentials
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
@@ -30,7 +29,6 @@ const images = [
     name: "david-hockney",
     url: "https://ichef.bbci.co.uk/images/ic/640x360/p0l2zhpl.jpg",
   },
-
 ];
 
 // Function to upload images

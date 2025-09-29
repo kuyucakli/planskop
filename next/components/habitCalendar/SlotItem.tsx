@@ -40,7 +40,7 @@ export const SlotItem = ({
   timezone: string;
   userId: string;
 }) => {
-  const { startDtMs, endDtMs, endMsProofImg } = getDetailedSlotTimes(
+  const { startDtMs, endDtMs } = getDetailedSlotTimes(
     new Date(startMs).toISOString().slice(0, 10),
     s.at,
     s.duration,

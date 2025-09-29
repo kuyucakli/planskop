@@ -81,7 +81,8 @@ async function upsertActionSlotCompletion(props: InsertActionCompletion) {
         actionCompletions.actionId,
       ],
       set: { completed, imagePublicId, imageUrl },
-    });
+    })
+    .returning();
 }
 
 async function deleteActionSlotCompletion(
@@ -93,9 +94,13 @@ async function deleteActionSlotCompletion(
       await cloudinary.api.delete_resources([imagePublicId]);
     } catch (err) {
       console.error("Failed to delete image from Cloudinary:", err);
+    } finally {
     }
   }
-  return await db.delete(actionCompletions).where(eq(actionCompletions.id, id));
+  return await db
+    .delete(actionCompletions)
+    .where(eq(actionCompletions.id, id))
+    .returning();
 }
 
 export {
