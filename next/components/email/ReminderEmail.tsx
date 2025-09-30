@@ -219,6 +219,7 @@ async function ReminderEmail({
       <a
         target="_blank"
         href={`${ROUTES.SITE_URL + ROUTES.API_REMINDER_CANCEL}${dailyPlanId}`}
+        style={{ fontSize: "12px" }}
       >
         Cancel this reminder
       </a>
