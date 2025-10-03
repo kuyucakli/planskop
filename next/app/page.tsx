@@ -1,12 +1,13 @@
 import Banner from "@/components/Banner";
-import SummaryLatestUserSlots from "@/components/community/SummaryLatestUserSlots";
-import DailyPLanList from "@/components/DailyPlanList";
+import { CardFamousPersonSummary } from "@/components/Card";
+
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
 import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { FamousPeopleRoutines } from "./famous-people-routines";
 
 export default async function Home() {
   const { userId, sessionClaims } = await auth();
@@ -17,9 +18,6 @@ export default async function Home() {
 
   return (
     <>
-      <Suspense fallback={"Loading"}>
-        <DailyPLanList />
-      </Suspense>
       <Banner>
         <div className="absolute top-0 left-0 p-8">
           <h1 className=" text-center md:text-left text-6xl md:text-7xl text-cyan-200 font-kira-hareng mb-8">
@@ -42,17 +40,24 @@ export default async function Home() {
         />
       </Banner>
 
+      <h1 className="text-4xl/16  l-h sticky top-0 left-0 backdrop-blur-sm">
+        Inspiration
+      </h1>
+      <Suspense
+        fallback={
+          <CardFamousPersonSummary
+            famousPerson={{ image: "", personName: "", routines: [] }}
+            isSkeletonView
+          />
+        }
+      >
+        <FamousPeopleRoutines />
+      </Suspense>
+
       <Suspense fallback={"Loading..."}>
         <SectionRandomFamous />
       </Suspense>
 
-      <section className=" my-4">
-        <h1 className="text-sm">Commnunity</h1>
-        <h2 className="text-xl mb-4">Small steps, shared progress</h2>
-        <Suspense fallback="loading...">
-          <SummaryLatestUserSlots />
-        </Suspense>
-      </section>
       {/* <section className="text-amber-200  my-4">
         <h1 className="text-2xl">
           Man is nothing else but what he makes of himself.

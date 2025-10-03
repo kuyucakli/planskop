@@ -1,9 +1,11 @@
+import DailyPLanList from "@/components/DailyPlanList";
 import { IconAdd } from "@/components/Icons";
 import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { formatDate } from "@/lib/utils";
 import { getDetailedDailyPlanTimes } from "@/lib/utils/dailyPlan";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default async function Page() {
   const { userId, sessionClaims } = await auth();
@@ -35,6 +37,10 @@ export default async function Page() {
           Create your first daily plan
         </Link>
       )}
+
+      <Suspense fallback={"Loading"}>
+        <DailyPLanList />
+      </Suspense>
 
       <section className="mt-2">
         <ul>

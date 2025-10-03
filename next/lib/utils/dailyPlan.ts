@@ -80,7 +80,6 @@ function createCompletionId(
   return `${dailyPlanId}-${slotId}-${slotStartDtMs}`;
 }
 
-
 export {
   getDetailedDailyPlanTimes,
   getDetailedSlotTimes,

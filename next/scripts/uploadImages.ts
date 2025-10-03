@@ -42,7 +42,6 @@ async function uploadImages() {
         unique_filename: false,
         overwrite: true,
       });
-      console.log(`Uploaded ${image.name}: ${result.secure_url}`);
     } catch (error) {
       console.error(`Error uploading ${image.name}:`, error);
     }

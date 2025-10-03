@@ -8,10 +8,7 @@ import {
 } from "@/lib/utils/dailyPlan";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getActionSlotCompletion } from "@/db/queries/dailyPlans";
-import { useTimeDiffToNow } from "@/hooks/useTimeDiff";
 import { ButtonCheckable, ButtonCldUpload } from "../Buttons";
-import { formatDuration } from "@/lib/utils";
-import { Wheel } from "../WheelAnim";
 import { DurationToStart } from "./DurationToStart";
 import {
   deleteActionSlotCompletion,
@@ -68,6 +65,7 @@ export const SlotItem = ({
           dailyPlanId,
           userId,
           actionDate,
+          actionTime: new Date(startDtMs),
           actionTitle: s.title,
           actionId: completionId,
           imageUrl,
@@ -157,17 +155,6 @@ export const SlotItem = ({
         {data && data[0]?.imageUrl && (
           <CardImage path={data[0].imageUrl} altText="test" />
         )}
-        {/* <p
-          className={`text-xs ${
-            durationToStart.state == "ongoing"
-              ? "text-gray-100"
-              : "text-gray-300"
-          }`}
-        >
-          {!allowedToUploadImg && durationToStart.state == "ended" && "-"}
-          {durationToStart.state != "ended" && formatDuration(durationToStart)}
-          {durationToStart.state == "ongoing" && <Wheel />}
-        </p> */}
       </div>
     </li>
   );

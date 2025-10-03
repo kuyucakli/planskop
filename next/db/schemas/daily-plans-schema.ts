@@ -135,7 +135,6 @@ const dailyActionsFormSchemaBase = z.object({
       const reserved: number[] = [];
 
       slots.forEach((slot, index) => {
-        console.log("sdjskkhfkdfhkdfhdjfdfjfhdfjdhdjh");
         if (startTimes.has(slot.at)) {
           ctx.addIssue({
             code: "custom",
@@ -190,6 +189,7 @@ const actionCompletions = pgTable(
     actionDate: date("action_date").notNull(),
     actionTitle: text("action_title").notNull(),
     actionId: text("action_id").notNull(),
+    actionTime: timestamp("action_time"),
     dailyPlanId: integer("dailyPlanId")
       .references(() => dailyPlanTbl.id, { onDelete: "cascade" })
       .notNull(),

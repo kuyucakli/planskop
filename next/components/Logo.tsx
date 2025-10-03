@@ -4,10 +4,11 @@ import styles from "./Logo.module.css";
 import { PropsWithChildren } from "react";
 
 const Logo = ({
+  className,
   onlyPictogram = false,
-}: PropsWithChildren & { onlyPictogram?: boolean }) => {
+}: React.HTMLAttributes<HTMLElement> & { onlyPictogram?: boolean }) => {
   return (
-    <Link href="/" className={styles.LogoMain}>
+    <Link href="/" className={`${styles.LogoMain} ${className}`}>
       {onlyPictogram ? (
         <Image
           src="/planskop-logo/xs-on-dark-planskop-pictogram.png"
@@ -27,7 +28,7 @@ const Logo = ({
             width="263"
             height="64"
             alt="Planksop logo"
-            className="scale-75"
+            className={`scale-75`}
           />
         </picture>
       )}

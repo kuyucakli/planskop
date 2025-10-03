@@ -85,6 +85,11 @@ const IconLogout = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
     <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
   </IconSvgBase>
 );
+const IconLogin = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
+  <IconSvgBase {...props}>
+    <path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
+  </IconSvgBase>
+);
 
 const IconEdit = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
   <IconSvgBase {...props}>
@@ -141,6 +146,7 @@ const IconSettings = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
 );
 
 export {
+  IconAdd,
   IconAddPhotoAlternate,
   IconArrowBack,
   IconArrowForward,
@@ -148,8 +154,8 @@ export {
   IconAttachFile,
   IconSettings,
   IconHome,
-  IconUserCircle,
   IconLogout,
+  IconLogin,
   IconEdit,
   IconCheck,
   IconCircle,
@@ -157,9 +163,9 @@ export {
   IconDelete,
   IconSave,
   IconCancel,
-  IconAdd,
   IconInfo,
+  IconSchedule,
   IconClose,
   IconUpload,
-  IconSchedule,
+  IconUserCircle,
 };

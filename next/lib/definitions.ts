@@ -1,3 +1,4 @@
+import { getLatestPublicDailyPLans } from "@/db/queries/dailyPlans";
 import { DailyActionSlot } from "@/db/schemas/daily-plans-schema";
 
 export const ROUTES = {
@@ -228,6 +229,20 @@ const REMIND_HOURS: Record<remindAt, number> = {
 
 const MAX_DAILY_ACTION_SLOTS = 8;
 
+type DailyPlanWithCompletion = Awaited<
+  ReturnType<typeof getLatestPublicDailyPLans>
+>[number];
+
+type CompletionsMap = Record<
+  number, // dailyPlanId
+  {
+    completions: Record<string, number>; // key = actionTitle + "-" + HH:mm
+    userId: string;
+    dailyPlanTitle: string;
+    repeatDayCount: number;
+  }
+>;
+
 export {
   ALLOWED_TIMES,
   REMIND_HOURS,
@@ -238,6 +253,8 @@ export {
   type AllowedTime,
   type AllowedTimeBasedDuration,
   type DailyActionSlot,
+  type CompletionsMap,
+  type DailyPlanWithCompletion,
   type remindAt,
   type RepeatDuration,
 };
