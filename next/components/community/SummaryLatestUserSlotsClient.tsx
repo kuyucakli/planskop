@@ -97,7 +97,7 @@ export function SummaryLatestUserSlotsClient() {
                     <span className="text-xs">
                       {formatDate(dailyPlanStartDate, {
                         year: "numeric",
-                        month: "2-digit",
+                        month: "short",
                       }).replace("/", ".")}
                     </span>
                   </p>

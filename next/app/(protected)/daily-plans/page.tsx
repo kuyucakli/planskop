@@ -58,7 +58,7 @@ export default async function Page() {
                 <h2 className="text-3xl relative capitalize text-emerald-200">
                   <Link
                     href={`/daily-plans/detail/${dailyPlan.id}`}
-                    className="flex items-baseline  w-full h-24"
+                    className="flex flex-col lg:flex-row items-baseline  gap-2 w-full  h-24 "
                     prefetch={true}
                   >
                     {dailyPlan.title}
