@@ -2,9 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserDailyPLans } from "@/db/queries/dailyPlans";
-import { createCompletionsMap } from "@/lib/utils/dailyPlan";
+import {
+  createCompletionsMap,
+  getDetailedDailyPlanTimes,
+} from "@/lib/utils/dailyPlan";
 import Link from "next/link";
 import { ROUTES } from "@/lib/definitions";
+import { formatDate } from "@/lib/utils";
 
 export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
   const { data } = useQuery({
@@ -27,12 +31,19 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
         {completionsMapKeys.map((key) => {
           let totalCompletionCount = 0;
           const {
-            userId,
             dailyPlanTitle,
             completions,
             repeatDayCount,
             dailyPlanId,
+            dailyPlanStartDate,
+            dailyPlanTimezone,
+            dailyPlanRepeat,
           } = completionsMap[Number(key)];
+          const { daysUntilEnd } = getDetailedDailyPlanTimes(
+            dailyPlanStartDate,
+            dailyPlanRepeat,
+            dailyPlanTimezone
+          );
           return (
             <li key={key} className="bg-neutral-900 rounded p-6">
               <h1>
@@ -40,7 +51,7 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
                   href={`${ROUTES.DAILY_PLAN_DETAIL}${dailyPlanId}`}
                   className="underline underline-offset-4 decoration-dotted decoration-neutral-500"
                 >
-                  {dailyPlanTitle}
+                  <span>{dailyPlanTitle}</span>
                 </Link>
               </h1>
               <ul className="my-2">
@@ -49,7 +60,7 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
                   return (
                     <li key={key} className="text-xs">
                       <h2 className="mb-1">{key}</h2>
-                      <div className="h-4 flex gap-2 items-center">
+                      <div className="mb-3 h-4 flex gap-2 items-center">
                         <div className="h-3 bg-neutral-950 w-11/12 rounded-md">
                           <div
                             className="h-1 bg-amber-800 mt-1"
@@ -72,13 +83,31 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
                 })}
               </ul>
               <footer className="flex gap-2 items-center justify-end">
-                <p className="text-xs pr-2">
-                  Total:
-                  {` %${Math.round(
-                    (100 * totalCompletionCount) /
-                      (Object.keys(completions).length * repeatDayCount)
-                  )}`}
-                </p>
+                <div className="text-xs pr-2 text-right">
+                  <p>
+                    {` completion: %${Math.round(
+                      (100 * totalCompletionCount) /
+                        (Object.keys(completions).length * repeatDayCount)
+                    )}`}
+                  </p>
+                  <p>
+                    {daysUntilEnd <= 0
+                      ? `${repeatDayCount} ${
+                          repeatDayCount > 1 ? "days" : "day"
+                        } plan ended `
+                      : `${repeatDayCount - daysUntilEnd}/${repeatDayCount}  ${
+                          repeatDayCount > 1 ? "days" : "day"
+                        } done! `}
+                  </p>
+                  <p>
+                    <span className="text-xs">
+                      {formatDate(dailyPlanStartDate, {
+                        year: "numeric",
+                        month: "2-digit",
+                      }).replace("/", ".")}
+                    </span>
+                  </p>
+                </div>
               </footer>
             </li>
           );

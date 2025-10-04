@@ -55,7 +55,6 @@ async function scrapeMeta(url: string) {
 async function run() {
   const results = [];
   for (const url of sources) {
-    console.log("Scraping:", url);
     const meta = await scrapeMeta(url);
     results.push(meta);
   }

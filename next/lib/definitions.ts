@@ -238,8 +238,11 @@ type CompletionsMap = Record<
   {
     completions: Record<string, number>; // key = actionTitle + "-" + HH:mm
     userId: string;
-    dailyPlanId:number,
+    dailyPlanId: number;
     dailyPlanTitle: string;
+    dailyPlanStartDate: string;
+    dailyPlanTimezone: string;
+    dailyPlanRepeat: RepeatDuration | null;
     repeatDayCount: number;
     allSlots: DailyActionSlot[];
   }

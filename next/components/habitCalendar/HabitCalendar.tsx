@@ -155,7 +155,8 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectDailyPlan }) => {
               actionDate={startDate}
               slotData={s}
               dailyPlanId={dailyPlan.id}
-              startMs={selectedDateUtcMs}
+              startUtcMs={selectedDateUtcMs}
+              startLocalMs={selectedDateLocalMs}
               timezone={dailyPlan.timezone}
               userId={dailyPlan.userId}
             />

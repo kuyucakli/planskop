@@ -26,24 +26,27 @@ export const SlotItem = ({
   actionDate,
   dailyPlanId,
   slotData: s,
-  startMs,
+  startUtcMs,
+  startLocalMs,
   timezone,
   userId,
 }: {
   actionDate: string;
   dailyPlanId: number;
   slotData: DailyActionSlot;
-  startMs: number;
+  startUtcMs: number;
+  startLocalMs: number;
   timezone: string;
   userId: string;
 }) => {
-  const { startDtMs, endDtMs } = getDetailedSlotTimes(
-    new Date(startMs).toISOString().slice(0, 10),
+  const { startDtMs: startUtcDtMs, endDtMs: endUtcDtMs } = getDetailedSlotTimes(
+    new Date(startLocalMs).toISOString().slice(0, 10),
     s.at,
     s.duration,
     timezone
   );
-  const completionId = createCompletionId(startDtMs, s.id, dailyPlanId);
+
+  const completionId = createCompletionId(startUtcDtMs, s.id, dailyPlanId);
 
   const queryClient = useQueryClient();
 
@@ -65,7 +68,7 @@ export const SlotItem = ({
           dailyPlanId,
           userId,
           actionDate,
-          actionTime: new Date(startDtMs),
+          actionTime: new Date(startUtcDtMs),
           actionTitle: s.title,
           actionId: completionId,
           imageUrl,
@@ -128,7 +131,7 @@ export const SlotItem = ({
           <ButtonCheckable
             onCheck={handleCheck}
             checked={isCompletedFromServer}
-            disabled={startDtMs > Date.now()}
+            disabled={startUtcDtMs > Date.now()}
           />
         )}
       </div>
@@ -149,7 +152,7 @@ export const SlotItem = ({
         </div>
       </div>
       <div className="basis-24 flex items-center">
-        <DurationToStart startDtMs={startDtMs} endDtMs={endDtMs} />
+        <DurationToStart startDtMs={startUtcDtMs} endDtMs={endUtcDtMs} />
       </div>
       <div className="basis-24 flex items-center justify-center">
         {data && data[0]?.imageUrl && (

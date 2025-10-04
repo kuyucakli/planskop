@@ -8,7 +8,7 @@ import {
   createCompletionsMap,
   getDetailedDailyPlanTimes,
 } from "@/lib/utils/dailyPlan";
-import { utcToGmtOffset } from "@/lib/utils";
+import { formatDate, utcToGmtOffset } from "@/lib/utils";
 
 export function SummaryLatestUserSlotsClient() {
   const { data } = useQuery({
@@ -30,8 +30,20 @@ export function SummaryLatestUserSlotsClient() {
       <ul className="">
         {completionsMapKeys.map((key) => {
           let totalCompletionCount = 0;
-          const { userId, dailyPlanTitle, completions, repeatDayCount } =
-            completionsMap[Number(key)];
+          const {
+            userId,
+            dailyPlanTitle,
+            dailyPlanRepeat,
+            dailyPlanStartDate,
+            dailyPlanTimezone,
+            completions,
+            repeatDayCount,
+          } = completionsMap[Number(key)];
+          const { daysUntilEnd } = getDetailedDailyPlanTimes(
+            dailyPlanStartDate,
+            dailyPlanRepeat,
+            dailyPlanTimezone
+          );
           return (
             <li key={key} className="bg-neutral-900 rounded p-6">
               <h1>{dailyPlanTitle}</h1>
@@ -65,13 +77,31 @@ export function SummaryLatestUserSlotsClient() {
               </ul>
               <footer className="flex gap-2 items-center justify-between">
                 <ClerkUserCard userId={userId} />
-                <p className="text-xs pr-2">
-                  Total:
-                  {` %${Math.round(
-                    (100 * totalCompletionCount) /
-                      (Object.keys(completions).length * repeatDayCount)
-                  )}`}
-                </p>
+                <div className="text-xs pr-2 text-right">
+                  <p>
+                    {` completion: %${Math.round(
+                      (100 * totalCompletionCount) /
+                        (Object.keys(completions).length * repeatDayCount)
+                    )}`}
+                  </p>
+                  <p>
+                    {daysUntilEnd <= 0
+                      ? `${repeatDayCount} ${
+                          repeatDayCount > 1 ? "days" : "day"
+                        } plan ended `
+                      : `${repeatDayCount - daysUntilEnd}/${repeatDayCount}  ${
+                          repeatDayCount > 1 ? "days" : "day"
+                        } done! `}
+                  </p>
+                  <p>
+                    <span className="text-xs">
+                      {formatDate(dailyPlanStartDate, {
+                        year: "numeric",
+                        month: "2-digit",
+                      }).replace("/", ".")}
+                    </span>
+                  </p>
+                </div>
               </footer>
             </li>
           );
