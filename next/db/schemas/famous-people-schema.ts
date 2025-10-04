@@ -1,8 +1,6 @@
-import { DATA_I_CAN_ACTIONS } from "@/data";
-import { TIME_BASED_DURATIONS, ALLOWED_TIMES } from "@/lib/definitions";
 import { relations } from "drizzle-orm";
 import { integer, pgTable, serial, text, time } from "drizzle-orm/pg-core";
-import { z } from "zod";
+
 
 export const famousPeopleTbl = pgTable("famous_people", {
   id: serial("id").primaryKey(),

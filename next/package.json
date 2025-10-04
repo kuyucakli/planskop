@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "worker:sample": "dotenv -e .env.local -- pnpx tsx --watch workers/sample.worker.ts",
-    "img-upload-script": "tsx scripts/uploadImages.ts"
+    "img-upload-script": "tsx scripts/uploadImages.ts",
+    "scrape-library-script": "tsx scripts/scrapeLibrary.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
@@ -54,6 +55,8 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
+    "axios": "^1.12.2",
+    "cheerio": "^1.1.2",
     "cypress": "^15.3.0",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.36.0",

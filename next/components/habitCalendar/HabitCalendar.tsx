@@ -10,33 +10,36 @@ import { PropsWithChildren, useState } from "react";
 import { IconCheck, IconInfo, IconSchedule } from "../Icons";
 import { getDetailedDailyPlanTimes, sortSlots } from "@/lib/utils/dailyPlan";
 import { SlotItem } from "./SlotItem";
+import { convertUtcMsToLocalMs } from "@/lib/utils/time";
 
 function NavDate({
   interval,
-  selectedDateMs,
+  selectedDateUtcMs,
+  selectedDateLocalMs,
   onDateChange,
 }: {
   interval: { startMs: number; endMs: number };
-  selectedDateMs: number;
+  selectedDateUtcMs: number;
+  selectedDateLocalMs: number;
   onDateChange: (ms: number) => void;
 }) {
   const todayMs = Date.now();
   const { startMs, endMs } = interval;
   const dayMs = 24 * 60 * 60_000;
-  const disablePrev = selectedDateMs - dayMs < startMs;
+  const disablePrev = selectedDateUtcMs - dayMs < startMs;
   const disableNext =
-    selectedDateMs + dayMs > endMs || selectedDateMs > todayMs - dayMs;
+    selectedDateUtcMs + dayMs > endMs || selectedDateUtcMs > todayMs - dayMs;
   return (
     <div className="border-1 border-dotted border-gray-400 px-1 shadow-md shadow-black/20  h-10  items-center gap-1 flex justify-between rounded-lg">
       <ButtonDirectional
         direction="prev"
         disabled={disablePrev}
         onDirectionalClick={() => {
-          onDateChange(selectedDateMs - dayMs);
+          onDateChange(selectedDateUtcMs - dayMs);
         }}
       />
       <span className="rounded-md inline-flex text-lg  h-8 justify-center items-center bold ">
-        {formatDate(selectedDateMs, {
+        {formatDate(selectedDateLocalMs, {
           day: "numeric",
           month: "long",
         })}
@@ -45,7 +48,7 @@ function NavDate({
         direction="next"
         disabled={disableNext}
         onDirectionalClick={() => {
-          onDateChange(selectedDateMs + dayMs);
+          onDateChange(selectedDateUtcMs + dayMs);
         }}
       />
     </div>
@@ -124,9 +127,12 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectDailyPlan }) => {
     repeat,
     timezone
   );
-  const [selectedDateMs, setSelectedDateMs] = useState<number>(
+
+  const [selectedDateUtcMs, setSelectedDateUtcMs] = useState<number>(
     todayMs >= startMs && todayMs <= endMs ? todayMs : startMs
   );
+
+  const selectedDateLocalMs = convertUtcMsToLocalMs(selectedDateUtcMs);
 
   return (
     <section className={`${styles.HabitCalendarWrapper} mt-2 mb-8 `}>
@@ -135,10 +141,11 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectDailyPlan }) => {
         repeat={repeat}
       />
       <div className={`${styles.SlotContainer}`}>
-        <div className={styles.FadeFlash} key={selectedDateMs}></div>
+        <div className={styles.FadeFlash} key={selectedDateUtcMs}></div>
         <NavDate
-          selectedDateMs={selectedDateMs}
-          onDateChange={setSelectedDateMs}
+          selectedDateUtcMs={selectedDateUtcMs}
+          selectedDateLocalMs={selectedDateLocalMs}
+          onDateChange={setSelectedDateUtcMs}
           interval={{ startMs, endMs }}
         />
         <SlotList>
@@ -148,7 +155,7 @@ const HabitCalendar = ({ dailyPlan }: { dailyPlan: SelectDailyPlan }) => {
               actionDate={startDate}
               slotData={s}
               dailyPlanId={dailyPlan.id}
-              startMs={selectedDateMs}
+              startMs={selectedDateUtcMs}
               timezone={dailyPlan.timezone}
               userId={dailyPlan.userId}
             />

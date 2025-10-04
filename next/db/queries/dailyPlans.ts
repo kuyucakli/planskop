@@ -101,6 +101,7 @@ async function getLatestPublicDailyPLans(limit = 4) {
       dailyPlanStartDate: dailyPlanTbl.startDate,
       dailyPlanRepeat: dailyPlanTbl.repeat,
       dailyPlanTimezone: dailyPlanTbl.timezone,
+      dailyPlanSlots: dailyPlanTbl.slots,
       completionId: actionCompletions.id,
       imageUrl: actionCompletions.imageUrl,
       actionId: actionCompletions.actionId,
@@ -118,6 +119,42 @@ async function getLatestPublicDailyPLans(limit = 4) {
       sql`${dailyPlanTbl.isPublic} = ${true} and ${
         dailyPlanTbl.startDate
       } <= ${todayStr}`
+    )
+    .orderBy(desc(dailyPlanTbl.startDate)); // nearest to today first
+  // .limit(limit);
+}
+
+async function getCurrentUserDailyPLans(userId: string) {
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+
+  // Step 1: Join daily plans with actionCompletions, filter by isPublic and startDate
+  return await db
+    .select({
+      userId: dailyPlanTbl.userId,
+      dailyPlanTitle: dailyPlanTbl.title,
+      dailyPlanId: dailyPlanTbl.id,
+      dailyPlanStartDate: dailyPlanTbl.startDate,
+      dailyPlanRepeat: dailyPlanTbl.repeat,
+      dailyPlanTimezone: dailyPlanTbl.timezone,
+      dailyPlanSlots: dailyPlanTbl.slots,
+      completionId: actionCompletions.id,
+      imageUrl: actionCompletions.imageUrl,
+      actionId: actionCompletions.actionId,
+      actionTitle: actionCompletions.actionTitle,
+      actionTime: actionCompletions.actionTime,
+      imagePublicId: actionCompletions.imagePublicId,
+      completed: actionCompletions.completed,
+    })
+    .from(dailyPlanTbl)
+    .innerJoin(
+      actionCompletions,
+      eq(actionCompletions.dailyPlanId, dailyPlanTbl.id)
+    )
+    .where(
+      sql`${dailyPlanTbl.isPublic} = ${true} and ${
+        dailyPlanTbl.startDate
+      } <= ${todayStr} and ${dailyPlanTbl.userId} = ${userId}`
     )
     .orderBy(desc(dailyPlanTbl.startDate)); // nearest to today first
   // .limit(limit);
@@ -145,6 +182,7 @@ async function getClerkUser(userId: string) {
 
 export {
   getActionSlotCompletion,
+  getCurrentUserDailyPLans,
   getDailyPlan,
   getDailyPlans,
   getLatestPublicDailyPLans,

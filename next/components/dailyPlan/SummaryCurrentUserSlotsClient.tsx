@@ -1,19 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import ClerkUserCard from "../ClerkUserCard";
-import { getLatestPublicDailyPLans } from "@/db/queries/dailyPlans";
-import { CompletionsMap, DailyPlanWithCompletion } from "@/lib/definitions";
-import {
-  createCompletionsMap,
-  getDetailedDailyPlanTimes,
-} from "@/lib/utils/dailyPlan";
-import { utcToGmtOffset } from "@/lib/utils";
+import { getCurrentUserDailyPLans } from "@/db/queries/dailyPlans";
+import { createCompletionsMap } from "@/lib/utils/dailyPlan";
+import Link from "next/link";
+import { ROUTES } from "@/lib/definitions";
 
-export function SummaryLatestUserSlotsClient() {
+export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
   const { data } = useQuery({
-    queryKey: ["percentageSlots"],
-    queryFn: () => getLatestPublicDailyPLans(),
+    queryKey: ["percentageSlotsCurrentUser"],
+    queryFn: () => getCurrentUserDailyPLans(userId),
   });
 
   if (!data) return;
@@ -25,16 +21,28 @@ export function SummaryLatestUserSlotsClient() {
   return (
     <>
       <h1 className="text-2xl/16  l-h sticky top-0 left-0 backdrop-blur-sm">
-        Community
+        Summary
       </h1>
       <ul className="">
         {completionsMapKeys.map((key) => {
           let totalCompletionCount = 0;
-          const { userId, dailyPlanTitle, completions, repeatDayCount } =
-            completionsMap[Number(key)];
+          const {
+            userId,
+            dailyPlanTitle,
+            completions,
+            repeatDayCount,
+            dailyPlanId,
+          } = completionsMap[Number(key)];
           return (
             <li key={key} className="bg-neutral-900 rounded p-6">
-              <h1>{dailyPlanTitle}</h1>
+              <h1>
+                <Link
+                  href={`${ROUTES.DAILY_PLAN_DETAIL}${dailyPlanId}`}
+                  className="underline underline-offset-4 decoration-dotted decoration-neutral-500"
+                >
+                  {dailyPlanTitle}
+                </Link>
+              </h1>
               <ul className="my-2">
                 {Object.keys(completions).map((key) => {
                   totalCompletionCount += completions[key];
@@ -63,8 +71,7 @@ export function SummaryLatestUserSlotsClient() {
                   );
                 })}
               </ul>
-              <footer className="flex gap-2 items-center justify-between">
-                <ClerkUserCard userId={userId} />
+              <footer className="flex gap-2 items-center justify-end">
                 <p className="text-xs pr-2">
                   Total:
                   {` %${Math.round(

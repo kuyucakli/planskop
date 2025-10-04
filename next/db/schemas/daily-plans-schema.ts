@@ -196,7 +196,7 @@ const actionCompletions = pgTable(
     imageUrl: text("image_url"),
     imagePublicId: text("image_public_id"),
     completed: boolean("completed").default(false),
-    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   },
   (t) => [unique().on(t.userId, t.actionDate, t.actionId)]
 );

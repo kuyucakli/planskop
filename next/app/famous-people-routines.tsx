@@ -1,9 +1,22 @@
+"use client";
+
 import { CardFamousPersonSummary } from "@/components/Card";
 import { FamousPersonWithRoutines } from "@/db/schemas/famous-people-schema";
 import { getFamousPeopleWithRoutines } from "@/db/queries/famousPeople";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { BasicButton } from "@/components/Buttons";
+import { IconArrowBack, IconArrowForward } from "@/components/Icons";
 
-const FamousPeopleRoutines = async () => {
-  const famousPeopleWithRoutines = await getFamousPeopleWithRoutines();
+const FamousPeopleRoutines = () => {
+  const [index, setIndex] = useState(0);
+
+  const { data: famousPeopleWithRoutines } = useQuery({
+    queryKey: ["famousPeopleWithRoutines"],
+    queryFn: () => getFamousPeopleWithRoutines(),
+  });
+
+  if (!famousPeopleWithRoutines) return;
 
   const grouped = Object.values(
     famousPeopleWithRoutines.reduce((acc, row) => {
@@ -29,13 +42,29 @@ const FamousPeopleRoutines = async () => {
   );
 
   return (
-    <ul>
-      {grouped.map((f) => (
-        <li key={f.id}>
-          <CardFamousPersonSummary famousPerson={f} />
-        </li>
-      ))}
-    </ul>
+    <div>
+      <CardFamousPersonSummary
+        famousPerson={grouped[index]}
+        footerChildren={
+          <nav aria-label="Carousel navigation" className="flex justify-end">
+            <BasicButton
+              action={() => setIndex(index - 1)}
+              disabled={index <= 0}
+              className="bg-transparent"
+            >
+              <IconArrowBack className="fill-neutral-200 size-4" />
+            </BasicButton>
+            <BasicButton
+              action={() => setIndex(index + 1)}
+              disabled={index >= grouped.length - 1}
+              className="bg-transparent"
+            >
+              <IconArrowForward className="fill-neutral-200 size-4" />
+            </BasicButton>
+          </nav>
+        }
+      />
+    </div>
   );
 };
 

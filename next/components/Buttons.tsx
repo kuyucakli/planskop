@@ -27,12 +27,14 @@ function BasicButton({
   children,
   action,
   className,
-}: PropsWithChildren & {
+  disabled,
+}: HTMLProps<HTMLButtonElement> & {
   className?: string;
   action?: (...args: any[]) => void;
 }) {
   return (
     <button
+      disabled={disabled}
       type="button"
       className={`${className} rounded-md bg-gray-700 px-3 py-1 text-sm hover:bg-gray-600 h-12 cursor-pointer`}
       onClick={(e) => action && action()}

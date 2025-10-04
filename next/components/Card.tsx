@@ -2,7 +2,7 @@
 import { CldImage } from "next-cloudinary";
 import ColorLegend from "./ColorLegend";
 import { FamousPersonWithRoutines } from "@/db/schemas/famous-people-schema";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, ReactElement, useState } from "react";
 import styles from "./Card.module.css";
 import { UseThemeContext } from "@/context/ThemeContext";
 import { ChartFamousDailyRoutines } from "./charts/";
@@ -40,8 +40,8 @@ const CardImage = ({
   altText,
   className,
   removeBackground = true,
-  width = "80",
-  height = "80",
+  width = "120",
+  height = "120",
 }: PropsWithChildren & {
   path: string;
   altText: string;
@@ -71,9 +71,13 @@ const CardImage = ({
 };
 
 const CardFamousPersonSummary = ({
+  headerChildren,
+  footerChildren,
   famousPerson,
   isSkeletonView = false,
 }: {
+  headerChildren?: ReactElement;
+  footerChildren?: ReactElement;
   famousPerson: Pick<
     FamousPersonWithRoutines,
     "image" | "personName" | "routines"
@@ -97,6 +101,7 @@ const CardFamousPersonSummary = ({
   return (
     <Card>
       <CardHeader>
+        {headerChildren}
         <h2 className="text-xl my-2">{personName}</h2>
       </CardHeader>
       <CardBody className="flex items-start gap-6">
@@ -110,6 +115,7 @@ const CardFamousPersonSummary = ({
       </CardBody>
       <CardFooter>
         <ChartFamousDailyRoutines routines={routines} compact />
+        {footerChildren}
       </CardFooter>
     </Card>
   );
