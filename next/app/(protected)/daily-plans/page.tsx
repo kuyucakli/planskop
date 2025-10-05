@@ -1,8 +1,6 @@
 import DailyPLanList from "@/components/DailyPlanList";
 import { IconAdd } from "@/components/Icons";
 import { getDailyPlans } from "@/db/queries/dailyPlans";
-import { formatDate } from "@/lib/utils";
-import { getDetailedDailyPlanTimes } from "@/lib/utils/dailyPlan";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -19,12 +17,12 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className=" mb-8 flex justify-between items-baseline">
-        <span className="text-6xl font-kira-hareng">My Daily Plans</span>
+      <h1 className=" -mb-2 flex justify-between items-baseline">
+        <span className="text-6xl font-kira-hareng">Plans</span>
         {dailyPlans && dailyPlans.length > 0 && (
           <Link href="/planner" className="flex gap-2 text-xs items-center">
             <IconAdd className="fill-white" />
-            Add new daily plan
+            Add plan
           </Link>
         )}
       </h1>
@@ -42,7 +40,7 @@ export default async function Page() {
         <DailyPLanList />
       </Suspense>
 
-      <section className="mt-2">
+      {/* <section className="mt-2">
         <ul>
           {dailyPlans?.map((dailyPlan) => {
             const detailedTimes = getDetailedDailyPlanTimes(
@@ -88,7 +86,7 @@ export default async function Page() {
             );
           })}
         </ul>
-      </section>
+      </section> */}
     </>
   );
 }

@@ -13,7 +13,7 @@ export default function HandWrittenNums({ num }: { num: number }) {
   };
 
   return (
-    <div>
+    <div className="scale-80">
       {paddedNumStr.split("").map((d, index) => (
         <span
           key={index}
