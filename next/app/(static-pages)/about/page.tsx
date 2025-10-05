@@ -15,7 +15,7 @@ export default function Page() {
           className="w-60 mix-blend-overlay m-auto"
         />
       </figure>
-      <div className="max-w-2xl ">
+      <div className="max-w-2xl mb-4">
         <h1 className="text-2xl">About "Planskop"</h1>
         <p className="my-4">
           Planskop is an open source web app actively design and developed by
