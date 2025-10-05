@@ -54,14 +54,14 @@ export default async function RootLayout({
                 <nav className="flex gap-2 text-sm">
                   <Link
                     href="/about"
-                    className="bg-neutral-900 hover:bg-neutral-800 text-gray-100 text-xs  font-bold py-2 px-4 rounded tracking-wide"
+                    className="bg-neutral-900 hover:bg-neutral-800 text-gray-100 text-xs py-2 px-4 rounded tracking-wide"
                     scroll={false}
                   >
                     About
                   </Link>
                   <Link
                     href="/newsletter"
-                    className="bg-neutral-900 hover:bg-neutral-800 text-gray-100 text-xs font-bold  py-2 px-4 rounded tracking-wider"
+                    className="bg-neutral-900 hover:bg-neutral-800 text-gray-100 text-xs py-2 px-4 rounded tracking-wider"
                     scroll={false}
                   >
                     Newsletter
