@@ -125,7 +125,10 @@ export const SlotItem = ({
   };
 
   return (
-    <li key={s.id} className={`flex gap-4  my-4 `}>
+    <li
+      key={s.id}
+      className={`flex gap-4 py-2  my-4  border-1 border-zinc-800 rounded-lg bg-gradient-to-b from-10% from-zinc-900  to-90% to-zinc-800 `}
+    >
       <div className="basis-12 relative">
         {data && (
           <ButtonCheckable
@@ -144,7 +147,7 @@ export const SlotItem = ({
 
       <div className="flex gap-4 flex-1">
         <div className={`flex flex-col justify-between`}>
-          <h2 className="text-lg capitalize">{s.title}</h2>
+          <h2 className="text-md  capitalize">{s.title}</h2>
 
           <p className="text-xs ">
             at {s.at} for {s.duration}
@@ -154,11 +157,11 @@ export const SlotItem = ({
       <div className="basis-24 flex items-center">
         <DurationToStart startDtMs={startUtcDtMs} endDtMs={endUtcDtMs} />
       </div>
-      <div className="basis-24 flex items-center justify-center">
+      {/* <div className="basis-24 flex items-center justify-center">
         {data && data[0]?.imageUrl && (
           <CardImage path={data[0].imageUrl} altText="test" />
         )}
-      </div>
+      </div> */}
     </li>
   );
 };

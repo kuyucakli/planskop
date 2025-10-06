@@ -17,11 +17,11 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className=" -mb-2 flex justify-between items-baseline">
-        <span className="text-6xl font-kira-hareng">Plans</span>
+      <h1 className=" flex justify-between items-baseline">
+        <span className="text-5xl font-kira-hareng">Plans</span>
         {dailyPlans && dailyPlans.length > 0 && (
           <Link href="/planner" className="flex gap-2 text-xs items-center">
-            <IconAdd className="fill-white" />
+            <IconAdd className="fill-neutral-300" />
             Add plan
           </Link>
         )}

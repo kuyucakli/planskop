@@ -152,9 +152,7 @@ async function getCurrentUserDailyPLans(userId: string) {
       eq(actionCompletions.dailyPlanId, dailyPlanTbl.id)
     )
     .where(
-      sql`${dailyPlanTbl.isPublic} = ${true} and ${
-        dailyPlanTbl.startDate
-      } <= ${todayStr} and ${dailyPlanTbl.userId} = ${userId}`
+      sql`${dailyPlanTbl.startDate} <= ${todayStr} and ${dailyPlanTbl.userId} = ${userId}`
     )
     .orderBy(desc(dailyPlanTbl.startDate)); // nearest to today first
   // .limit(limit);

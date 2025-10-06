@@ -21,7 +21,6 @@ export default async function DetailPage({ params }: DetailPageProps) {
     );
   }
 
-
   return (
     <Suspense fallback={<p className="text-center">Loading...</p>}>
       <DailyPlanDetail dailyPlanId={dailyPLanId} />

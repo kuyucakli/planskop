@@ -27,7 +27,7 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
       <h1 className="text-2xl/16  l-h sticky top-0 left-0 backdrop-blur-sm">
         Summary
       </h1>
-      <ul className="">
+      <ul className="flex flex-col gap-4">
         {completionsMapKeys.map((key) => {
           let totalCompletionCount = 0;
           const {

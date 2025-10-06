@@ -64,8 +64,8 @@ function SectionInfo({
 }) {
   const { start, end } = interval;
   return (
-    <div className="border-gray-400 rounded-2xl text-xs  my-4">
-      <p>
+    <div className="border-gray-400 rounded-2xl text-xs  my-4 ">
+      <p className="text-neutral-400">
         <IconInfo
           fill="none"
           viewBox="0 0 24 24"
@@ -102,7 +102,7 @@ function SlotListHeader() {
       </div>
       <div className="basis-12 flex items-center justify-center">Media</div>
       <div className="flex-1 flex items-center">Action</div>
-      <div className="basis-24 flex items-center">Status</div>
+
       <div className="basis-24 flex items-center justify-center">
         <IconSchedule className="fill-gray-400 -translate-y-0.5" />
       </div>
