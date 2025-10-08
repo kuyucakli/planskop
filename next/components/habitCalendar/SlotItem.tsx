@@ -14,7 +14,8 @@ import {
   deleteActionSlotCompletion,
   upsertActionSlotCompletion,
 } from "@/db/mutations/dailyPlans";
-import { CardImage } from "../Card";
+
+import CheckboxLoadingCircleAnim from "../animated/CheckboxLoadingCircleAnim";
 
 type CompletionMutationPayload = {
   newCheckVal: boolean;
@@ -130,13 +131,16 @@ export const SlotItem = ({
       className={`flex gap-4 py-2  my-4  border-1 border-zinc-800 rounded-lg bg-gradient-to-b from-10% from-zinc-900  to-90% to-zinc-800 `}
     >
       <div className="basis-12 relative">
-        {data && (
-          <ButtonCheckable
-            onCheck={handleCheck}
-            checked={isCompletedFromServer}
-            disabled={startUtcDtMs > Date.now()}
-          />
-        )}
+        <>
+          <CheckboxLoadingCircleAnim state={isLoading ? "loading" : ""} />
+          {data && (
+            <ButtonCheckable
+              onCheck={handleCheck}
+              checked={isCompletedFromServer}
+              disabled={startUtcDtMs > Date.now()}
+            />
+          )}
+        </>
       </div>
       <div className="basis-12 relative">
         <ButtonCldUpload
@@ -157,11 +161,6 @@ export const SlotItem = ({
       <div className="basis-24 flex items-center">
         <DurationToStart startDtMs={startUtcDtMs} endDtMs={endUtcDtMs} />
       </div>
-      {/* <div className="basis-24 flex items-center justify-center">
-        {data && data[0]?.imageUrl && (
-          <CardImage path={data[0].imageUrl} altText="test" />
-        )}
-      </div> */}
     </li>
   );
 };

@@ -2,8 +2,8 @@
 import {
   HTMLProps,
   PropsWithChildren,
-  ReactElement,
-  use,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import styles from "./Buttons.module.css";
@@ -15,13 +15,12 @@ import {
   IconArrowBack,
   IconArrowForward,
   IconArrowHistoryBack,
-  IconAttachFile,
   IconCheckCircle,
   IconCircle,
   IconDelete,
-  IconUpload,
 } from "./Icons";
 import { useRouter } from "next/navigation";
+import CheckedEffect from "./animated/CheckedEffect";
 
 function BasicButton({
   children,
@@ -192,15 +191,36 @@ function ButtonCheckable({
 }: React.HTMLProps<HTMLInputElement> & {
   onCheck: (checked: boolean) => void;
 }) {
+  const timeoutRef = useRef<number | null>(null);
+  const [justChecked, setJustChecked] = useState(false);
   const className = "fill-gray-200";
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   return (
     <button
       type="button"
-      onClick={() => onCheck(!checked)}
-      className="cursor-pointer inline-flex items-center justify-center w-12 h-12"
+      onClick={() => {
+        onCheck(!checked);
+        if (!checked) {
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+          setJustChecked(true);
+
+          timeoutRef.current = window.setTimeout(() => {
+            setJustChecked(false);
+            timeoutRef.current = null;
+          }, 1600);
+        }
+      }}
+      className="cursor-pointer inline-flex items-center justify-center w-12 h-12 relative"
       disabled={disabled}
     >
+      {checked && justChecked && <CheckedEffect />}
       {checked && <IconCheckCircle className={className} />}
       {!checked && <IconCircle className={className} />}
     </button>
