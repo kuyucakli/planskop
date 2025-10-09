@@ -8,12 +8,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { FamousPeopleRoutines } from "./famous-people-routines";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const { userId, sessionClaims } = await auth();
   let content;
   if (userId && sessionClaims) {
-    content = await getDailyPlans(userId);
+    //content = await getDailyPlans(userId);
+    redirect("/daily-plans");
   }
 
   return (
