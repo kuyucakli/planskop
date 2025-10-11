@@ -128,7 +128,9 @@ export const SlotItem = ({
   return (
     <li
       key={s.id}
-      className={`flex gap-4 py-2  my-4  border-1 border-zinc-800 rounded-lg bg-gradient-to-b from-10% from-zinc-900  to-90% to-zinc-800 `}
+      className={`flex gap-4 py-2  my-4  border-1 border-zinc-800 rounded-lg bg-gradient-to-b from-10% from-zinc-900  to-90% to-zinc-800 ${
+        startUtcDtMs > Date.now() ? "opacity-50" : ""
+      }`}
     >
       <div className="basis-12 relative">
         <>
@@ -159,7 +161,11 @@ export const SlotItem = ({
         </div>
       </div>
       <div className="basis-24 flex items-center">
-        <DurationToStart startDtMs={startUtcDtMs} endDtMs={endUtcDtMs} />
+        <DurationToStart
+          startDtMs={startUtcDtMs}
+          endDtMs={endUtcDtMs}
+          isDone={isCompletedFromServer}
+        />
       </div>
     </li>
   );
