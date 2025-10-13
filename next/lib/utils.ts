@@ -262,6 +262,8 @@ function addRepeatDuration(
   const [_, numStr, unit] = match;
   const amount = parseInt(numStr, 10);
 
+  const aDayOffset = 1;
+
   switch (unit.toLowerCase()) {
     case "day":
       result.setDate(result.getDate() + amount);
@@ -278,6 +280,9 @@ function addRepeatDuration(
     default:
       throw new Error("Unsupported duration unit");
   }
+
+  // duration excluding extra day
+  result.setDate(result.getDate() - 1);
 
   return result;
 }

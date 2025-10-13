@@ -54,6 +54,9 @@ function getDetailedDailyPlanTimes(
   timezone: string,
   remind?: remindAt
 ) {
+  const now = Date.now(); // current UTC timestamp in ms
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
   const startDt = combineAsDtUtc(startDate, "00:00", "0");
   const endDt = addRepeatDuration(startDt, repeat);
 
@@ -78,9 +81,6 @@ function getDetailedDailyPlanTimes(
     localEndDt.getTime() - localEndDt.getTimezoneOffset() * 60_000;
 
   // --- Days passed and remaining ---
-  const now = Date.now(); // current UTC timestamp in ms
-  const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
   const daysSinceStart = Math.floor((now - startMs) / MS_PER_DAY);
   const daysUntilEnd = Math.ceil((endMs - now) / MS_PER_DAY);
 
@@ -144,9 +144,13 @@ function createCompletionsMap(data: Awaited<DailyPlanWithCompletion[]>) {
         dailyPlanRepeat,
         dailyPlanTimezone
       );
+      const DAY_MS = 1000 * 60 * 60 * 24;
+
       const repeatDayCount =
-        (detailedDailyPlanTimes.endMs - detailedDailyPlanTimes.startMs) /
-        (1000 * 60 * 60 * 24);
+        (detailedDailyPlanTimes.endMs -
+          detailedDailyPlanTimes.startMs +
+          DAY_MS) /
+        DAY_MS;
 
       acc[dailyPlanId] = {
         completions: { [actionTitle + "-" + hoursMinutes]: 1 },
@@ -196,35 +200,3 @@ export {
   sortSlots,
   createCompletionId,
 };
-
-// function getDetailedDailyPlanTimes(
-//   startDate: string,
-//   repeat: RepeatDuration | null | undefined,
-//   timezone: string,
-//   remind?: remindAt
-// ) {
-//   const startDt = combineAsDtUtc(startDate, "00:00", "0");
-//   const startMs = startDt.getTime();
-//   const startDtStr = startDt.toISOString();
-//   const endDt = addRepeatDuration(startDt, repeat);
-//   const endMs = endDt.getTime();
-//   const endDtStr = endDt.toISOString();
-//   let reminderHourUtc = null;
-
-//   if (remind) {
-//     const remindLocalHour = REMIND_HOURS[remind];
-//     reminderHourUtc = remindLocalHour - getNumValFromTzLabel(timezone);
-//   }
-
-//   return {
-//     startDt,
-//     startMs,
-//     startDtStr,
-//     endDt,
-//     endMs,
-//     endDtStr,
-//     localStartDtStr: utcToGmtOffset(startDt.toISOString(), timezone),
-//     localEndDtStr: utcToGmtOffset(endDt.toISOString(), timezone),
-//     reminderHourUtc,
-//   };
-// }
