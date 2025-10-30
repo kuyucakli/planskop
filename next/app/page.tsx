@@ -1,8 +1,6 @@
 import Banner from "@/components/Banner";
 import { CardFamousPersonSummary } from "@/components/Card";
-
 import { SectionRandomFamous } from "@/components/SectionRandomFamous";
-import { getDailyPlans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,9 +10,8 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   const { userId, sessionClaims } = await auth();
-  let content;
+
   if (userId && sessionClaims) {
-    //content = await getDailyPlans(userId);
     redirect("/daily-plans");
   }
 

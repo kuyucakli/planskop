@@ -1,6 +1,12 @@
 import DailyPLanList from "@/components/DailyPlanList";
 import { IconAdd } from "@/components/Icons";
+import { getCurrentUserDailyPLans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import Link from "next/link";
 
 export default async function Page() {
@@ -17,6 +23,13 @@ export default async function Page() {
     );
   }
 
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["percentageSlotsCurrentUser"],
+    queryFn: () => getCurrentUserDailyPLans(userId),
+  });
+
   return (
     <>
       <h1 className=" flex justify-between items-baseline">
@@ -27,8 +40,9 @@ export default async function Page() {
           Add plan
         </Link>
       </h1>
-
-      <DailyPLanList userId={userId} />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <DailyPLanList userId={userId} />
+      </HydrationBoundary>
     </>
   );
 }
