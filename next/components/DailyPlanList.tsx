@@ -1,46 +1,79 @@
-import { getDailyPlans } from "@/db/queries/dailyPlans";
+"use client";
+
+import { getCurrentUserDailyPLans } from "@/db/queries/dailyPlans";
 import { auth } from "@clerk/nextjs/server";
 import HandWrittenNums from "./HandWrittenNums";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
-import { getDetailedDailyPlanTimes } from "@/lib/utils/dailyPlan";
+import {
+  createCompletionsMap,
+  getDetailedDailyPlanTimes,
+} from "@/lib/utils/dailyPlan";
+import D3Barplot from "@/components/ui/d3/barplot";
+import { useQuery } from "@tanstack/react-query";
+import { ShimmerLine } from "./ui/shimmer";
 
-const DailyPLanList = async () => {
-  const { userId } = await auth();
+const DailyPLanList = ({ userId }: { userId: string | null }) => {
+  if (!userId) return null;
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["percentageSlotsCurrentUser"],
+    queryFn: () => getCurrentUserDailyPLans(userId),
+  });
 
-  if (!userId) {
-    return null;
+  if (isPending)
+    return (
+      <section>
+        <ShimmerLine />
+      </section>
+    );
+
+  if (isError || !data) {
+    return <p>Something went wrong.</p>;
   }
 
-  const result = await getDailyPlans(userId as string);
+  const completionsMap = createCompletionsMap(data);
 
-  const dailyPlans = result.data;
+  const completionsMapKeys = Object.keys(completionsMap);
 
   return (
     <section className="p-md mb-6">
-      <ul className="grid  [grid-template-columns:repeat(auto-fit,minmax(350px,1fr))] gap-4  md:gap-2 mt-4">
-        {dailyPlans?.map((d, i) => {
+      <ul className="grid  [grid-template-columns:repeat(auto-fit,minmax(450px,1fr))] gap-4  md:gap-2 mt-4">
+        {completionsMapKeys?.map((key) => {
+          const {
+            dailyPlanTitle,
+            completions,
+            repeatDayCount,
+            dailyPlanId,
+            dailyPlanStartDate,
+            dailyPlanTimezone,
+            dailyPlanRepeat,
+          } = completionsMap[Number(key)];
+
           const detailedDailyPlanTimes = getDetailedDailyPlanTimes(
-            d.startDate,
-            d.repeat,
-            d.timezone
+            dailyPlanStartDate,
+            dailyPlanRepeat,
+            dailyPlanTimezone
           );
           return (
-            <li key={d.id} className="">
+            <li
+              key={dailyPlanId}
+              className="bg-neutral-900/[.5] text-neutral-400 rounded-lg"
+            >
               <Link
-                href={`/daily-plans/detail/${d.id}`}
-                className="capitalize text-sm text-black flex  flex-col md:flex-row md:items-top bg-emerald-200 p-4 rounded-lg gap-4 "
+                href={`/daily-plans/detail/${dailyPlanId}`}
+                className="capitalize text-sm  flex  flex-col md:flex-row md:items-top  p-4  gap-4 "
               >
-                <div className="flex flex-col items-center h-28 bg-emerald-300 rounded-lg">
+                <div className="flex flex-col items-center h-28 bg-neutral-950 rounded-lg">
                   <HandWrittenNums
                     num={Number(
-                      formatDate(d.startDate, {
+                      formatDate(dailyPlanStartDate, {
                         day: "numeric",
                       })
                     )}
                   />
+
                   <span className="font-bold">
-                    {formatDate(d.startDate, {
+                    {formatDate(dailyPlanStartDate, {
                       month: "short",
                       year: "numeric",
                     })}
@@ -48,10 +81,10 @@ const DailyPLanList = async () => {
                 </div>
 
                 <div>
-                  <h1 className="text-2xl font-bold">{d.title}</h1>
-                  <p className="flex flex-col">
+                  <h1 className="text-xl">{dailyPlanTitle}</h1>
+                  <p className="flex flex-col text-xs">
                     <span>
-                      End:{" "}
+                      Until:{" "}
                       {formatDate(detailedDailyPlanTimes.endDtStr, {
                         day: "2-digit",
                         month: "short",
@@ -59,7 +92,12 @@ const DailyPLanList = async () => {
                       })}
                     </span>
                   </p>
+                  <p className="text-xs">This is a {repeatDayCount} day plan</p>
                 </div>
+                <D3Barplot
+                  id={`${dailyPlanId}`}
+                  data={completionsMap[Number(key)]}
+                />
               </Link>
             </li>
           );

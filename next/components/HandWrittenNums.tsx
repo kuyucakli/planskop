@@ -5,7 +5,7 @@ export default function HandWrittenNums({ num }: { num: number }) {
 
   const style = {
     display: "inline-block",
-
+    filter: " hue-rotate(90deg) saturate(30%) invert(50%)",
     width: digitWidth,
     height: digitHeight,
     backgroundImage: "url('/images/hand-written-nums.png')",

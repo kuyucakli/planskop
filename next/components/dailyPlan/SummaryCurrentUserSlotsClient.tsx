@@ -45,7 +45,7 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
             dailyPlanTimezone
           );
           return (
-            <li key={key} className="bg-neutral-900 rounded p-6">
+            <li key={key} className="bg-neutral-800 rounded p-6">
               <h1>
                 <Link
                   href={`${ROUTES.DAILY_PLAN_DETAIL}${dailyPlanId}`}
@@ -61,9 +61,9 @@ export function SummaryCurrentUserSlotsClient({ userId }: { userId: string }) {
                     <li key={key} className="text-xs">
                       <h2 className="mb-1">{key}</h2>
                       <div className="mb-3 h-4 flex gap-2 items-center">
-                        <div className="h-3 bg-neutral-950 w-11/12 rounded-md">
+                        <div className="h-1 bg-neutral-900/70 w-11/12 rounded-md">
                           <div
-                            className="h-1 bg-amber-800 mt-1"
+                            className="h-1 bg-amber-800"
                             style={{
                               width: `${Math.round(
                                 (100 * completions[key]) / repeatDayCount
