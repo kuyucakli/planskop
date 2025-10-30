@@ -45,7 +45,7 @@ export function SummaryLatestUserSlotsClient() {
             dailyPlanTimezone
           );
           return (
-            <li key={key} className="bg-neutral-900 rounded p-6">
+            <li key={key} className="bg-neutral-800 rounded p-6">
               <h1>{dailyPlanTitle}</h1>
               <ul className="my-2">
                 {Object.keys(completions).map((key) => {
