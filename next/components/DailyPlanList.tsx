@@ -1,7 +1,6 @@
 "use client";
 
 import { getCurrentUserDailyPLans } from "@/db/queries/dailyPlans";
-import { auth } from "@clerk/nextjs/server";
 import HandWrittenNums from "./HandWrittenNums";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
@@ -37,7 +36,7 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
 
   return (
     <section className="p-md mb-6">
-      <ul className="grid  [grid-template-columns:repeat(auto-fit,minmax(450px,1fr))] gap-4  md:gap-2 mt-4">
+      <ul className="grid  [grid-template-columns:repeat(auto-fit,minmax(480px,1fr))] gap-4  md:gap-2 mt-4">
         {completionsMapKeys?.map((key) => {
           const {
             dailyPlanTitle,
@@ -57,11 +56,11 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
           return (
             <li
               key={dailyPlanId}
-              className="bg-neutral-900/[.5] text-neutral-400 rounded-lg"
+              className="bg-neutral-900/[.5] text-neutral-400 rounded-lg @container"
             >
               <Link
                 href={`/daily-plans/detail/${dailyPlanId}`}
-                className="capitalize text-sm  flex  flex-col md:flex-row md:items-top  p-4  gap-4 "
+                className="capitalize text-sm  flex  flex-col @3xl:flex-row md:items-top  p-4  gap-4 "
               >
                 <div className="flex flex-col items-center h-28 bg-neutral-950 rounded-lg">
                   <HandWrittenNums
