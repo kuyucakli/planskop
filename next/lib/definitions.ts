@@ -243,7 +243,9 @@ type CompletionsMap = Record<
     dailyPlanStartDate: string;
     dailyPlanTimezone: string;
     dailyPlanRepeat: RepeatDuration | null;
+    daysSinceStart: number;
     repeatDayCount: number;
+
     allSlots: DailyActionSlot[];
   }
 >;

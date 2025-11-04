@@ -35,8 +35,8 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
   const completionsMapKeys = Object.keys(completionsMap);
 
   return (
-    <section className="p-md mb-6">
-      <ul className="grid  [grid-template-columns:repeat(auto-fit,minmax(480px,1fr))] gap-4  md:gap-2 mt-4">
+    <section className="p-md mb-6 @container">
+      <ul className="grid  @xl:[grid-template-columns:repeat(auto-fit,minmax(480px,1fr))] gap-6  md:gap-8 mt-4">
         {completionsMapKeys?.map((key) => {
           const {
             dailyPlanTitle,
@@ -46,6 +46,7 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
             dailyPlanStartDate,
             dailyPlanTimezone,
             dailyPlanRepeat,
+            daysSinceStart,
           } = completionsMap[Number(key)];
 
           const detailedDailyPlanTimes = getDetailedDailyPlanTimes(
@@ -60,9 +61,9 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
             >
               <Link
                 href={`/daily-plans/detail/${dailyPlanId}`}
-                className="capitalize text-sm  flex  flex-col @3xl:flex-row md:items-top  p-4  gap-4 "
+                className="capitalize text-sm  flex  justify-between  flex-wrap @[818px]:flex-row @[818px]:flex-nowrap md:items-top  p-4  gap-4"
               >
-                <div className="flex flex-col items-center h-28 bg-neutral-950 rounded-lg">
+                <div className="flex flex-col items-center flex-shrink-0 w-32 h-28 bg-neutral-950 rounded-lg order-3  @[818px]:order-1">
                   <HandWrittenNums
                     num={Number(
                       formatDate(dailyPlanStartDate, {
@@ -79,8 +80,8 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
                   </span>
                 </div>
 
-                <div>
-                  <h1 className="text-xl">{dailyPlanTitle}</h1>
+                <div className="order-2 @[818px]:flex-[280px]">
+                  <h1 className="text-xl font-bold ">{dailyPlanTitle}</h1>
                   <p className="flex flex-col text-xs">
                     <span>
                       Until:{" "}
@@ -93,9 +94,11 @@ const DailyPLanList = ({ userId }: { userId: string | null }) => {
                   </p>
                   <p className="text-xs">This is a {repeatDayCount} day plan</p>
                 </div>
+
                 <D3Barplot
                   id={`${dailyPlanId}`}
                   data={completionsMap[Number(key)]}
+                  className="flex-12/12  @[818px]:grow overflow-hidden order-3"
                 />
               </Link>
             </li>

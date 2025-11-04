@@ -7,17 +7,25 @@ type Props = {
     completions: Record<string, number>;
     repeatDayCount: number;
     dailyPlanTitle: string;
+    daysSinceStart: number;
   };
+  className?: string;
 };
 
-export default function D3Barplot({ id, data }: Props) {
+export default function D3Barplot({ id, data, className }: Props) {
   useEffect(() => {
     const container = d3.select(`#chart-${id}`);
     container.select("svg").remove();
 
-    const margin = { top: 30, right: 30, bottom: 70, left: 60 },
-      width = 460 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+    const node = container.node();
+    if (!(node instanceof HTMLElement)) return;
+
+    const { width: containerWidth, height: containerHeight } =
+      node.getBoundingClientRect();
+
+    const margin = { top: 40, right: 8, bottom: 64, left: 40 },
+      width = containerWidth - margin.left - margin.right,
+      height = 320 - margin.top - margin.bottom;
 
     const svg = container
       .append("svg")
@@ -85,11 +93,35 @@ export default function D3Barplot({ id, data }: Props) {
       .attr("cx", 0) // slightly left of tick text
       .attr("cy", y(data.repeatDayCount))
       .attr("r", 4)
-      .attr("fill", "#ff4400")
+      //.attr("fill", "#ff4400")
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .attr("pointer-events", "none"); // no mouse interference
 
+    // ✅ Draw horizontal dashed line for "today"
+    if (data.daysSinceStart) {
+      const todayY = y(data.daysSinceStart);
+
+      // Draw the line
+      svg
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", todayY)
+        .attr("y2", todayY)
+        .attr("stroke", "#ff880088")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-dasharray", "4 4");
+
+      // Add "Today" label at the right end
+      svg
+        .append("text")
+        .attr("x", width - 48)
+        .attr("y", todayY - 6) // small vertical offset
+        .attr("fill", "#ff880088")
+        .attr("font-size", "11px")
+        .text("Today");
+    }
     // Bars
     svg
       .selectAll("rect")
@@ -103,5 +135,5 @@ export default function D3Barplot({ id, data }: Props) {
       .attr("fill", "#ff4400");
   }, [id, data]);
 
-  return <div id={`chart-${id}`}></div>;
+  return <div id={`chart-${id}`} className={`${className}`}></div>;
 }

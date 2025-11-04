@@ -159,6 +159,7 @@ function createCompletionsMap(data: Awaited<DailyPlanWithCompletion[]>) {
         dailyPlanStartDate,
         dailyPlanTimezone,
         dailyPlanRepeat,
+        daysSinceStart: detailedDailyPlanTimes.daysSinceStart,
         allSlots: dailyPlanSlots,
         repeatDayCount,
       };
