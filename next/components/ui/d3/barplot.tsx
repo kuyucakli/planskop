@@ -34,16 +34,6 @@ export default function D3Barplot({ id, data, className }: Props) {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("x", margin.left)
-      .attr("y", -10)
-      .attr("fill", "#555")
-      .attr("font-size", "13px")
-      .attr("font-weight", "bold")
-      .text("Days Completed");
-
     // ✅ Convert completions object to array
     const completionsArray = Object.entries(data.completions).map(
       ([key, value]) => ({
@@ -62,10 +52,18 @@ export default function D3Barplot({ id, data, className }: Props) {
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x))
+      .call(
+        d3
+          .axisBottom(x)
+          .tickFormat((label) =>
+            label.length > 10 ? label.slice(0, 10) + "…" : label
+          )
+      )
       .selectAll("text")
       .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
+      .style("text-anchor", "end")
+      .style("font-size", "11px")
+      .style("fill", "#777");
 
     const max = data.repeatDayCount;
 
@@ -88,15 +86,40 @@ export default function D3Barplot({ id, data, className }: Props) {
       d3.axisLeft(y).tickValues(ticks).tickFormat(d3.format("d")) // ensures integer display
     );
 
+    // --- Tooltip setup ---
+    const tooltip = container
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "rgba(0,0,0,0.75)")
+      .style("color", "white")
+      .style("padding", "6px 8px")
+      .style("border-radius", "6px")
+      .style("font-size", "12px")
+      .style("pointer-events", "none") // don't block mouse
+      .style("opacity", 0);
+
+    // ✅ Draw dashed line for total repeat day count
+    const totalY = y(data.repeatDayCount);
+
     svg
-      .append("circle")
-      .attr("cx", 0) // slightly left of tick text
-      .attr("cy", y(data.repeatDayCount))
-      .attr("r", 4)
-      //.attr("fill", "#ff4400")
-      .attr("stroke", "#fff")
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", totalY)
+      .attr("y2", totalY)
+      .attr("stroke", "#777")
       .attr("stroke-width", 1.5)
-      .attr("pointer-events", "none"); // no mouse interference
+      .attr("stroke-dasharray", "4 4");
+
+    // Add label for total
+    svg
+      .append("text")
+      .attr("x", width - 14)
+      .attr("y", totalY - 6)
+      .attr("fill", "#777")
+      .attr("font-size", "11px")
+      .attr("text-anchor", "end")
+      .text(`${data.repeatDayCount} days goal`);
 
     // ✅ Draw horizontal dashed line for "today"
     if (data.daysSinceStart) {
@@ -116,10 +139,11 @@ export default function D3Barplot({ id, data, className }: Props) {
       // Add "Today" label at the right end
       svg
         .append("text")
-        .attr("x", width - 48)
+        .attr("x", width - 14)
         .attr("y", todayY - 6) // small vertical offset
         .attr("fill", "#ff880088")
         .attr("font-size", "11px")
+        .attr("text-anchor", "end")
         .text("Today");
     }
     // Bars
@@ -132,7 +156,29 @@ export default function D3Barplot({ id, data, className }: Props) {
       .attr("y", (d) => y(d.value))
       .attr("width", x.bandwidth())
       .attr("height", (d) => height - y(d.value))
-      .attr("fill", "#ff4400");
+      .attr("fill", "#ff4400")
+      .on("mouseover", function (event, d) {
+        const percent = ((d.value / data.repeatDayCount) * 100).toFixed(1);
+
+        tooltip.style("opacity", 1).html(`
+      <div style="text-align:left;">
+        <div><strong>${d.label}</strong></div>
+        <div>${d.value} days done</div>
+        <div>${percent}% completed</div>
+      </div>
+    `);
+
+        d3.select(this).attr("fill", "#ff7733"); // highlight bar
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("left", event.pageX + 10 + "px")
+          .style("top", event.pageY - 28 + "px");
+      })
+      .on("mouseleave", function () {
+        tooltip.style("opacity", 0);
+        d3.select(this).attr("fill", "#ff4400"); // restore color
+      });
   }, [id, data]);
 
   return <div id={`chart-${id}`} className={`${className}`}></div>;
